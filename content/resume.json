@@ -1,0 +1,50 @@
+{
+  "summary": "Product-minded software engineer with experience shipping user-facing applications, internal tooling, integrations, and AI-assisted workflows. Strongest when the work needs both implementation rigor and plain-language reasoning about product and technical tradeoffs.",
+  "skills": [
+    {
+      "category": "Languages",
+      "color": "accent",
+      "items": ["TypeScript", "JavaScript", "Ruby", "SQL", "HTML/CSS"]
+    },
+    {
+      "category": "Frameworks",
+      "color": "green",
+      "items": ["React", "Next.js", "Rails", "Node.js", "Tailwind CSS"]
+    },
+    {
+      "category": "Platforms",
+      "color": "pink",
+      "items": ["Netlify", "GitHub Actions", "Supabase", "Docker", "PostgreSQL"]
+    },
+    {
+      "category": "Domains",
+      "color": "cyan",
+      "items": ["Product engineering", "Marketing automation", "Developer tooling", "AI workflows"]
+    }
+  ],
+  "interests": ["Cycling", "Numismatics", "History", "Biblical languages", "Games"],
+  "experience": [
+    {
+      "company": "Apollo Labs",
+      "role": "Founder / Consulting Engineer",
+      "start": "2024",
+      "end": "Present",
+      "bullets": [
+        "Deliver scoped product and platform work for clients who need execution more than process theater.",
+        "Build integrations, internal tooling, and AI-assisted workflows with an emphasis on maintainability.",
+        "Translate ambiguous technical problems into concrete plans that non-engineering stakeholders can evaluate."
+      ]
+    },
+    {
+      "company": "Independent Product and Software Work",
+      "role": "Full-Stack Engineer",
+      "start": "2021",
+      "end": "Present",
+      "bullets": [
+        "Shipped web applications, experiments, and portfolio projects spanning consumer UX and operational tooling.",
+        "Worked across frontend systems, API design, deployment, debugging, and content-driven site architecture.",
+        "Focused on clean interfaces, stable abstractions, and reducing long-term maintenance cost."
+      ]
+    }
+  ]
+}

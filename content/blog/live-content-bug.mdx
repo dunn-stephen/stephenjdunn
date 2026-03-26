@@ -1,0 +1,22 @@
+---
+title: "Debugging a Live Content Rendering Bug"
+slug: "live-content-bug"
+date: "2026-02-11"
+tags: ["debugging", "nextjs", "content"]
+description: "A small rendering inconsistency turned into a useful exercise in tracing assumptions through the stack."
+readTime: 4
+---
+
+## The Failure Mode
+
+The bug looked cosmetic at first: content rendered correctly in development but drifted in production. That is usually a signal that some build-time assumption is leaking into runtime behavior.
+
+## What Helped
+
+- Reproducing the problem with the smallest possible content file.
+- Comparing build output rather than only comparing visible UI.
+- Eliminating layers until only the content transform remained.
+
+## Takeaway
+
+Many content bugs are not really about content. They are mismatches between where data is transformed, where it is cached, and what the page assumes will still be true later.

@@ -1,2 +1,8 @@
+node_modules/
+.next/
+.netlify/
+out/
+coverage/
+dist/
+tsconfig.tsbuildinfo
 .DS_Store
-.netlify

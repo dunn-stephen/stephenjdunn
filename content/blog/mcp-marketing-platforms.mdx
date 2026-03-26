@@ -1,0 +1,29 @@
+---
+title: "Building Agent-Native Marketing Platforms with MCP"
+slug: "mcp-marketing-platforms"
+date: "2026-03-10"
+tags: ["mcp", "martech", "ai"]
+description: "Wrapping operational APIs as tools changes what an assistant can responsibly do for marketing teams."
+readTime: 6
+---
+
+## Why This Pattern Matters
+
+Most assistants stop at explanation. They can describe a workflow, but they cannot inspect the state of the system or act within the guardrails of that system. MCP-style tooling closes that gap by turning operational capabilities into explicit contracts.
+
+## Tool Design
+
+The useful question is not whether a platform has an API. The useful question is whether the API can be exposed as a set of actions an agent can reason about safely.
+
+```ts
+type CampaignQuery = {
+  accountId: string;
+  status?: "draft" | "scheduled" | "running";
+};
+```
+
+When tools are shaped clearly, the assistant stops improvising around the edges and starts operating in a more auditable way.
+
+## Practical Constraint
+
+Every tool increases surface area. If the interface becomes too broad, users lose confidence and the model loses clarity about which action is appropriate.

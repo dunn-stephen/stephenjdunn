@@ -1,20 +1,35 @@
 # stephenjdunn
 
-Minimal Netlify-ready personal landing page for Stephen J. Dunn.
+Terminal-styled personal website built with Next.js App Router, TypeScript, Tailwind CSS, and file-backed MDX content.
 
-## Local preview
+## Stack
 
-Because this is a plain static site, you can preview it with any simple file server.
+- `next` App Router
+- `typescript`
+- `tailwindcss`
+- `next-mdx-remote` for MDX content rendering
+- `rehype-pretty-code` for code blocks
+- `lucide-react` for UI icons
+
+## Local development
 
 ```bash
 cd /Users/stephendunn/stephenjdunn
-python3 -m http.server 8000
+npm install
+npm run dev
 ```
 
-Then open `http://localhost:8000`.
+Then open `http://localhost:3000`.
+
+## Content workflow
+
+- Add projects in `content/projects/*.mdx`
+- Add posts in `content/blog/*.mdx`
+- Update current status in `content/now.md`
+- Update resume data in `content/resume.json`
 
 ## Deploy notes
 
-- Netlify publish directory: `.`
+- Netlify build command: `npm run build`
 - Production branch: `main`
-- Recommended branch deploy: `staging`
+- Custom headers remain configured in `netlify.toml`
