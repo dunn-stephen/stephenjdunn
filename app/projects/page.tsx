@@ -1,18 +1,17 @@
 import { ProjectDirectory } from "@/components/projects/ProjectDirectory";
-import { SectionHeading } from "@/components/shared/SectionHeading";
+import { TerminalPage } from "@/components/terminal/TerminalPage";
 import { getAllProjects } from "@/lib/content";
 
 export default function ProjectsPage() {
   const projects = getAllProjects();
 
   return (
-    <div className="space-y-10">
-      <SectionHeading
-        eyebrow="projects/"
-        title="Shipped work across apps, tools, interfaces, and experiments."
-        description="Projects can render as demos, screenshots, or long-form writeups depending on what best explains the work."
-      />
+    <TerminalPage command="cd projects && ls" cwd="~">
+      <div className="mb-6 space-y-2 text-sm leading-7 text-dim">
+        <p>project directory</p>
+        <p>Open an item from the tree or use the command bar to navigate deeper.</p>
+      </div>
       <ProjectDirectory projects={projects} />
-    </div>
+    </TerminalPage>
   );
 }

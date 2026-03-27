@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --color-shell: #0d0d0f;
-  --color-surface: #131316;
+  --color-shell: rgb(30 30 30);
+  --color-surface: #0f0f11;
   --color-border: #28282e;
   --color-text: #c8c8cc;
   --color-dim: #7b7b84;
@@ -25,10 +25,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(255, 140, 26, 0.12), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(88, 216, 255, 0.08), transparent 22%),
-    linear-gradient(180deg, #09090b 0%, var(--color-shell) 42%, #070709 100%);
+  background: var(--color-shell);
   color: var(--color-text);
   font-family:
     "IBM Plex Mono",

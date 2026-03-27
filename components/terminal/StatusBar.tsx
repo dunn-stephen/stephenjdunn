@@ -44,9 +44,9 @@ export function StatusBar({ modeLabel, pathname }: StatusBarProps) {
   }, [pathname]);
 
   return (
-    <footer className="grid gap-2 border-t border-border bg-black/25 px-4 py-3 text-xs uppercase tracking-[0.22em] text-dim sm:grid-cols-3">
-      <p>{modeLabel}</p>
-      <p className="sm:text-center">{pageIndex}</p>
+    <footer className="grid gap-2 border-t border-border bg-black/60 px-4 py-3 text-xs uppercase tracking-[0.22em] text-dim sm:grid-cols-[auto_1fr_auto]">
+      <p>NORMAL · {modeLabel}</p>
+      <p className="sm:text-center">tree · {pageIndex} · shell input ready</p>
       <p className="sm:text-right">{clock}</p>
     </footer>
   );

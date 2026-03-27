@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import type { ProjectDetail as ProjectDetailType } from "@/lib/content";
+import { TerminalPage } from "@/components/terminal/TerminalPage";
 
 type ProjectDetailProps = {
   project: ProjectDetailType;
@@ -9,6 +10,7 @@ type ProjectDetailProps = {
 
 export function ProjectDetail({ project, content }: ProjectDetailProps) {
   return (
+    <TerminalPage command={`cd projects && cat ${project.slug}.mdx`} cwd="~">
     <article className="space-y-8">
       <header className="rounded-3xl border border-border bg-black/25 p-6">
         <p className="text-xs uppercase tracking-[0.28em] text-dim">{project.displayMode}</p>
@@ -74,5 +76,6 @@ export function ProjectDetail({ project, content }: ProjectDetailProps) {
         {content}
       </section>
     </article>
+    </TerminalPage>
   );
 }

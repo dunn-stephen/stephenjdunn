@@ -1,18 +1,17 @@
 import { BlogDirectory } from "@/components/blog/BlogDirectory";
-import { SectionHeading } from "@/components/shared/SectionHeading";
+import { TerminalPage } from "@/components/terminal/TerminalPage";
 import { getAllPosts } from "@/lib/content";
 
 export default function BlogPage() {
   const posts = getAllPosts();
 
   return (
-    <div className="space-y-10">
-      <SectionHeading
-        eyebrow="blog/"
-        title="Technical writing, build logs, and side-interest notes in the same archive."
-        description="Posts are MDX-backed and designed to handle code, diagrams, and long-form explanations without giving up the terminal aesthetic."
-      />
+    <TerminalPage command="cd blog && ls" cwd="~">
+      <div className="mb-6 space-y-2 text-sm leading-7 text-dim">
+        <p>blog archive</p>
+        <p>Select a post to open it in the shell output area.</p>
+      </div>
       <BlogDirectory posts={posts} />
-    </div>
+    </TerminalPage>
   );
 }

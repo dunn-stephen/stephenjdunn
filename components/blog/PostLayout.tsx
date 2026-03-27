@@ -2,6 +2,7 @@ import type { Route } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import type { BlogDetail, BlogSummary } from "@/lib/content";
+import { TerminalPage } from "@/components/terminal/TerminalPage";
 
 type PostLayoutProps = {
   post: BlogDetail;
@@ -12,6 +13,7 @@ type PostLayoutProps = {
 
 export function PostLayout({ post, content, previousPost, nextPost }: PostLayoutProps) {
   return (
+    <TerminalPage command={`cd blog && cat ${post.slug}.mdx`} cwd="~">
     <article className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_240px]">
       <div className="space-y-8">
         <header className="rounded-3xl border border-border bg-black/25 p-6">
@@ -77,5 +79,6 @@ export function PostLayout({ post, content, previousPost, nextPost }: PostLayout
         </div>
       </aside>
     </article>
+    </TerminalPage>
   );
 }

@@ -1,15 +1,12 @@
-import { SectionHeading } from "@/components/shared/SectionHeading";
+import { TerminalPage } from "@/components/terminal/TerminalPage";
 import { siteConfig } from "@/lib/site";
 
 export default function ContactPage() {
   return (
-    <div className="space-y-10">
-      <SectionHeading
-        eyebrow="contact.md"
-        title="Reach out if you need software shipped, untangled, or explained clearly."
-        description="This page keeps the CTA simple: direct paths for consulting, hiring conversations, and professional contact."
-      />
-
+    <TerminalPage command="cat contact.md" cwd="~">
+      <div className="mb-6 space-y-2 text-sm leading-7 text-dim">
+        <p>Reach out if you need software shipped, untangled, or explained clearly.</p>
+      </div>
       <section className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
         <div className="rounded-3xl border border-border bg-black/25 p-6">
           <p className="text-xs uppercase tracking-[0.28em] text-dim">consulting</p>
@@ -55,6 +52,6 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-    </div>
+    </TerminalPage>
   );
 }

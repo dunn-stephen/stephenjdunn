@@ -1,6 +1,6 @@
 export const terminalTheme = {
-  shell: "#0d0d0f",
-  surface: "#131316",
+  shell: "rgb(30 30 30)",
+  surface: "#0f0f11",
   border: "#28282e",
   accent: "#ff8c1a",
   text: "#c8c8cc",

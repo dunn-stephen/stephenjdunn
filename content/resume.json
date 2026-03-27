@@ -1,49 +1,116 @@
 {
-  "summary": "Product-minded software engineer with experience shipping user-facing applications, internal tooling, integrations, and AI-assisted workflows. Strongest when the work needs both implementation rigor and plain-language reasoning about product and technical tradeoffs.",
+  "summary": "Senior technical consultant with 4+ years of SaaS implementation experience focused on enterprise CDP rollouts, marketing-technology integrations, and complex stakeholder management. Strongest at turning messy customer environments into workable technical plans across data architecture, email/SMS infrastructure, APIs, webhooks, and platform operations.",
+  "contact": {
+    "phone": "(408) 228-7823",
+    "email": "stephendunn2424@gmail.com",
+    "github": "github.com/dunn-stephen",
+    "linkedin": "linkedin.com/in/stephendunn24",
+    "headline": [
+      "CDP Implementation",
+      "Email/SMS Infrastructure",
+      "API & Webhooks",
+      "Data Architecture"
+    ]
+  },
   "skills": [
     {
-      "category": "Languages",
+      "category": "Implementation",
       "color": "accent",
-      "items": ["TypeScript", "JavaScript", "Ruby", "SQL", "HTML/CSS"]
-    },
-    {
-      "category": "Frameworks",
-      "color": "green",
-      "items": ["React", "Next.js", "Rails", "Node.js", "Tailwind CSS"]
-    },
-    {
-      "category": "Platforms",
-      "color": "pink",
-      "items": ["Netlify", "GitHub Actions", "Supabase", "Docker", "PostgreSQL"]
-    },
-    {
-      "category": "Domains",
-      "color": "cyan",
-      "items": ["Product engineering", "Marketing automation", "Developer tooling", "AI workflows"]
-    }
-  ],
-  "interests": ["Cycling", "Numismatics", "History", "Biblical languages", "Games"],
-  "experience": [
-    {
-      "company": "Apollo Labs",
-      "role": "Founder / Consulting Engineer",
-      "start": "2024",
-      "end": "Present",
-      "bullets": [
-        "Deliver scoped product and platform work for clients who need execution more than process theater.",
-        "Build integrations, internal tooling, and AI-assisted workflows with an emphasis on maintainability.",
-        "Translate ambiguous technical problems into concrete plans that non-engineering stakeholders can evaluate."
+      "items": [
+        "Enterprise implementation leadership",
+        "Multi-stakeholder project coordination",
+        "Risk management and mitigation",
+        "Implementation process customization"
       ]
     },
     {
-      "company": "Independent Product and Software Work",
-      "role": "Full-Stack Engineer",
-      "start": "2021",
+      "category": "Marketing Technology",
+      "color": "green",
+      "items": [
+        "CDP implementation",
+        "Lifecycle and automation strategy",
+        "Email/SMS infrastructure",
+        "Martech stack integration",
+        "Data architecture design"
+      ]
+    },
+    {
+      "category": "Technical",
+      "color": "pink",
+      "items": [
+        "Ruby on Rails",
+        "REST APIs",
+        "Postman",
+        "AWS S3/Athena/CLI",
+        "JavaScript",
+        "Python",
+        "DNS / SSL / deliverability configuration"
+      ]
+    },
+    {
+      "category": "Platforms",
+      "color": "cyan",
+      "items": [
+        "Blueshift",
+        "Salesforce Marketing Cloud",
+        "Oracle",
+        "Iterable",
+        "Braze",
+        "Databricks",
+        "Snowflake",
+        "Shopify",
+        "Magento"
+      ]
+    }
+  ],
+  "interests": ["Cycling", "Numismatics", "History", "Biblical languages", "Games"],
+  "education": {
+    "degree": "B.S. Business",
+    "school": "Notre Dame de Namur",
+    "years": "2014 - 2018",
+    "concentration": "Management",
+    "highlights": [
+      "Resident Assistant",
+      "Student Government Senator",
+      "Chess Club Treasurer"
+    ]
+  },
+  "experience": [
+    {
+      "company": "Blueshift",
+      "role": "Senior Product Consultant",
+      "start": "Nov 2020",
       "end": "Present",
       "bullets": [
-        "Shipped web applications, experiments, and portfolio projects spanning consumer UX and operational tooling.",
-        "Worked across frontend systems, API design, deployment, debugging, and content-driven site architecture.",
-        "Focused on clean interfaces, stable abstractions, and reducing long-term maintenance cost."
+        "Managed an $8.2M+ ARR enterprise portfolio as the first technical point of contact, with $3M+ ARR successfully onboarded to date.",
+        "Led end-to-end implementation lifecycles across project planning, stakeholder coordination, timeline management, and value-realization milestones.",
+        "Designed data architecture for complex enterprise use cases spanning web, app, offline interactions, CRM integration, and catalog management.",
+        "Implemented multi-source integrations across websites, APIs, EDWs, Shopify, Magento, webhooks, S3, Azure, BigQuery, Databricks, and Snowflake.",
+        "Owned email and SMS infrastructure work including ESP integration, DNS setup, deliverability optimization, TCPA compliance, and 10DLC registration.",
+        "Built customer-facing technical resources including Blueshift's Postman collection, internal operational scripts, and implementation process improvements."
+      ]
+    },
+    {
+      "company": "Lister Digital",
+      "role": "Project Manager",
+      "start": "Sep 2019",
+      "end": "Nov 2020",
+      "bullets": [
+        "Led enterprise implementations across Oracle, Salesforce, Google, Iterable, and Braze marketing platforms.",
+        "Managed international project teams across time zones while coordinating technical and creative resources.",
+        "Maintained a 100% on-time delivery rate across enterprise and mid-market client work.",
+        "Coordinated integrations between marketing platforms, CRM systems, and e-commerce infrastructure."
+      ]
+    },
+    {
+      "company": "Arevea",
+      "role": "Project Manager",
+      "start": "Mar 2018",
+      "end": "Sep 2019",
+      "bullets": [
+        "Generated 40+ product requirements that were implemented and used in production.",
+        "Secured acceptance to the Plug & Play Travel Batch Accelerator through product positioning and technical communication.",
+        "Built networking and partnership programs that supported business development and market access."
       ]
     }
   ]

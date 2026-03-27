@@ -1,4 +1,4 @@
-import { SectionHeading } from "@/components/shared/SectionHeading";
+import { TerminalPage } from "@/components/terminal/TerminalPage";
 import { getResumeData } from "@/lib/content";
 
 const skillToneMap = {
@@ -12,15 +12,35 @@ export default function ResumePage() {
   const resume = getResumeData();
 
   return (
-    <div className="space-y-10">
-      <SectionHeading
-        eyebrow="resume.md"
-        title="Professional experience presented like a terminal readout, not a PDF dump."
-        description={resume.summary}
-      />
-
+    <div className="space-y-8">
+      <TerminalPage command="cat resume.md" cwd="~">
+        <div className="mb-6 space-y-2 text-sm leading-7 text-dim">
+          <p>Professional experience rendered as terminal output.</p>
+        </div>
       <section className="rounded-3xl border border-border bg-black/25 p-6">
-        <div className="border-b border-border pb-4">
+        <div className="grid gap-6 border-b border-border pb-5 xl:grid-cols-[1.1fr_0.9fr]">
+          <div>
+            <p className="text-xs uppercase tracking-[0.28em] text-dim">contact</p>
+            <div className="mt-4 grid gap-3 text-sm text-text sm:grid-cols-2">
+              <p>{resume.contact.phone}</p>
+              <p>{resume.contact.email}</p>
+              <p>{resume.contact.github}</p>
+              <p>{resume.contact.linkedin}</p>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-[0.28em] text-dim">focus</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {resume.contact.headline.map((item) => (
+                <span key={item} className="rounded-full border border-border px-3 py-1 text-sm text-accent">
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 border-b border-border pb-4">
           <p className="text-xs uppercase tracking-[0.28em] text-dim">summary</p>
         </div>
         <p className="mt-5 max-w-3xl leading-7 text-text">{resume.summary}</p>
@@ -84,6 +104,29 @@ export default function ResumePage() {
           </div>
         </div>
       </section>
+
+      <section className="rounded-3xl border border-border bg-black/25 p-6">
+        <p className="border-b border-border pb-4 text-xs uppercase tracking-[0.28em] text-dim">education</p>
+        <div className="mt-6 space-y-3">
+          <h2 className="text-2xl text-text">
+            {resume.education.degree} | {resume.education.school}
+          </h2>
+          <p className="text-dim">{resume.education.years}</p>
+          {resume.education.concentration ? (
+            <p className="text-text">Concentration: {resume.education.concentration}</p>
+          ) : null}
+          {resume.education.highlights?.length ? (
+            <div className="flex flex-wrap gap-2">
+              {resume.education.highlights.map((item) => (
+                <span key={item} className="rounded-full border border-border px-3 py-1 text-sm text-green">
+                  {item}
+                </span>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </section>
+      </TerminalPage>
     </div>
   );
 }

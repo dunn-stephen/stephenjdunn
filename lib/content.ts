@@ -29,8 +29,22 @@ export type BlogFrontmatter = {
 
 export type ResumeData = {
   summary: string;
+  contact: {
+    phone: string;
+    email: string;
+    github: string;
+    linkedin: string;
+    headline: string[];
+  };
   skills: Array<{ category: string; color: "accent" | "green" | "pink" | "cyan"; items: string[] }>;
   interests: string[];
+  education: {
+    degree: string;
+    school: string;
+    years: string;
+    concentration?: string;
+    highlights?: string[];
+  };
   experience: Array<{
     company: string;
     role: string;

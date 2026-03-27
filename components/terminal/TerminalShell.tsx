@@ -11,6 +11,7 @@ import { primaryRoutes } from "@/lib/site";
 import { Sidebar } from "@/components/terminal/Sidebar";
 import { StatusBar } from "@/components/terminal/StatusBar";
 import { CommandPalette } from "@/components/terminal/CommandPalette";
+import { CommandLine } from "@/components/terminal/CommandLine";
 
 type TerminalShellProps = {
   children: ReactNode;
@@ -99,6 +100,19 @@ export function TerminalShell({ children, projects, posts }: TerminalShellProps)
   }, [effectsEnabled]);
 
   useEffect(() => {
+    const toggleSidebar = () => setSidebarOpen((value) => !value);
+    const toggleCrt = () => setEffectsEnabled((value) => !value);
+
+    window.addEventListener("terminal:toggle-sidebar", toggleSidebar);
+    window.addEventListener("terminal:toggle-crt", toggleCrt);
+
+    return () => {
+      window.removeEventListener("terminal:toggle-sidebar", toggleSidebar);
+      window.removeEventListener("terminal:toggle-crt", toggleCrt);
+    };
+  }, []);
+
+  useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
       if ((event.ctrlKey && event.key.toLowerCase() === "k") || (!event.ctrlKey && event.key === "/")) {
         if (!isTypingTarget(event.target)) {
@@ -162,7 +176,7 @@ export function TerminalShell({ children, projects, posts }: TerminalShellProps)
   return (
     <div className="min-h-screen px-3 py-4 sm:px-6 sm:py-8">
       <div className="mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-7xl flex-col overflow-hidden rounded-[24px] border border-border bg-surface/95 shadow-terminal backdrop-blur">
-        <header className="flex items-center justify-between gap-4 border-b border-border px-4 py-3">
+        <header className="flex items-center justify-between gap-4 border-b border-border bg-black/40 px-4 py-3">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -181,17 +195,29 @@ export function TerminalShell({ children, projects, posts }: TerminalShellProps)
           </div>
 
           <div className="flex items-center gap-2">
-            <nav className="hidden items-center gap-1 rounded-2xl border border-border bg-black/20 p-1 md:flex">
+            <nav className="hidden items-center gap-1 rounded-2xl border border-border bg-black/45 p-1 md:flex">
               {primaryRoutes.map((route) => (
                 <Link
                   key={route.href}
                   href={route.href}
                   className={clsx(
-                    "rounded-xl px-3 py-2 text-sm transition",
-                    pathname === route.href ? "bg-accent text-black" : "text-dim hover:text-text"
+                    "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition",
+                    pathname === route.href
+                      ? "bg-accent/15 text-accent"
+                      : "text-dim hover:bg-white/5 hover:text-text"
                   )}
                 >
-                  {route.label}
+                  <span
+                    className={clsx(
+                      "inline-flex h-5 min-w-5 items-center justify-center rounded-md border px-1 text-[10px] font-semibold leading-none",
+                      pathname === route.href
+                        ? "border-accent/40 bg-accent/10 text-accent"
+                        : "border-border text-dim"
+                    )}
+                  >
+                    {route.hotkey}
+                  </span>
+                  <span>{route.label}</span>
                 </Link>
               ))}
             </nav>
@@ -199,7 +225,7 @@ export function TerminalShell({ children, projects, posts }: TerminalShellProps)
             <button
               type="button"
               onClick={() => setPaletteOpen(true)}
-              className="hidden rounded-xl border border-border bg-black/20 px-3 py-2 text-sm text-dim transition hover:border-accent hover:text-accent md:inline-flex"
+              className="hidden rounded-xl border border-border bg-black/45 px-3 py-2 text-sm text-dim transition hover:border-accent hover:text-accent md:inline-flex"
               aria-label="Open command palette"
             >
               <Command className="mr-2 h-4 w-4" />
@@ -208,7 +234,7 @@ export function TerminalShell({ children, projects, posts }: TerminalShellProps)
             <button
               type="button"
               onClick={() => setSidebarOpen((value) => !value)}
-              className="hidden rounded-xl border border-border bg-black/20 p-2 text-dim transition hover:border-accent hover:text-accent lg:inline-flex"
+              className="hidden rounded-xl border border-border bg-black/45 p-2 text-dim transition hover:border-accent hover:text-accent lg:inline-flex"
               aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             >
               {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
@@ -220,7 +246,7 @@ export function TerminalShell({ children, projects, posts }: TerminalShellProps)
                 "inline-flex rounded-xl border px-3 py-2 text-sm transition",
                 effectsEnabled
                   ? "border-accent bg-accent/10 text-accent"
-                  : "border-border bg-black/20 text-dim hover:text-text"
+                : "border-border bg-black/45 text-dim hover:text-text"
               )}
             >
               <MoonStar className="mr-2 h-4 w-4" />
@@ -229,7 +255,14 @@ export function TerminalShell({ children, projects, posts }: TerminalShellProps)
           </div>
         </header>
 
-        <div className="grid flex-1 overflow-hidden lg:grid-cols-[minmax(260px,320px)_1fr]">
+        <div
+          className={clsx(
+            "grid flex-1 overflow-hidden transition-[grid-template-columns] duration-300 ease-out",
+            sidebarOpen
+              ? "lg:grid-cols-[minmax(260px,320px)_1fr]"
+              : "lg:grid-cols-[0px_1fr]"
+          )}
+        >
           <Sidebar
             pathname={pathname}
             open={sidebarOpen}
@@ -239,12 +272,20 @@ export function TerminalShell({ children, projects, posts }: TerminalShellProps)
           />
           <main
             ref={mainRef}
-            className="tui-scrollbar min-h-0 overflow-y-auto bg-black/10 px-5 py-6 sm:px-8 sm:py-8"
+            className="min-h-0 bg-black/30 px-4 py-3 sm:px-5 sm:py-4"
           >
-            <div className="mx-auto w-full max-w-5xl animate-floatIn">{children}</div>
+            <div className="mx-auto flex h-full w-full max-w-5xl animate-floatIn flex-col">
+              <CommandLine
+                onToggleSidebar={() => setSidebarOpen((value) => !value)}
+                onToggleCrt={() => setEffectsEnabled((value) => !value)}
+                projects={projects}
+                posts={posts}
+              >
+                {children}
+              </CommandLine>
+            </div>
           </main>
         </div>
-
         <StatusBar modeLabel={modeLabel} pathname={pathname} />
       </div>
 
