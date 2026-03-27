@@ -1,5 +1,6 @@
-import type { AnchorHTMLAttributes, HTMLAttributes } from "react";
-import { compileMDX } from "next-mdx-remote/rsc";
+import type { AnchorHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import { compile, run } from "@mdx-js/mdx";
+import * as runtime from "react/jsx-runtime";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
@@ -60,21 +61,25 @@ const mdxComponents = {
   )
 };
 
+type MdxModule = {
+  default: (props: { components?: typeof mdxComponents }) => ReactNode;
+};
+
 export async function renderMdx(source: string) {
-  const { content } = await compileMDX({
-    source,
-    components: mdxComponents,
-    options: {
-      mdxOptions: {
-        remarkPlugins: [remarkGfm],
-        rehypePlugins: [
-          rehypeSlug,
-          [rehypeAutolinkHeadings, { behavior: "wrap" }],
-          [rehypePrettyCode, prettyCodeOptions]
-        ]
-      }
-    }
+  const compiled = await compile(source, {
+    outputFormat: "function-body",
+    rehypePlugins: [
+      rehypeSlug,
+      [rehypeAutolinkHeadings, { behavior: "wrap" }],
+      [rehypePrettyCode, prettyCodeOptions]
+    ],
+    remarkPlugins: [remarkGfm]
   });
 
-  return content;
+  const { default: Content } = (await run(String(compiled), {
+    ...runtime,
+    baseUrl: import.meta.url
+  })) as MdxModule;
+
+  return <Content components={mdxComponents} />;
 }

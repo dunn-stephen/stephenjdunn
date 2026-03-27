@@ -1,5 +1,5 @@
-import { TerminalPage } from "@/components/terminal/TerminalPage";
-
 export default function HomePage() {
-  return <div />;
+  // The home route is rendered through TerminalShell's boot workspace state,
+  // so the page itself intentionally returns no standalone content.
+  return null;
 }

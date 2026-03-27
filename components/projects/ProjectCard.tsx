@@ -1,10 +1,10 @@
 import type { Route } from "next";
-import Link from "next/link";
-import type { ProjectSummary } from "@/lib/content";
+import type { ProjectFrontmatter } from "@/lib/content";
+import { TerminalNavLink } from "@/components/terminal/TerminalNavLink";
 
-export function ProjectCard({ project }: { project: ProjectSummary }) {
+export function ProjectCard({ project }: { project: ProjectFrontmatter }) {
   return (
-    <Link
+    <TerminalNavLink
       href={`/projects/${project.slug}` as Route}
       className="group rounded-3xl border border-border bg-black/25 p-5 transition hover:border-accent hover:shadow-[0_0_32px_rgba(255,140,26,0.1)]"
     >
@@ -23,6 +23,6 @@ export function ProjectCard({ project }: { project: ProjectSummary }) {
           </span>
         ))}
       </div>
-    </Link>
+    </TerminalNavLink>
   );
 }

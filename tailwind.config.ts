@@ -24,8 +24,7 @@ const config: Config = {
       },
       animation: {
         blink: "blink 1s steps(1) infinite",
-        floatIn: "floatIn 500ms ease forwards",
-        glowPulse: "glowPulse 2.8s ease-in-out infinite"
+        floatIn: "floatIn 500ms ease forwards"
       },
       keyframes: {
         blink: {
@@ -34,10 +33,6 @@ const config: Config = {
         floatIn: {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" }
-        },
-        glowPulse: {
-          "0%, 100%": { boxShadow: "0 0 0 rgba(255, 140, 26, 0)" },
-          "50%": { boxShadow: "0 0 24px rgba(255, 140, 26, 0.18)" }
         }
       }
     }

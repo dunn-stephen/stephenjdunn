@@ -7,7 +7,7 @@ Terminal-styled personal website built with Next.js App Router, TypeScript, Tail
 - `next` App Router
 - `typescript`
 - `tailwindcss`
-- `next-mdx-remote` for MDX content rendering
+- `@mdx-js/mdx` for MDX content rendering
 - `rehype-pretty-code` for code blocks
 - `lucide-react` for UI icons
 
@@ -25,7 +25,6 @@ Then open `http://localhost:3000`.
 
 - Add projects in `content/projects/*.mdx`
 - Add posts in `content/blog/*.mdx`
-- Update current status in `content/now.md`
 - Update resume data in `content/resume.json`
 
 ## Deploy notes

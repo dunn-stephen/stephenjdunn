@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { ProjectSummary } from "@/lib/content";
+import type { ProjectFrontmatter } from "@/lib/content";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 
 type ProjectDirectoryProps = {
-  projects: ProjectSummary[];
+  projects: ProjectFrontmatter[];
 };
 
 export function ProjectDirectory({ projects }: ProjectDirectoryProps) {

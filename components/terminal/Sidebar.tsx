@@ -1,10 +1,11 @@
 "use client";
 
 import type { Route } from "next";
-import Link from "next/link";
 import clsx from "clsx";
 import { ChevronDown, ChevronRight, FileText, FolderClosed, FolderOpen, Mail } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { SocialLinks } from "@/components/home/SocialLinks";
+import { TerminalNavLink } from "@/components/terminal/TerminalNavLink";
 
 type SidebarProps = {
   pathname: string;
@@ -28,7 +29,7 @@ function TreeLink({
   onClick: () => void;
 }) {
   return (
-    <Link
+    <TerminalNavLink
       href={href}
       onClick={onClick}
       className={clsx(
@@ -41,22 +42,16 @@ function TreeLink({
       <span className="text-border">{active ? ">" : prefix}</span>
       <FileText className="h-4 w-4" />
       <span className="truncate">{label}</span>
-    </Link>
+    </TerminalNavLink>
   );
 }
 
 export function Sidebar({ pathname, open, onClose, projects, posts }: SidebarProps) {
   const [showProjects, setShowProjects] = useState(true);
   const [showPosts, setShowPosts] = useState(true);
-
-  useEffect(() => {
-    if (pathname.startsWith("/projects")) {
-      setShowProjects(true);
-    }
-    if (pathname.startsWith("/blog")) {
-      setShowPosts(true);
-    }
-  }, [pathname]);
+  // Keep the active directory visible even if the user previously collapsed it.
+  const projectsExpanded = showProjects || pathname.startsWith("/projects");
+  const postsExpanded = showPosts || pathname.startsWith("/blog");
 
   return (
     <>
@@ -86,12 +81,12 @@ export function Sidebar({ pathname, open, onClose, projects, posts }: SidebarPro
                 className="flex w-full items-center gap-2 rounded-lg border border-transparent px-2 py-1.5 text-left text-sm text-dim transition hover:bg-white/5 hover:text-text"
               >
                 <span className="text-border">├──</span>
-                {showProjects ? <FolderOpen className="h-4 w-4" /> : <FolderClosed className="h-4 w-4" />}
+                {projectsExpanded ? <FolderOpen className="h-4 w-4" /> : <FolderClosed className="h-4 w-4" />}
                 <span className="flex-1">projects/</span>
-                {showProjects ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                {projectsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
               </button>
 
-              {showProjects ? (
+              {projectsExpanded ? (
                 <div className="space-y-1 pl-5">
                   {projects.map((project, index) => (
                     <TreeLink
@@ -120,12 +115,12 @@ export function Sidebar({ pathname, open, onClose, projects, posts }: SidebarPro
                 className="flex w-full items-center gap-2 rounded-lg border border-transparent px-2 py-1.5 text-left text-sm text-dim transition hover:bg-white/5 hover:text-text"
               >
                 <span className="text-border">├──</span>
-                {showPosts ? <FolderOpen className="h-4 w-4" /> : <FolderClosed className="h-4 w-4" />}
+                {postsExpanded ? <FolderOpen className="h-4 w-4" /> : <FolderClosed className="h-4 w-4" />}
                 <span className="flex-1">blog/</span>
-                {showPosts ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                {postsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
               </button>
 
-              {showPosts ? (
+              {postsExpanded ? (
                 <div className="space-y-1 pl-5">
                   {posts.map((post, index) => (
                     <TreeLink
@@ -140,7 +135,7 @@ export function Sidebar({ pathname, open, onClose, projects, posts }: SidebarPro
                 </div>
               ) : null}
 
-              <Link
+              <TerminalNavLink
                 href="/contact"
                 onClick={onClose}
                 className={clsx(
@@ -153,13 +148,15 @@ export function Sidebar({ pathname, open, onClose, projects, posts }: SidebarPro
                 <span className="text-border">{pathname === "/contact" ? ">" : "└──"}</span>
                 <Mail className="h-4 w-4" />
                 <span>contact.md</span>
-              </Link>
+              </TerminalNavLink>
             </div>
           </div>
 
+          <SocialLinks />
+
           <div className="rounded-2xl border border-border bg-black/30 p-4 text-sm text-dim">
             <p className="mb-2 text-xs uppercase tracking-[0.28em] text-green">shortcuts</p>
-            <p>`1-4` jump pages</p>
+            <p>`1-5` jump pages</p>
             <p>`Cmd+B` toggle tree</p>
             <p>`Cmd+K` or `/` open palette</p>
             <p>`help` in command bar</p>

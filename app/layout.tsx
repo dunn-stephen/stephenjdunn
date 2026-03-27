@@ -4,6 +4,7 @@ import "./globals.css";
 import { getAllPosts, getAllProjects } from "@/lib/content";
 import { siteConfig } from "@/lib/site";
 import { TerminalShell } from "@/components/terminal/TerminalShell";
+import { HomeWorkspace } from "@/components/views/HomeWorkspace";
 
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${siteConfig.domain}`),
@@ -36,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="tui-scrollbar">
-        <TerminalShell projects={projects} posts={posts}>
+        <TerminalShell projects={projects} posts={posts} workspace={<HomeWorkspace />}>
           {children}
         </TerminalShell>
       </body>

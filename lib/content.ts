@@ -54,8 +54,6 @@ export type ResumeData = {
   }>;
 };
 
-export type ProjectSummary = ProjectFrontmatter;
-export type BlogSummary = BlogFrontmatter & { headings: string[] };
 export type ProjectDetail = ProjectFrontmatter & { content: string; headings: string[] };
 export type BlogDetail = BlogFrontmatter & { content: string; headings: string[] };
 
@@ -73,7 +71,13 @@ function extractHeadings(content: string) {
     .map((line) => line.replace(/^##\s+/, "").trim());
 }
 
-function readMdxFile<T>(folder: "projects" | "blog", slug: string) {
+function readFrontmatterFile<T>(folder: "projects" | "blog", slug: string) {
+  const filePath = path.join(contentRoot, folder, `${slug}.mdx`);
+  const source = fs.readFileSync(filePath, "utf8");
+  return matter(source).data as T;
+}
+
+function readDetailMdxFile<T>(folder: "projects" | "blog", slug: string) {
   const filePath = path.join(contentRoot, folder, `${slug}.mdx`);
   const source = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(source);
@@ -84,9 +88,9 @@ function readMdxFile<T>(folder: "projects" | "blog", slug: string) {
   };
 }
 
-export function getAllProjects(): ProjectSummary[] {
+export function getAllProjects(): ProjectFrontmatter[] {
   return readDirectory(path.join(contentRoot, "projects"))
-    .map((slug) => readMdxFile<ProjectFrontmatter>("projects", slug).frontmatter)
+    .map((slug) => readFrontmatterFile<ProjectFrontmatter>("projects", slug))
     .sort((a, b) => {
       if (a.featured !== b.featured) {
         return Number(Boolean(b.featured)) - Number(Boolean(a.featured));
@@ -95,33 +99,20 @@ export function getAllProjects(): ProjectSummary[] {
     });
 }
 
-export function getFeaturedProjects(limit = 3) {
-  return getAllProjects()
-    .filter((project) => project.featured)
-    .slice(0, limit);
-}
-
 export function getProjectBySlug(slug: string): ProjectDetail | null {
   const filePath = path.join(contentRoot, "projects", `${slug}.mdx`);
   if (!fs.existsSync(filePath)) {
     return null;
   }
 
-  const { frontmatter, content, headings } = readMdxFile<ProjectFrontmatter>("projects", slug);
+  const { frontmatter, content, headings } = readDetailMdxFile<ProjectFrontmatter>("projects", slug);
   return { ...frontmatter, content, headings };
 }
 
-export function getAllPosts(): BlogSummary[] {
+export function getAllPosts(): BlogFrontmatter[] {
   return readDirectory(path.join(contentRoot, "blog"))
-    .map((slug) => {
-      const { frontmatter, headings } = readMdxFile<BlogFrontmatter>("blog", slug);
-      return { ...frontmatter, headings };
-    })
+    .map((slug) => readFrontmatterFile<BlogFrontmatter>("blog", slug))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-}
-
-export function getRecentPosts(limit = 3) {
-  return getAllPosts().slice(0, limit);
 }
 
 export function getPostBySlug(slug: string): BlogDetail | null {
@@ -130,12 +121,8 @@ export function getPostBySlug(slug: string): BlogDetail | null {
     return null;
   }
 
-  const { frontmatter, content, headings } = readMdxFile<BlogFrontmatter>("blog", slug);
+  const { frontmatter, content, headings } = readDetailMdxFile<BlogFrontmatter>("blog", slug);
   return { ...frontmatter, content, headings };
-}
-
-export function getNowContent() {
-  return fs.readFileSync(path.join(contentRoot, "now.md"), "utf8").trim();
 }
 
 export function getResumeData(): ResumeData {

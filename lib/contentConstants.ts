@@ -1,0 +1,1 @@
+export const DEFAULT_READ_TIME_MINUTES = 5;

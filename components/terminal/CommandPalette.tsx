@@ -2,23 +2,23 @@
 
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
-import { Command, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { getCommandForRoute } from "@/lib/terminalNavigation";
 
 export type CommandPaletteItem = {
   id: string;
   label: string;
   section: string;
-  keywords: string[];
+  keywords: readonly string[];
   href?: Route;
-  action?: "toggle-crt" | "toggle-sidebar";
+  action?: "toggle-sidebar";
 };
 
 type CommandPaletteProps = {
   open: boolean;
   onClose: () => void;
   onToggleSidebar: () => void;
-  onToggleCrt: () => void;
   items: CommandPaletteItem[];
 };
 
@@ -26,20 +26,24 @@ export function CommandPalette({
   open,
   onClose,
   onToggleSidebar,
-  onToggleCrt,
   items
 }: CommandPaletteProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
 
+  const handleClose = () => {
+    setQuery("");
+    onClose();
+  };
+
   useEffect(() => {
     if (!open) {
-      setQuery("");
       return;
     }
 
-    window.setTimeout(() => inputRef.current?.focus(), 0);
+    const timeout = window.setTimeout(() => inputRef.current?.focus(), 0);
+    return () => window.clearTimeout(timeout);
   }, [open]);
 
   const filtered = useMemo(() => {
@@ -57,14 +61,20 @@ export function CommandPalette({
 
   const runItem = (item: CommandPaletteItem) => {
     if (item.href) {
+      window.dispatchEvent(
+        new CustomEvent("terminal:navigate", {
+          detail: {
+            href: item.href,
+            command: getCommandForRoute(item.href)
+          }
+        })
+      );
       router.push(item.href);
-    } else if (item.action === "toggle-crt") {
-      onToggleCrt();
     } else if (item.action === "toggle-sidebar") {
       onToggleSidebar();
     }
 
-    onClose();
+    handleClose();
   };
 
   if (!open) {
@@ -74,7 +84,7 @@ export function CommandPalette({
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center bg-black/55 px-4 py-20 backdrop-blur-sm"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div
         role="dialog"
@@ -95,7 +105,7 @@ export function CommandPalette({
           />
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="rounded-xl border border-border px-3 py-1.5 text-xs uppercase tracking-[0.2em] text-dim transition hover:border-accent hover:text-accent"
           >
             esc
@@ -114,13 +124,12 @@ export function CommandPalette({
                   key={item.id}
                   type="button"
                   onClick={() => runItem(item)}
-                  className="flex w-full items-center justify-between rounded-2xl border border-transparent px-4 py-3 text-left transition hover:border-accent hover:bg-black/20"
+                  className="flex w-full items-start rounded-2xl border border-transparent px-4 py-3 text-left transition hover:border-accent hover:bg-black/20"
                 >
                   <div>
                     <p className="text-sm text-text">{item.label}</p>
                     <p className="mt-1 text-xs uppercase tracking-[0.2em] text-dim">{item.section}</p>
                   </div>
-                  <Command className="h-4 w-4 text-dim" />
                 </button>
               ))}
             </div>

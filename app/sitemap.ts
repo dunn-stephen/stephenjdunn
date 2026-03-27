@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts, getAllProjects } from "@/lib/content";
-import { siteConfig } from "@/lib/site";
+import { primaryRoutes, siteConfig } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = `https://${siteConfig.domain}`;
-  const staticRoutes = ["", "/projects", "/resume", "/blog", "/contact"];
+  // The terminal is the primary UI, but the underlying URLs stay public so deep links are shareable.
+  const staticRoutes = primaryRoutes.map((route) => route.href);
   const projectRoutes = getAllProjects().map((project) => `/projects/${project.slug}`);
   const blogRoutes = getAllPosts().map((post) => `/blog/${post.slug}`);
 

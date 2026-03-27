@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { BlogSummary } from "@/lib/content";
+import type { BlogFrontmatter } from "@/lib/content";
 import { PostCard } from "@/components/blog/PostCard";
 
-export function BlogDirectory({ posts }: { posts: BlogSummary[] }) {
+export function BlogDirectory({ posts }: { posts: BlogFrontmatter[] }) {
   const [activeTag, setActiveTag] = useState<string>("all");
   const tags = useMemo(
     () => ["all", ...Array.from(new Set(posts.flatMap((post) => post.tags))).sort()],

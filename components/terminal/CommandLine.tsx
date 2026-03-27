@@ -2,42 +2,77 @@
 
 import type { Route } from "next";
 import { usePathname, useRouter } from "next/navigation";
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AsciiBanner } from "@/components/home/AsciiBanner";
+import { pandaArt } from "@/lib/asciiArt";
+import type { TerminalNavigateDetail } from "@/lib/terminalNavigation";
+import { getCommandForRoute, resolveNamedRoute } from "@/lib/terminalNavigation";
+import { shellHost, shellUser, siteConfig } from "@/lib/site";
 
 type CommandLineProps = {
-  onToggleSidebar?: () => void;
-  onToggleCrt?: () => void;
-  children?: ReactNode;
+  onToggleSidebar: () => void;
+  workspace?: ReactNode;
   projects?: Array<{ title: string; slug: string }>;
   posts?: Array<{ title: string; slug: string }>;
 };
 
-const pageCommands: Record<string, Route> = {
-  home: "/",
-  projects: "/projects",
-  resume: "/resume",
-  blog: "/blog",
-  contact: "/contact"
-};
-
 const helpLines = [
-  "commands: home, projects, resume, blog, contact",
-  "commands: ls, open <page>, cd <folder>, cd .., cat <doc>, tree, crt, clear, help",
-  "navigation: ArrowUp / ArrowDown recall previous commands"
+  "ArrowUp / ArrowDown - recall command history",
+  "banner - print the ASCII banner",
+  "blog - open the blog directory",
+  "cat <doc> - open a document or item",
+  "cd .. - go to the parent location",
+  "cd <folder> - change to a page, folder, or item",
+  "clear - clear terminal history",
+  "contact - open the contact document",
+  "help - show available commands",
+  "home - open the home workspace",
+  "ls - list files in the current location",
+  "open github - open GitHub in a new tab",
+  "open <page> - open a page in the modal",
+  "panda - print panda ASCII art",
+  "projects - open the projects directory",
+  "resume - open the resume document",
+  "tree - toggle the sidebar tree",
+  "whoami - print the current identity"
 ];
 
 type HistoryEntry = {
   id: string;
-  kind: "command" | "output" | "system";
+  kind: "command" | "output" | "system" | "banner";
   text: string;
   cwd?: string;
 };
 
 const storageKey = "terminal-history-v1";
 const commandHistoryKey = "terminal-command-history-v1";
-const shellUser = "stephendunn";
-const shellHost = "Stephen-Dunn-KQPFWR6HR4";
+
+function readStoredEntries() {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const savedEntries = window.localStorage.getItem(storageKey);
+    return savedEntries ? (JSON.parse(savedEntries) as HistoryEntry[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function readStoredCommandHistory() {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const savedHistory = window.localStorage.getItem(commandHistoryKey);
+    return savedHistory ? (JSON.parse(savedHistory) as string[]) : [];
+  } catch {
+    return [];
+  }
+}
 
 function getCwdLabel(pathname: string) {
   if (pathname.startsWith("/projects")) {
@@ -96,26 +131,16 @@ function getParentRoute(pathname: string): Route {
   return `/${segments.slice(0, -1).join("/")}` as Route;
 }
 
-function resolveCdTarget(
+function normalizeRouteKey(value: string) {
+  return value.replace(/\/$/, "").toLowerCase().replace(/\.mdx?$/, "");
+}
+
+function resolveDirectoryItemRoute(
   pathname: string,
-  arg: string,
+  key: string,
   projects: Array<{ title: string; slug: string }>,
   posts: Array<{ title: string; slug: string }>
 ): Route | null {
-  const key = arg.replace(/\/$/, "").toLowerCase();
-
-  if (!key || key === "~" || key === "/") {
-    return "/";
-  }
-
-  if (key === "..") {
-    return getParentRoute(pathname);
-  }
-
-  if (key in pageCommands) {
-    return pageCommands[key];
-  }
-
   if (pathname === "/projects") {
     const project = projects.find((item) => item.slug.toLowerCase() === key);
     if (project) {
@@ -133,10 +158,44 @@ function resolveCdTarget(
   return null;
 }
 
+function resolveCdTarget(
+  pathname: string,
+  arg: string,
+  projects: Array<{ title: string; slug: string }>,
+  posts: Array<{ title: string; slug: string }>
+): Route | null {
+  const key = normalizeRouteKey(arg);
+
+  if (!key || key === "~" || key === "/") {
+    return "/";
+  }
+
+  if (key === "..") {
+    return getParentRoute(pathname);
+  }
+
+  const namedRoute = resolveNamedRoute(key);
+  if (namedRoute) {
+    return namedRoute;
+  }
+
+  return resolveDirectoryItemRoute(pathname, key, projects, posts);
+}
+
+function resolveDirectRouteAlias(
+  pathname: string,
+  command: string,
+  projects: Array<{ title: string; slug: string }>,
+  posts: Array<{ title: string; slug: string }>
+): Route | null {
+  const key = normalizeRouteKey(command);
+
+  return resolveNamedRoute(key) ?? resolveDirectoryItemRoute(pathname, key, projects, posts);
+}
+
 export function CommandLine({
   onToggleSidebar,
-  onToggleCrt,
-  children,
+  workspace,
   projects = [],
   posts = []
 }: CommandLineProps) {
@@ -148,29 +207,21 @@ export function CommandLine({
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
-  const [showRouteContent, setShowRouteContent] = useState(true);
+  const [showBootWorkspace, setShowBootWorkspace] = useState(() => pathname === "/");
+  const [hasLoadedStorage, setHasLoadedStorage] = useState(false);
 
   useEffect(() => {
-    try {
-      const savedEntries = window.localStorage.getItem(storageKey);
-      const savedHistory = window.localStorage.getItem(commandHistoryKey);
+    const frame = window.requestAnimationFrame(() => {
+      setEntries(readStoredEntries());
+      setCommandHistory(readStoredCommandHistory());
+      setHasLoadedStorage(true);
+    });
 
-      if (savedEntries) {
-        setEntries(JSON.parse(savedEntries) as HistoryEntry[]);
-      } else {
-        setEntries([]);
-      }
-
-      if (savedHistory) {
-        setCommandHistory(JSON.parse(savedHistory) as string[]);
-      }
-    } catch {
-      setEntries([]);
-    }
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
-    if (entries.length === 0) {
+    if (!hasLoadedStorage) {
       return;
     }
 
@@ -179,28 +230,84 @@ export function CommandLine({
       top: scrollRef.current.scrollHeight,
       behavior: "smooth"
     });
-  }, [entries]);
+  }, [entries, hasLoadedStorage]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({
       top: scrollRef.current.scrollHeight,
       behavior: "smooth"
     });
-  }, [pathname, showRouteContent]);
-
-  useEffect(() => {
-    window.localStorage.setItem(commandHistoryKey, JSON.stringify(commandHistory));
-  }, [commandHistory]);
-
-  useEffect(() => {
-    setShowRouteContent(true);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!hasLoadedStorage) {
+      return;
+    }
+
+    window.localStorage.setItem(commandHistoryKey, JSON.stringify(commandHistory));
+  }, [commandHistory, hasLoadedStorage]);
+
   const cwdLabel = useMemo(() => getCwdLabel(pathname), [pathname]);
+  const shouldRenderBootWorkspace = pathname === "/" && entries.length === 0 && Boolean(workspace) && showBootWorkspace;
 
   const appendEntries = (nextEntries: HistoryEntry[]) => {
     setEntries((current) => [...current, ...nextEntries]);
   };
+
+  const focusInput = () => {
+    const input = inputRef.current;
+    if (!input) {
+      return;
+    }
+
+    input.focus();
+    const caretPosition = input.value.length;
+    input.setSelectionRange(caretPosition, caretPosition);
+  };
+
+  const handlePanelClick = (event: MouseEvent<HTMLDivElement>) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    if (target.closest("a, button, input, textarea, select, summary")) {
+      return;
+    }
+
+    focusInput();
+  };
+
+  useEffect(() => {
+    const handleNavigate = (event: Event) => {
+      const detail = (event as CustomEvent<TerminalNavigateDetail>).detail;
+      if (!detail?.href || !detail.command) {
+        return;
+      }
+
+      appendEntries([
+        {
+          id: crypto.randomUUID(),
+          kind: "command",
+          text: detail.command,
+          cwd: cwdLabel
+        }
+      ]);
+
+      setCommandHistory((current) => {
+        if (current[current.length - 1] === detail.command) {
+          return current;
+        }
+        return [...current, detail.command];
+      });
+
+      setHistoryIndex(null);
+      setShowBootWorkspace(false);
+    };
+
+    window.addEventListener("terminal:navigate", handleNavigate);
+    return () => window.removeEventListener("terminal:navigate", handleNavigate);
+  }, [cwdLabel]);
 
   const execute = (raw: string) => {
     const command = raw.trim();
@@ -208,25 +315,54 @@ export function CommandLine({
       return;
     }
 
+    const [name, ...rest] = command.split(/\s+/);
+    const arg = rest.join(" ");
+
+    let renderedCommand = command;
+    let navigationTarget: Route | null = null;
+
+    if (rest.length === 0) {
+      navigationTarget = resolveDirectRouteAlias(pathname, name, projects, posts);
+    }
+
+    if (navigationTarget) {
+      renderedCommand = getCommandForRoute(navigationTarget);
+    } else if (name === "open" && arg) {
+      const target = resolveDirectRouteAlias(pathname, arg, projects, posts);
+      if (target) {
+        navigationTarget = target;
+        renderedCommand = getCommandForRoute(navigationTarget);
+      }
+    } else if (name === "cat" && arg) {
+      const target = resolveDirectRouteAlias(pathname, arg, projects, posts);
+      if (target) {
+        navigationTarget = target;
+      }
+    } else if (name === "cd") {
+      const target = resolveCdTarget(pathname, arg, projects, posts);
+      if (target) {
+        navigationTarget = target;
+      }
+    }
+
+    setShowBootWorkspace(false);
+
     appendEntries([
       {
         id: crypto.randomUUID(),
         kind: "command",
-        text: command,
+        text: renderedCommand,
         cwd: cwdLabel
       }
     ]);
 
     setCommandHistory((current) => {
-      if (current[current.length - 1] === command) {
+      if (current[current.length - 1] === renderedCommand) {
         return current;
       }
-      return [...current, command];
+      return [...current, renderedCommand];
     });
     setHistoryIndex(null);
-
-    const [name, ...rest] = command.split(/\s+/);
-    const arg = rest.join(" ");
 
     if (name === "help") {
       appendEntries(
@@ -241,7 +377,6 @@ export function CommandLine({
 
     if (name === "clear") {
       setEntries([]);
-      setShowRouteContent(false);
       return;
     }
 
@@ -256,68 +391,52 @@ export function CommandLine({
       return;
     }
 
+    if (name === "whoami") {
+      appendEntries([{ id: crypto.randomUUID(), kind: "output", text: "Stephen Dunn" }]);
+      return;
+    }
+
+    if (name === "open" && arg.toLowerCase() === "github") {
+      window.open(siteConfig.socialLinks.github, "_blank", "noopener,noreferrer");
+      appendEntries([
+        {
+          id: crypto.randomUUID(),
+          kind: "output",
+          text: `opening ${siteConfig.socialLinks.github}`
+        }
+      ]);
+      return;
+    }
+
     if (name === "tree") {
-      if (onToggleSidebar) {
-        onToggleSidebar();
-      } else {
-        window.dispatchEvent(new CustomEvent("terminal:toggle-sidebar"));
-      }
+      onToggleSidebar();
       appendEntries([{ id: crypto.randomUUID(), kind: "output", text: "tree toggled" }]);
       return;
     }
 
-    if (name === "crt") {
-      if (onToggleCrt) {
-        onToggleCrt();
-      } else {
-        window.dispatchEvent(new CustomEvent("terminal:toggle-crt"));
-      }
-      appendEntries([{ id: crypto.randomUUID(), kind: "output", text: "crt effect toggled" }]);
+    if (name === "banner") {
+      appendEntries([{ id: crypto.randomUUID(), kind: "banner", text: "" }]);
       return;
     }
 
-    if (name in pageCommands) {
-      router.push(pageCommands[name]);
+    if (name === "panda") {
+      appendEntries([{ id: crypto.randomUUID(), kind: "output", text: pandaArt }]);
       return;
     }
 
-    if (name === "cd") {
-      const target = resolveCdTarget(pathname, arg, projects, posts);
-      if (target) {
-        router.push(target);
-        return;
-      }
-    }
-
-    if (name === "cat" && arg) {
-      const key = arg.toLowerCase();
-      if (key === "readme.md") {
-        router.push("/");
-        return;
-      }
-      if (key === "resume.md") {
-        router.push("/resume");
-        return;
-      }
-      if (key === "contact.md") {
-        router.push("/contact");
-        return;
-      }
-    }
-
-    if (name === "open" && arg) {
-      const key = arg.toLowerCase();
-      if (key in pageCommands) {
-        router.push(pageCommands[key]);
-        return;
-      }
+    if (navigationTarget) {
+      router.push(navigationTarget);
+      return;
     }
 
     appendEntries([{ id: crypto.randomUUID(), kind: "output", text: `zsh: command not found: ${name}` }]);
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-3xl border border-border bg-black/35">
+    <div
+      className="flex h-full min-h-0 flex-col rounded-3xl border border-border bg-black/35"
+      onClick={handlePanelClick}
+    >
       <div className="border-b border-border px-4 py-3">
         <p className="text-xs uppercase tracking-[0.24em] text-dim">terminal.session</p>
       </div>
@@ -327,6 +446,17 @@ export function CommandLine({
       >
         <div className="flex min-h-full flex-col justify-end">
           <div className="space-y-1 text-[13px] leading-5">
+            {shouldRenderBootWorkspace ? (
+              <div className="mb-3">
+                <p className="text-text">
+                  <span className="text-accent">{shellUser}</span>
+                  <span className="text-text">@{shellHost}</span>{" "}
+                  <span className="text-dim">{cwdLabel}</span> <span className="text-text">%</span>{" "}
+                  ./boot-portfolio
+                </p>
+                <div className="mt-3">{workspace}</div>
+              </div>
+            ) : null}
             {entries.map((entry) => (
               <div key={entry.id} className="break-words">
                 {entry.kind === "command" ? (
@@ -336,23 +466,22 @@ export function CommandLine({
                     <span className="text-dim">{entry.cwd ?? cwdLabel}</span>{" "}
                     <span className="text-text">%</span> {entry.text}
                   </p>
+                ) : entry.kind === "banner" ? (
+                  <div className="py-2">
+                    <AsciiBanner inline />
+                  </div>
                 ) : entry.kind === "system" ? (
                   <p className="text-dim">{entry.text}</p>
                 ) : (
-                  <p className="text-dim">{entry.text}</p>
+                  <p className="whitespace-pre-wrap text-text">{entry.text}</p>
                 )}
               </div>
             ))}
           </div>
-          {children && showRouteContent ? (
-            <div key={pathname} className="mt-2">
-              {children}
-            </div>
-          ) : null}
         </div>
       </div>
 
-      <div className="px-4 py-3">
+      <div className="sticky bottom-0 z-10 bg-surface/95 px-4 py-3 backdrop-blur">
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -361,8 +490,10 @@ export function CommandLine({
           }}
           className="flex items-center gap-2 text-[13px] leading-5"
         >
-          <span className="shrink-0 text-accent">{shellUser}</span>
-          <span className="shrink-0 text-text">@{shellHost}</span>
+          <span className="shrink-0">
+            <span className="text-accent">{shellUser}</span>
+            <span className="text-text">@{shellHost}</span>
+          </span>
           <span className="shrink-0 text-dim">{cwdLabel}</span>
           <span className="shrink-0 text-text">%</span>
           <input
