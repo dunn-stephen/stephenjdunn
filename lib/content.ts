@@ -10,6 +10,10 @@ export type ProjectFrontmatter = {
   slug: string;
   description: string;
   tech: string[];
+  primaryTech?: string;
+  status?: "active" | "done" | "wip";
+  highlights?: string[];
+  relatedPost?: string;
   github?: string;
   demo?: string;
   displayMode: "iframe" | "screenshot" | "readme";
@@ -29,14 +33,18 @@ export type BlogFrontmatter = {
 
 export type ResumeData = {
   summary: string;
-  contact: {
-    phone: string;
-    email: string;
-    github: string;
-    linkedin: string;
-    headline: string[];
-  };
-  skills: Array<{ category: string; color: "accent" | "green" | "pink" | "cyan"; items: string[] }>;
+  skillRatings: Array<{
+    label: string;
+    value: number;
+  }>;
+  platforms: string[];
+  toolkit: string[];
+  certificates: Array<{
+    title: string;
+    badge: string;
+    note: string;
+    href: string;
+  }>;
   interests: string[];
   education: {
     degree: string;

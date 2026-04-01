@@ -1,56 +1,182 @@
 import type { Route } from "next";
+import profile from "@/content/profile.json";
 
-export const shellUser = "stephenjdunn";
-export const shellHost = "portfolio";
-export const shellIdentity = `${shellUser}@${shellHost}`;
+export type ProfileData = {
+  name: string;
+  domain: string;
+  description: string;
+  initials: string;
+  sidebar: {
+    name: string;
+    role: string;
+    company: string;
+  };
+  hero: {
+    eyebrow: string;
+    subtitle: string;
+    ascii: string;
+  };
+  socialLinks: {
+    github: string;
+    linkedin: string;
+    email: string;
+    apolloLabs: string;
+  };
+  home: {
+    currentRole: {
+      title: string;
+      subtitle: string;
+    };
+    sideProject: {
+      title: string;
+      subtitle: string;
+    };
+    specialties: string[];
+    hint: string;
+  };
+  contact: {
+    availability: Array<{
+      label: string;
+      tone: "open" | "neutral" | "closed";
+    }>;
+    quickMessageSubject: string;
+  };
+  resume: {
+    pdfPath: string | null;
+  };
+};
+
+export const profileData = profile as ProfileData;
 
 export const siteConfig = {
-  name: "Stephen J. Dunn",
-  domain: "stephenjdunn.com",
-  description:
-    "Terminal-styled personal website for Stephen J. Dunn: software engineer, builder, writer, and consultant.",
-  socialLinks: {
-    github: "https://github.com/stephendunn",
-    linkedin: "https://www.linkedin.com/in/stephenjdunn/",
-    email: "mailto:stephen@stephenjdunn.com",
-    apolloLabs: "https://apollolabsconsulting.com"
-  }
+  name: profileData.name,
+  domain: profileData.domain,
+  description: profileData.description,
+  socialLinks: profileData.socialLinks
 } as const;
 
 export const primaryRoutes = [
   {
     href: "/" as Route,
-    label: "home",
+    key: "home",
+    label: "HOME",
+    number: "01",
     hotkey: "1",
-    command: "cat README.md",
-    keywords: ["home", "readme", "/"]
+    paletteGlyph: "■"
   },
   {
     href: "/projects" as Route,
-    label: "projects",
+    key: "projects",
+    label: "PROJECTS",
+    number: "02",
     hotkey: "2",
-    command: "cd projects",
-    keywords: ["projects", "/projects"]
+    paletteGlyph: "◆"
   },
   {
     href: "/resume" as Route,
-    label: "resume",
+    key: "resume",
+    label: "RESUME",
+    number: "03",
     hotkey: "3",
-    command: "cat resume.md",
-    keywords: ["resume", "cv", "/resume"]
+    paletteGlyph: "▤"
   },
   {
     href: "/blog" as Route,
-    label: "blog",
+    key: "blog",
+    label: "BLOG",
+    number: "04",
     hotkey: "4",
-    command: "cd blog",
-    keywords: ["blog", "posts", "/blog"]
+    paletteGlyph: "▦"
   },
   {
     href: "/contact" as Route,
-    label: "contact",
+    key: "contact",
+    label: "CONTACT",
+    number: "05",
     hotkey: "5",
-    command: "cat contact.md",
-    keywords: ["apollo", "contact", "email", "/contact"]
+    paletteGlyph: "✉"
   }
 ] as const;
+
+export type PrimaryRoute = (typeof primaryRoutes)[number];
+
+export function getActivePrimaryRoute(pathname: string): PrimaryRoute {
+  if (pathname.startsWith("/projects")) {
+    return primaryRoutes[1];
+  }
+
+  if (pathname.startsWith("/resume")) {
+    return primaryRoutes[2];
+  }
+
+  if (pathname.startsWith("/blog")) {
+    return primaryRoutes[3];
+  }
+
+  if (pathname.startsWith("/contact")) {
+    return primaryRoutes[4];
+  }
+
+  return primaryRoutes[0];
+}
+
+export function getSectionState(pathname: string): {
+  title: string;
+  breadcrumb?: {
+    href: Route;
+    label: string;
+  };
+} {
+  if (pathname.startsWith("/projects/")) {
+    return {
+      title: "DETAIL",
+      breadcrumb: {
+        href: "/projects" as Route,
+        label: "Projects"
+      }
+    };
+  }
+
+  if (pathname.startsWith("/blog/")) {
+    return {
+      title: "POST",
+      breadcrumb: {
+        href: "/blog" as Route,
+        label: "Blog"
+      }
+    };
+  }
+
+  return {
+    title: getActivePrimaryRoute(pathname).label
+  };
+}
+
+export function isTypingTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  return (
+    target.tagName === "INPUT" ||
+    target.tagName === "TEXTAREA" ||
+    target.tagName === "SELECT" ||
+    target.isContentEditable
+  );
+}
+
+export function buildMailtoLink(subject: string, body?: string) {
+  const [base] = siteConfig.socialLinks.email.split("?");
+  const params = new URLSearchParams();
+
+  if (subject) {
+    params.set("subject", subject);
+  }
+
+  if (body) {
+    params.set("body", body);
+  }
+
+  const query = params.toString();
+  return query ? `${base}?${query}` : base;
+}

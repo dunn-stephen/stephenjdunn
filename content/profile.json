@@ -1,0 +1,60 @@
+{
+  "name": "Stephen J. Dunn",
+  "domain": "stephenjdunn.com",
+  "description": "Terminal-styled portfolio for Stephen J. Dunn: technical consultant, builder, writer, and engineer.",
+  "initials": "SJD",
+  "sidebar": {
+    "name": "STEPHENJDUNN",
+    "role": "Senior Product Consultant",
+    "company": "Blueshift · Apollo Labs"
+  },
+  "hero": {
+    "eyebrow": "PORTFOLIO · v2.0 · 2026",
+    "subtitle": "Builder. Viber. Learner.",
+    "ascii": "█▀ ▀█▀ █▀▀ █▀█ █ █ █▀▀ █▄ █\n▄█  █  ██▄ █▀▀ █▀█ ██▄ █ ▀█"
+  },
+  "socialLinks": {
+    "github": "https://github.com/dunn-stephen",
+    "linkedin": "https://www.linkedin.com/in/stephendunn/",
+    "email": "mailto:stephen@stephenjdunn.com",
+    "apolloLabs": "https://apollolabsconsulting.com"
+  },
+  "home": {
+    "currentRole": {
+      "title": "Senior Product Consultant",
+      "subtitle": "Blueshift · Remote"
+    },
+    "sideProject": {
+      "title": "Apollo Labs",
+      "subtitle": "Digital transformation consultancy"
+    },
+    "specialties": [
+      "Marketing Automation",
+      "MCP / AI Tools",
+      "Next.js",
+      "TypeScript",
+      "API Integration",
+      "Blueshift"
+    ]
+  },
+  "contact": {
+    "availability": [
+      {
+        "label": "Open to consulting via Apollo Labs",
+        "tone": "open"
+      },
+      {
+        "label": "Available for speaking and writing",
+        "tone": "open"
+      },
+      {
+        "label": "Not seeking full-time roles",
+        "tone": "neutral"
+      }
+    ],
+    "quickMessageSubject": "Portfolio inquiry"
+  },
+  "resume": {
+    "pdfPath": null
+  }
+}

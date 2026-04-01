@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
-import { getAllPosts, getAllProjects } from "@/lib/content";
+import { buildSiteSearchItems } from "@/lib/search";
 import { siteConfig } from "@/lib/site";
-import { TerminalShell } from "@/components/terminal/TerminalShell";
-import { HomeWorkspace } from "@/components/views/HomeWorkspace";
+import { SiteChrome } from "@/components/chrome/SiteChrome";
 
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${siteConfig.domain}`),
@@ -31,15 +30,14 @@ export default function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const projects = getAllProjects().map(({ title, slug }) => ({ title, slug }));
-  const posts = getAllPosts().map(({ title, slug }) => ({ title, slug }));
+  const paletteItems = buildSiteSearchItems();
 
   return (
-    <html lang="en">
-      <body className="tui-scrollbar">
-        <TerminalShell projects={projects} posts={posts} workspace={<HomeWorkspace />}>
+    <html lang="en" data-scroll-behavior="smooth">
+      <body className="app-scrollbar">
+        <SiteChrome paletteItems={paletteItems}>
           {children}
-        </TerminalShell>
+        </SiteChrome>
       </body>
     </html>
   );

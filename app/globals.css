@@ -1,17 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --color-shell: rgb(30 30 30);
-  --color-surface: #0f0f11;
-  --color-border: #28282e;
-  --color-text: #c8c8cc;
-  --color-dim: #7b7b84;
-  --color-accent: #ff8c1a;
-  --color-green: #d8ff5e;
-  --color-pink: #ff6fd8;
-  --color-cyan: #58d8ff;
+  --color-shell: #101214;
+  --color-surface: #171a1d;
+  --color-panel: #1d2125;
+  --color-panel-alt: #252a30;
+  --color-border: #363c43;
+  --color-text: #ece9e4;
+  --color-dim: #c6c1ba;
+  --color-muted: #c6c1ba;
+  --color-subtle: #9ea5ad;
+  --color-faint: #6e7680;
+  --color-accent: #e8640c;
+  --color-accent-ink: #6d2e07;
+  --color-accent-surface: #2b170a;
 }
 
 * {
@@ -22,12 +28,19 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body {
+  min-height: 100%;
+}
+
 body {
   margin: 0;
-  min-height: 100vh;
-  background: var(--color-shell);
+  background:
+    radial-gradient(circle at top, rgba(232, 100, 12, 0.09), transparent 32%),
+    linear-gradient(180deg, #0e1114 0%, #15191d 100%);
   color: var(--color-text);
   font-family:
+    "Share Tech Mono",
     "IBM Plex Mono",
     "JetBrains Mono",
     ui-monospace,
@@ -43,56 +56,46 @@ a {
   text-decoration: none;
 }
 
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
 ::selection {
-  background: rgba(255, 140, 26, 0.26);
+  background: rgba(232, 100, 12, 0.24);
   color: white;
 }
 
 .prose-shell {
-  @apply space-y-5 leading-8 text-text;
+  font-size: 0.72rem;
+  line-height: 1.9;
+  color: var(--color-muted);
 }
 
-.prose-shell p {
-  @apply m-0 text-text;
+.prose-shell > * + * {
+  margin-top: 1rem;
 }
 
-.prose-shell ol {
-  @apply space-y-3 pl-5 marker:text-accent;
+.prose-shell p,
+.prose-shell li {
+  color: var(--color-muted);
 }
 
-.prose-shell hr {
-  @apply my-8 border-border;
-}
-
-.tui-scrollbar {
+.app-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: #434a52 transparent;
 }
 
-.tui-scrollbar::-webkit-scrollbar {
+.app-scrollbar::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
-.tui-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.14);
+.app-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
   border-radius: 999px;
-}
-
-@keyframes modalIn {
-  from {
-    opacity: 0;
-    transform: translateY(16px) scale(0.985);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.animate-modalIn {
-  animation: modalIn 180ms ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -108,5 +111,4 @@ a {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-
 }

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 340" fill="none">
+  <defs>
+    <clipPath id="shield-clip-essentials">
+      <path d="M46 18h168c11 0 20 9 20 20v177c0 59-42 111-104 132C68 326 26 274 26 215V38c0-11 9-20 20-20Z" />
+    </clipPath>
+    <pattern id="dots-essentials" width="6" height="6" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.1" fill="#000" />
+    </pattern>
+  </defs>
+
+  <path
+    d="M46 18h168c11 0 20 9 20 20v177c0 59-42 111-104 132C68 326 26 274 26 215V38c0-11 9-20 20-20Z"
+    fill="#fff"
+    stroke="#fff"
+    stroke-linejoin="round"
+    stroke-width="10"
+  />
+
+  <g clip-path="url(#shield-clip-essentials)">
+    <rect x="26" y="18" width="208" height="158" fill="#fff" />
+    <rect x="26" y="176" width="208" height="171" fill="#ff4a33" />
+  </g>
+
+  <path
+    d="M46 18h168c11 0 20 9 20 20v177c0 59-42 111-104 132C68 326 26 274 26 215V38c0-11 9-20 20-20Z"
+    stroke="#000"
+    stroke-linejoin="round"
+    stroke-width="5"
+  />
+  <line x1="26" x2="234" y1="176" y2="176" stroke="#000" stroke-width="5" />
+
+  <text
+    x="56"
+    y="72"
+    fill="#000"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="28"
+    font-weight="700"
+    letter-spacing="-0.5"
+  >
+    Notion
+  </text>
+  <text
+    x="56"
+    y="107"
+    fill="#000"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="28"
+    font-weight="700"
+    letter-spacing="-0.5"
+  >
+    Academy
+  </text>
+  <text
+    x="56"
+    y="141"
+    fill="#000"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="24"
+    font-weight="500"
+    letter-spacing="-0.4"
+  >
+    Essentials
+  </text>
+
+  <g transform="translate(63 192) scale(7.3)">
+    <path
+      d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"
+      fill="url(#dots-essentials)"
+      stroke="#000"
+      stroke-linejoin="round"
+      stroke-width="1.3"
+    />
+    <path d="M10 2c1 .5 2 2 2 5" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" />
+  </g>
+</svg>

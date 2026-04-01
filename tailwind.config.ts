@@ -11,28 +11,27 @@ const config: Config = {
       colors: {
         shell: "var(--color-shell)",
         surface: "var(--color-surface)",
+        panel: "var(--color-panel)",
+        "panel-alt": "var(--color-panel-alt)",
         border: "var(--color-border)",
         text: "var(--color-text)",
         dim: "var(--color-dim)",
+        muted: "var(--color-muted)",
+        subtle: "var(--color-subtle)",
+        faint: "var(--color-faint)",
         accent: "var(--color-accent)",
-        green: "var(--color-green)",
-        pink: "var(--color-pink)",
-        cyan: "var(--color-cyan)"
+        "accent-ink": "var(--color-accent-ink)",
+        "accent-surface": "var(--color-accent-surface)"
       },
       boxShadow: {
-        terminal: "0 28px 80px rgba(0, 0, 0, 0.45), 0 0 48px rgba(255, 140, 26, 0.08)"
+        terminal: "0 28px 80px rgba(0, 0, 0, 0.52), 0 0 56px rgba(232, 100, 12, 0.06)"
       },
       animation: {
-        blink: "blink 1s steps(1) infinite",
-        floatIn: "floatIn 500ms ease forwards"
+        blink: "blink 1s steps(1) infinite"
       },
       keyframes: {
         blink: {
           "50%": { opacity: "0" }
-        },
-        floatIn: {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" }
         }
       }
     }
