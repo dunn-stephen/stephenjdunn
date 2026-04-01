@@ -9,6 +9,7 @@ type CommandPaletteProps = {
   items: SearchItem[];
   initialQuery?: string;
   onClose: () => void;
+  onSecretCommand: (id: string) => void;
   onSelect: (item: SearchItem) => void;
 };
 
@@ -67,11 +68,26 @@ function getSearchScore(item: SearchItem, terms: string[]) {
   return score;
 }
 
+function getSecretCommandId(query: string) {
+  const normalized = normalizeValue(query);
+
+  if (normalized === "spaceinvaders" || normalized === "space invaders" || normalized === "space-invaders") {
+    return "space-invaders";
+  }
+
+  if (normalized === "starwars" || normalized === "star wars" || normalized === "star-wars") {
+    return "star-wars";
+  }
+
+  return null;
+}
+
 export function CommandPalette({
   open,
   items,
   initialQuery = "",
   onClose,
+  onSecretCommand,
   onSelect
 }: CommandPaletteProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -104,9 +120,12 @@ export function CommandPalette({
       return;
     }
 
+    setQuery(initialQuery);
+    setSelectedIndex(0);
+
     const timeout = window.setTimeout(() => inputRef.current?.focus(), 0);
     return () => window.clearTimeout(timeout);
-  }, [open]);
+  }, [initialQuery, open]);
 
   const closePalette = () => {
     onClose();
@@ -126,7 +145,7 @@ export function CommandPalette({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/75 px-4 py-12 sm:py-20">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/78 px-4 py-12 backdrop-blur-[2px] sm:py-20">
       <button
         type="button"
         aria-label="Close command palette overlay"
@@ -138,57 +157,66 @@ export function CommandPalette({
         role="dialog"
         aria-modal="true"
         aria-label="Command palette"
-        className="relative z-10 w-full max-w-[460px] border border-[#7a4319] bg-panel"
+        className="relative z-10 w-full max-w-[500px] overflow-hidden border border-border bg-surface shadow-terminal"
       >
-        <div className="flex items-center gap-3 border-b border-border bg-surface px-4 py-3">
-          <span className="text-[0.72rem] text-accent">⌘</span>
-          <input
-            ref={inputRef}
-            value={query}
-            onChange={(event) => {
-              setQuery(event.target.value);
-              setSelectedIndex(0);
-            }}
-            onKeyDown={(event) => {
-              if (event.key === "ArrowDown") {
-                event.preventDefault();
-                setSelectedIndex((current) => (filtered.length === 0 ? 0 : (current + 1) % filtered.length));
-                return;
-              }
+        <div className="border-b border-border bg-panel px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="flex min-w-0 flex-1 items-center gap-2 border border-border bg-panel-alt px-3 py-2">
+              <span className="text-[0.72rem] text-accent">⌘</span>
+              <input
+                ref={inputRef}
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setSelectedIndex(0);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "ArrowDown") {
+                    event.preventDefault();
+                    setSelectedIndex((current) => (filtered.length === 0 ? 0 : (current + 1) % filtered.length));
+                    return;
+                  }
 
-              if (event.key === "ArrowUp") {
-                event.preventDefault();
-                setSelectedIndex((current) =>
-                  filtered.length === 0 ? 0 : (current - 1 + filtered.length) % filtered.length
-                );
-                return;
-              }
+                  if (event.key === "ArrowUp") {
+                    event.preventDefault();
+                    setSelectedIndex((current) =>
+                      filtered.length === 0 ? 0 : (current - 1 + filtered.length) % filtered.length
+                    );
+                    return;
+                  }
 
-              if (event.key === "Enter") {
-                event.preventDefault();
-                runSelected(selectedIndex);
-                return;
-              }
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    const secretCommandId = getSecretCommandId(query);
+                    if (secretCommandId) {
+                      onSecretCommand(secretCommandId);
+                      return;
+                    }
+                    runSelected(selectedIndex);
+                    return;
+                  }
 
-              if (event.key === "Escape") {
-                event.preventDefault();
-                closePalette();
-              }
-            }}
-            placeholder="Type a command or search..."
-            className="w-full border-0 bg-transparent text-[0.78rem] tracking-[0.12em] text-text outline-none placeholder:text-subtle"
-            aria-label="Command palette search"
-          />
-          <button
-            type="button"
-            onClick={closePalette}
-            className="border border-border px-2 py-1 text-[0.58rem] uppercase tracking-[0.16em] text-subtle transition hover:border-[#6a320d] hover:text-accent"
-          >
-            Esc
-          </button>
+                  if (event.key === "Escape") {
+                    event.preventDefault();
+                    closePalette();
+                  }
+                }}
+                placeholder="Type a command or search..."
+                className="w-full border-0 bg-transparent text-[0.72rem] uppercase tracking-[0.14em] text-text outline-none placeholder:text-faint"
+                aria-label="Command palette search"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={closePalette}
+              className="border border-border bg-surface px-2.5 py-1 text-[0.58rem] uppercase tracking-[0.16em] text-subtle transition hover:border-[#6a320d] hover:text-accent"
+            >
+              Esc
+            </button>
+          </div>
         </div>
 
-        <div className="max-h-[420px] overflow-y-auto">
+        <div className="app-scrollbar max-h-[420px] overflow-y-auto bg-panel">
           {filtered.length === 0 ? (
             <div className="px-4 py-8 text-center text-[0.72rem] uppercase tracking-[0.16em] text-muted">
               {query.trim() ? `No matches for "${query.trim()}".` : "No matches."}
@@ -202,7 +230,7 @@ export function CommandPalette({
                 return (
                   <div key={item.id}>
                     {showSection ? (
-                      <div className="border-b border-border px-4 py-2 text-[0.58rem] uppercase tracking-[0.22em] text-subtle">
+                      <div className="border-b border-border bg-panel-alt px-4 py-2 text-[0.58rem] uppercase tracking-[0.22em] text-subtle">
                         {item.section}
                       </div>
                     ) : null}
@@ -211,8 +239,10 @@ export function CommandPalette({
                       onMouseEnter={() => setSelectedIndex(index)}
                       onClick={() => runSelected(index)}
                       className={clsx(
-                        "flex w-full items-center gap-3 border-b border-border px-4 py-3 text-left transition",
-                        index === selectedIndex ? "bg-accent-surface" : "hover:bg-accent-surface"
+                        "flex w-full items-center gap-3 border-b border-border border-l-2 px-4 py-3 text-left transition",
+                        index === selectedIndex
+                          ? "border-l-accent bg-accent-surface"
+                          : "border-l-transparent hover:bg-panel-alt"
                       )}
                     >
                       <span
@@ -234,15 +264,12 @@ export function CommandPalette({
                           <span
                             className={clsx(
                               "mt-1 block truncate text-[0.62rem] tracking-[0.06em]",
-                              index === selectedIndex ? "text-[#f1b480]" : "text-subtle"
+                              index === selectedIndex ? "text-muted" : "text-subtle"
                             )}
                           >
                             {item.description}
                           </span>
                         ) : null}
-                      </span>
-                      <span className="text-[0.58rem] uppercase tracking-[0.16em] text-subtle">
-                        {item.hint}
                       </span>
                     </button>
                   </div>
@@ -252,7 +279,7 @@ export function CommandPalette({
           )}
         </div>
 
-        <div className="flex gap-4 border-t border-border bg-surface px-4 py-2 text-[0.58rem] uppercase tracking-[0.16em] text-subtle">
+        <div className="flex gap-4 border-t border-border bg-panel px-4 py-2 text-[0.58rem] uppercase tracking-[0.16em] text-subtle">
           <span>
             <em className="not-italic text-muted">↑↓</em> navigate
           </span>

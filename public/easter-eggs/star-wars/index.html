@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Star Wars ASCII Encyclopedia</title>
+<style>
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:#000;
+  color:#69ff7a;
+  font-family:"IBM Plex Mono","SFMono-Regular","Consolas","Liberation Mono","Menlo",monospace;
+  overflow:hidden;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at top, rgba(84,255,128,.12), transparent 34%),
+    repeating-linear-gradient(180deg, transparent, transparent 2px, rgba(0,0,0,.16) 2px, rgba(0,0,0,.16) 4px);
+  pointer-events:none;
+}
+button,input{font:inherit}
+#app{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  gap:12px;
+  height:100%;
+  padding:12px;
+}
+#topbar,
+.panel{
+  border:1px solid #1f5b2d;
+  background:rgba(3,12,5,.94);
+  box-shadow:0 0 0 1px rgba(74,255,106,.08), 0 0 18px rgba(74,255,106,.08);
+}
+#topbar{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px 16px;
+  padding:10px 12px;
+}
+.eyebrow{
+  font-size:10px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:#4abf62;
+}
+.title{
+  margin-top:4px;
+  font-size:14px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#8cff9a;
+}
+.topbar-hints{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#4abf62;
+  text-align:right;
+}
+.topbar-hints span{color:#b6ffbf}
+#layout{
+  display:grid;
+  grid-template-rows:minmax(0,1fr) minmax(220px,34vh);
+  gap:12px;
+  min-height:0;
+}
+#content-shell{
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  min-height:0;
+}
+.panel-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border-bottom:1px solid #1f5b2d;
+  background:rgba(8,20,10,.95);
+}
+.panel-title{
+  font-size:10px;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:#4abf62;
+}
+.panel-subtitle{
+  margin-top:4px;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#8cff9a;
+}
+#view-toolbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+#meta{
+  margin-left:auto;
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#4abf62;
+  white-space:nowrap;
+}
+#back-button{
+  display:none;
+  border:1px solid #1f5b2d;
+  background:#061109;
+  color:#8cff9a;
+  padding:6px 10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:border-color .16s ease,color .16s ease,background-color .16s ease;
+}
+#back-button.visible{display:inline-flex;align-items:center}
+#back-button:hover{
+  border-color:#69ff7a;
+  color:#d8ffdc;
+  background:#0a190d;
+}
+#content-scroll{
+  min-height:0;
+  overflow:auto;
+  padding:16px 14px 18px;
+  scrollbar-width:thin;
+  scrollbar-color:#246534 transparent;
+}
+#content-scroll::-webkit-scrollbar{width:10px;height:10px}
+#content-scroll::-webkit-scrollbar-thumb{background:#246534;border-radius:999px}
+#content{
+  margin:0;
+  min-height:100%;
+  color:#7fff8b;
+  font-size:12px;
+  line-height:1.18;
+  white-space:pre;
+}
+#menu-shell{
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  min-height:0;
+}
+#menu-list{
+  min-height:0;
+  overflow:auto;
+  padding:10px 0;
+  scrollbar-width:thin;
+  scrollbar-color:#246534 transparent;
+}
+#menu-list::-webkit-scrollbar{width:10px;height:10px}
+#menu-list::-webkit-scrollbar-thumb{background:#246534;border-radius:999px}
+.menu-row{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 14px;
+  border:0;
+  border-left:2px solid transparent;
+  background:transparent;
+  color:#65da73;
+  text-align:left;
+  cursor:pointer;
+  transition:background-color .14s ease,border-color .14s ease,color .14s ease;
+}
+.menu-row:hover{
+  background:rgba(18,38,20,.9);
+  color:#8cff9a;
+}
+.menu-row.selected{
+  border-left-color:#69ff7a;
+  background:rgba(16,44,20,.92);
+  color:#d8ffdc;
+}
+.menu-row.section{padding-left:34px}
+.menu-icon{
+  min-width:22px;
+  color:#4abf62;
+  font-size:12px;
+}
+.menu-row.selected .menu-icon{color:#8cff9a}
+.menu-text{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width:0;
+}
+.menu-label{
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.menu-hint{
+  font-size:10px;
+  color:#4abf62;
+  letter-spacing:.08em;
+}
+.menu-row.selected .menu-hint{color:#8ddf97}
+.status-line{
+  padding:0 14px 12px;
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:#4abf62;
+}
+.status-line span{color:#b6ffbf}
+@media (max-width: 640px){
+  #app{padding:8px}
+  #layout{grid-template-rows:minmax(0,1fr) minmax(200px,38vh)}
+  #content{font-size:10px}
+  .title{font-size:12px}
+  .topbar-hints{text-align:left}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div>
+      <div class="eyebrow">Easter Egg</div>
+      <div class="title">Star Wars ASCII Encyclopedia</div>
+    </div>
+    <div class="topbar-hints">
+      <span>↑↓</span> navigate · <span>←→</span> fold · <span>Enter</span> open · <span>B</span> back
+    </div>
+  </header>
+
+  <main id="layout">
+    <section id="content-shell" class="panel">
+      <div class="panel-header">
+        <div id="view-toolbar">
+          <button id="back-button" type="button">← Back</button>
+          <div>
+            <div id="view-label" class="panel-title">Home</div>
+            <div id="view-title" class="panel-subtitle">Star Wars</div>
+          </div>
+        </div>
+        <div id="meta">Loading</div>
+      </div>
+      <div id="content-scroll">
+        <pre id="content">Loading Star Wars archive...</pre>
+      </div>
+    </section>
+
+    <section id="menu-shell" class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Navigator</div>
+          <div class="panel-subtitle">Categories & Sections</div>
+        </div>
+      </div>
+      <div id="menu-list" aria-label="Star Wars sections"></div>
+      <div class="status-line">
+        Secret archive online · <span>16</span> selectable sections
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const NAVIGATION = [
+  {
+    id: "starships",
+    label: "Starships",
+    items: [
+      { id: "capital-ships", label: "Capital Ships" },
+      { id: "starfighters", label: "Starfighters" },
+      { id: "transports", label: "Transports" }
+    ]
+  },
+  {
+    id: "vehicles",
+    label: "Vehicles",
+    items: [
+      { id: "repulsorlifts", label: "Repulsorlifts" },
+      { id: "walkers", label: "Walkers" }
+    ]
+  },
+  {
+    id: "droids",
+    label: "Droids",
+    items: [
+      { id: "first-degree", label: "First-degree" },
+      { id: "second-degree", label: "Second-degree" },
+      { id: "third-degree", label: "Third-degree" },
+      { id: "fourth-degree", label: "Fourth-degree" },
+      { id: "fifth-degree", label: "Fifth-degree" }
+    ]
+  },
+  {
+    id: "characters",
+    label: "Characters",
+    items: [
+      { id: "aliens", label: "Aliens" },
+      { id: "humans", label: "Humans" },
+      { id: "heroes", label: "Heroes" },
+      { id: "villains", label: "Villains" }
+    ]
+  },
+  {
+    id: "equipment",
+    label: "Equipment",
+    items: [
+      { id: "weapons", label: "Weapons" },
+      { id: "armor", label: "Armor" }
+    ]
+  }
+];
+
+const SECTION_DEFINITIONS = {
+  "capital-ships": { label: "Capital Ships", startLine: 11, endLineExclusive: 125 },
+  "starfighters": { label: "Starfighters", startLine: 125, endLineExclusive: 426 },
+  "transports": { label: "Transports", startLine: 426, endLineExclusive: 515 },
+  "repulsorlifts": { label: "Repulsorlifts", startLine: 515, endLineExclusive: 579 },
+  "walkers": { label: "Walkers", startLine: 579, endLineExclusive: 737 },
+  "first-degree": { label: "First-degree", startLine: 737, endLineExclusive: 767 },
+  "second-degree": { label: "Second-degree", startLine: 767, endLineExclusive: 816 },
+  "third-degree": { label: "Third-degree", startLine: 816, endLineExclusive: 846 },
+  "fourth-degree": { label: "Fourth-degree", startLine: 846, endLineExclusive: 1124 },
+  "fifth-degree": { label: "Fifth-degree", startLine: 1124, endLineExclusive: 1217 },
+  "aliens": { label: "Aliens", startLine: 1217, endLineExclusive: 1256 },
+  "humans": { label: "Humans", startLine: 1256, endLineExclusive: 1411 },
+  "heroes": { label: "Heroes", startLine: 1411, endLineExclusive: 1498 },
+  "villains": { label: "Villains", startLine: 1498, endLineExclusive: 1663 },
+  "weapons": { label: "Weapons", startLine: 1663, endLineExclusive: 1718 },
+  "armor": { label: "Armor", startLine: 1718, endLineExclusive: 1765 }
+};
+
+const sectionToCategory = Object.fromEntries(
+  NAVIGATION.flatMap((category) => category.items.map((item) => [item.id, category.id]))
+);
+
+const state = {
+  expandedCategories: new Set(NAVIGATION.map((category) => category.id)),
+  selectedKey: "category:starships",
+  currentSectionId: null,
+  homeText: "Loading Star Wars archive...",
+  sectionContent: {}
+};
+
+const menuList = document.getElementById("menu-list");
+const contentEl = document.getElementById("content");
+const contentScroll = document.getElementById("content-scroll");
+const backButton = document.getElementById("back-button");
+const viewLabel = document.getElementById("view-label");
+const viewTitle = document.getElementById("view-title");
+const meta = document.getElementById("meta");
+
+function normalizeText(source) {
+  return source.replace(/\r\n/g, "\n");
+}
+
+function buildSectionContent(source) {
+  const lines = normalizeText(source).split("\n");
+  const output = {};
+
+  for (const [id, section] of Object.entries(SECTION_DEFINITIONS)) {
+    const slice = lines.slice(section.startLine - 1, section.endLineExclusive - 1);
+    output[id] = slice.join("\n").replace(/\n+$/, "");
+  }
+
+  return output;
+}
+
+function getVisibleItems() {
+  const items = [];
+
+  for (const category of NAVIGATION) {
+    items.push({
+      key: `category:${category.id}`,
+      type: "category",
+      categoryId: category.id,
+      label: category.label
+    });
+
+    if (!state.expandedCategories.has(category.id)) {
+      continue;
+    }
+
+    for (const section of category.items) {
+      items.push({
+        key: `section:${section.id}`,
+        type: "section",
+        categoryId: category.id,
+        sectionId: section.id,
+        label: section.label
+      });
+    }
+  }
+
+  return items;
+}
+
+function ensureValidSelection() {
+  const visibleItems = getVisibleItems();
+  if (visibleItems.some((item) => item.key === state.selectedKey)) {
+    return;
+  }
+
+  state.selectedKey = visibleItems[0]?.key ?? "";
+}
+
+function moveSelection(delta) {
+  const visibleItems = getVisibleItems();
+  if (visibleItems.length === 0) {
+    return;
+  }
+
+  const currentIndex = Math.max(
+    0,
+    visibleItems.findIndex((item) => item.key === state.selectedKey)
+  );
+  const nextIndex = (currentIndex + delta + visibleItems.length) % visibleItems.length;
+  state.selectedKey = visibleItems[nextIndex].key;
+  renderMenu();
+}
+
+function toggleCategory(categoryId, forceExpanded) {
+  const isExpanded = state.expandedCategories.has(categoryId);
+  const nextExpanded = forceExpanded ?? !isExpanded;
+
+  if (nextExpanded) {
+    state.expandedCategories.add(categoryId);
+  } else {
+    state.expandedCategories.delete(categoryId);
+    if (state.selectedKey.startsWith("section:")) {
+      const sectionId = state.selectedKey.slice("section:".length);
+      if (sectionToCategory[sectionId] === categoryId) {
+        state.selectedKey = `category:${categoryId}`;
+      }
+    }
+  }
+
+  ensureValidSelection();
+  renderMenu();
+}
+
+function openSection(sectionId) {
+  state.currentSectionId = sectionId;
+  state.selectedKey = `section:${sectionId}`;
+  renderContent();
+  renderMenu();
+}
+
+function goHome() {
+  state.currentSectionId = null;
+  renderContent();
+}
+
+function renderContent() {
+  const section = state.currentSectionId ? SECTION_DEFINITIONS[state.currentSectionId] : null;
+  const text = section ? state.sectionContent[state.currentSectionId] : state.homeText;
+
+  contentEl.textContent = text ?? "Section unavailable.";
+  viewLabel.textContent = section ? "Section" : "Home";
+  viewTitle.textContent = section ? section.label : "Star Wars";
+  meta.textContent = section ? `${section.startLine}-${section.endLineExclusive - 1}` : "Archive Index";
+  backButton.classList.toggle("visible", Boolean(section));
+  contentScroll.scrollTo({ top: 0, behavior: "auto" });
+}
+
+function renderMenu() {
+  ensureValidSelection();
+  const visibleItems = getVisibleItems();
+
+  menuList.innerHTML = "";
+
+  for (const item of visibleItems) {
+    const row = document.createElement("button");
+    row.type = "button";
+    row.className = `menu-row ${item.type === "section" ? "section" : ""}${item.key === state.selectedKey ? " selected" : ""}`;
+    row.dataset.key = item.key;
+
+    const icon = document.createElement("span");
+    icon.className = "menu-icon";
+
+    const text = document.createElement("span");
+    text.className = "menu-text";
+
+    const label = document.createElement("span");
+    label.className = "menu-label";
+    label.textContent = item.label;
+    text.appendChild(label);
+
+    if (item.type === "category") {
+      const expanded = state.expandedCategories.has(item.categoryId);
+      icon.textContent = expanded ? "[-]" : "[+]";
+
+      const hint = document.createElement("span");
+      hint.className = "menu-hint";
+      hint.textContent = expanded ? "Expanded" : "Collapsed";
+      text.appendChild(hint);
+
+      row.addEventListener("click", () => {
+        state.selectedKey = item.key;
+        toggleCategory(item.categoryId);
+      });
+    } else {
+      icon.textContent = state.currentSectionId === item.sectionId ? ">>" : "->";
+
+      const hint = document.createElement("span");
+      hint.className = "menu-hint";
+      hint.textContent = state.currentSectionId === item.sectionId ? "Viewing" : "Open Section";
+      text.appendChild(hint);
+
+      row.addEventListener("click", () => {
+        state.selectedKey = item.key;
+        openSection(item.sectionId);
+      });
+    }
+
+    row.addEventListener("mouseenter", () => {
+      state.selectedKey = item.key;
+      renderMenu();
+    });
+
+    row.append(icon, text);
+    menuList.appendChild(row);
+  }
+
+  const selectedRow = menuList.querySelector(`[data-key="${CSS.escape(state.selectedKey)}"]`);
+  selectedRow?.scrollIntoView({ block: "nearest" });
+}
+
+function activateSelection() {
+  const visibleItems = getVisibleItems();
+  const selected = visibleItems.find((item) => item.key === state.selectedKey);
+  if (!selected) {
+    return;
+  }
+
+  if (selected.type === "category") {
+    toggleCategory(selected.categoryId);
+    return;
+  }
+
+  openSection(selected.sectionId);
+}
+
+function handleArrowRight() {
+  const visibleItems = getVisibleItems();
+  const selected = visibleItems.find((item) => item.key === state.selectedKey);
+  if (!selected || selected.type !== "category") {
+    return;
+  }
+
+  if (!state.expandedCategories.has(selected.categoryId)) {
+    toggleCategory(selected.categoryId, true);
+    return;
+  }
+
+  const category = NAVIGATION.find((entry) => entry.id === selected.categoryId);
+  if (category?.items[0]) {
+    state.selectedKey = `section:${category.items[0].id}`;
+    renderMenu();
+  }
+}
+
+function handleArrowLeft() {
+  const visibleItems = getVisibleItems();
+  const selected = visibleItems.find((item) => item.key === state.selectedKey);
+  if (!selected) {
+    return;
+  }
+
+  if (selected.type === "category") {
+    if (state.expandedCategories.has(selected.categoryId)) {
+      toggleCategory(selected.categoryId, false);
+    }
+    return;
+  }
+
+  state.selectedKey = `category:${selected.categoryId}`;
+  renderMenu();
+}
+
+async function loadArchive() {
+  try {
+    const [homeResponse, archiveResponse] = await Promise.all([
+      fetch("./home.txt"),
+      fetch("./star_wars.txt")
+    ]);
+
+    if (!homeResponse.ok || !archiveResponse.ok) {
+      throw new Error("Unable to load Star Wars archive files.");
+    }
+
+    const [homeText, archiveText] = await Promise.all([
+      homeResponse.text(),
+      archiveResponse.text()
+    ]);
+
+    state.homeText = normalizeText(homeText).replace(/\n+$/, "");
+    state.sectionContent = buildSectionContent(archiveText);
+    renderContent();
+    renderMenu();
+  } catch (error) {
+    state.homeText = `Archive offline.\n\n${error instanceof Error ? error.message : "Unknown error."}`;
+    renderContent();
+    renderMenu();
+  }
+}
+
+window.addEventListener("keydown", (event) => {
+  const key = event.key;
+  const lowerKey = key.toLowerCase();
+
+  if (key === "ArrowDown") {
+    event.preventDefault();
+    moveSelection(1);
+    return;
+  }
+
+  if (key === "ArrowUp") {
+    event.preventDefault();
+    moveSelection(-1);
+    return;
+  }
+
+  if (key === "ArrowRight") {
+    event.preventDefault();
+    handleArrowRight();
+    return;
+  }
+
+  if (key === "ArrowLeft") {
+    event.preventDefault();
+    handleArrowLeft();
+    return;
+  }
+
+  if (key === "Enter") {
+    event.preventDefault();
+    activateSelection();
+    return;
+  }
+
+  if ((key === "Escape" || key === "Backspace" || lowerKey === "b") && state.currentSectionId) {
+    event.preventDefault();
+    goHome();
+  }
+});
+
+backButton.addEventListener("click", goHome);
+
+renderContent();
+renderMenu();
+loadArchive();
+</script>
+</body>
+</html>

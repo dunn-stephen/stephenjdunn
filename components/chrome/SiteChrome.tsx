@@ -4,10 +4,12 @@ import type { Route } from "next";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
-import { ArrowLeftFromLine, ArrowRightFromLine } from "lucide-react";
+import { ArrowLeftFromLine, ArrowRightFromLine, Github, Linkedin, Mail, Maximize2, Minus, X } from "lucide-react";
 import type { FormEvent, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CommandPalette } from "@/components/chrome/CommandPalette";
+import { SpaceInvadersModal } from "@/components/easter-eggs/SpaceInvadersModal";
+import { StarWarsModal } from "@/components/easter-eggs/StarWarsModal";
 import { StatusBar } from "@/components/chrome/StatusBar";
 import {
   getActivePrimaryRoute,
@@ -23,6 +25,27 @@ type SiteChromeProps = {
   children: ReactNode;
   paletteItems: SearchItem[];
 };
+
+const sidebarSocialLinks = [
+  {
+    href: siteConfig.socialLinks.github,
+    label: "github",
+    icon: Github,
+    external: true
+  },
+  {
+    href: siteConfig.socialLinks.linkedin,
+    label: "linkedin",
+    icon: Linkedin,
+    external: true
+  },
+  {
+    href: siteConfig.socialLinks.email,
+    label: "email",
+    icon: Mail,
+    external: false
+  }
+] as const;
 
 function RouteLink({
   href,
@@ -113,30 +136,37 @@ function SidebarNav({
         </nav>
       </div>
 
-      <div className="border-t border-border px-3 py-3">
-        <div className={clsx("space-y-2", collapsed && "hidden")}>
-          <a
-            href={siteConfig.socialLinks.github}
-            target="_blank"
-            rel="noreferrer"
-            className="block text-[0.58rem] uppercase tracking-[0.12em] text-subtle transition hover:text-accent"
-          >
-            ↗ github
-          </a>
-          <a
-            href={siteConfig.socialLinks.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            className="block text-[0.58rem] uppercase tracking-[0.12em] text-subtle transition hover:text-accent"
-          >
-            ↗ linkedin
-          </a>
-          <a
-            href={siteConfig.socialLinks.email}
-            className="block text-[0.58rem] uppercase tracking-[0.12em] text-subtle transition hover:text-accent"
-          >
-            ↗ email
-          </a>
+      <div className={clsx("border-t border-border py-3", collapsed ? "px-2" : "px-3")}>
+        <div className={clsx(collapsed ? "flex flex-col items-center gap-2" : "space-y-2")}>
+          {collapsed
+            ? sidebarSocialLinks.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    target={item.external ? "_blank" : undefined}
+                    rel={item.external ? "noreferrer" : undefined}
+                    aria-label={item.label}
+                    title={item.label}
+                    className="flex h-7 w-7 items-center justify-center border border-transparent text-subtle transition hover:border-[#6a320d] hover:bg-panel hover:text-accent"
+                  >
+                    <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                  </a>
+                );
+              })
+            : sidebarSocialLinks.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noreferrer" : undefined}
+                  className="block text-[0.58rem] uppercase tracking-[0.12em] text-subtle transition hover:text-accent"
+                >
+                  ↗ {item.label}
+                </a>
+              ))}
         </div>
       </div>
     </aside>
@@ -154,11 +184,13 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [paletteInitialQuery, setPaletteInitialQuery] = useState("");
   const [headerSearchQuery, setHeaderSearchQuery] = useState("");
+  const [activeEasterEgg, setActiveEasterEgg] = useState<string | null>(null);
   const mobileNavOpen = mobileNavPathname === pathname;
 
   const closeMobileNav = useCallback(() => setMobileNavPathname(null), []);
   const openMobileNav = useCallback(() => setMobileNavPathname(pathname), [pathname]);
   const closePalette = useCallback(() => setPaletteOpen(false), []);
+  const closeEasterEgg = useCallback(() => setActiveEasterEgg(null), []);
   const openPalette = useCallback((query = "") => {
     setMobileNavPathname(null);
     setPaletteInitialQuery(query);
@@ -183,6 +215,11 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
     setPaletteOpen(false);
     router.push(href);
   }, [router]);
+  const handleSecretCommand = useCallback((id: string) => {
+    setMobileNavPathname(null);
+    setPaletteOpen(false);
+    setActiveEasterEgg(id);
+  }, []);
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
@@ -203,6 +240,12 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
       }
 
       if (event.key === "Escape") {
+        if (activeEasterEgg) {
+          event.preventDefault();
+          setActiveEasterEgg(null);
+          return;
+        }
+
         if (paletteOpen) {
           event.preventDefault();
           setPaletteOpen(false);
@@ -237,7 +280,7 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
 
     window.addEventListener("keydown", handleKeydown);
     return () => window.removeEventListener("keydown", handleKeydown);
-  }, [focusHeaderSearch, mobileNavOpen, paletteOpen, router]);
+  }, [activeEasterEgg, focusHeaderSearch, mobileNavOpen, paletteOpen, router]);
 
   const runPaletteItem = (item: SearchItem) => {
     if (item.href) {
@@ -263,21 +306,27 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
 
   return (
     <div className="min-h-dvh bg-shell px-2 py-3 sm:px-4 sm:py-4">
-      <div className="mx-auto flex min-h-[calc(100dvh-1.5rem)] w-full max-w-[1440px] flex-col border border-border bg-surface shadow-terminal">
+      <div className="mx-auto flex h-[calc(100dvh-1.5rem)] w-full max-w-[1440px] flex-col overflow-hidden border border-border bg-surface shadow-terminal">
         <header className="flex items-center gap-3 border-b border-border bg-panel px-3 py-2 sm:px-4">
           <button
             type="button"
             onClick={openMobileNav}
-            className="inline-flex h-8 w-8 items-center justify-center border border-border bg-panel-alt text-[0.72rem] text-muted transition hover:border-[#6a320d] hover:text-accent md:hidden"
+            className="order-last inline-flex self-stretch w-8 items-center justify-center border border-border bg-panel-alt text-[0.72rem] text-muted transition hover:border-[#6a320d] hover:text-accent md:hidden"
             aria-label="Open navigation"
           >
             ☰
           </button>
 
           <div className="flex items-center gap-1.5" aria-hidden="true">
-            <span className="h-[11px] w-[11px] rounded-full bg-[#ff5f56]" />
-            <span className="h-[11px] w-[11px] rounded-full bg-[#ffbd2e]" />
-            <span className="h-[11px] w-[11px] rounded-full bg-[#27c93f]" />
+            <span className="relative flex h-[11px] w-[11px] items-center justify-center rounded-full bg-[#ff5f56]">
+              <X size={7} strokeWidth={2.5} className="absolute text-[#1c1c1f]" />
+            </span>
+            <span className="relative flex h-[11px] w-[11px] items-center justify-center rounded-full bg-[#ffbd2e]">
+              <Minus size={7} strokeWidth={2.5} className="absolute text-[#1c1c1f]" />
+            </span>
+            <span className="relative flex h-[11px] w-[11px] items-center justify-center rounded-full bg-[#27c93f]">
+              <Maximize2 size={7} strokeWidth={2.2} className="absolute text-[#1c1c1f]" />
+            </span>
           </div>
 
           <form
@@ -297,6 +346,7 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
                 type="search"
                 value={headerSearchQuery}
                 onChange={(event) => setHeaderSearchQuery(event.target.value)}
+                onFocus={() => openPalette(headerSearchQuery.trim())}
                 placeholder={`Search ${profileData.domain}`}
                 className="w-full border-0 bg-transparent text-[0.58rem] uppercase tracking-[0.16em] text-subtle outline-none placeholder:text-faint"
                 aria-label="Search the site"
@@ -311,7 +361,7 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
             <button
               type="button"
               onClick={() => openPalette()}
-              className="border border-[#3a1800] bg-[#1e0e00] px-3 py-1.5 text-[0.58rem] uppercase tracking-[0.16em] text-accent transition hover:bg-[#2a1400]"
+              className="hidden border border-[#3a1800] bg-[#1e0e00] px-3 py-1.5 text-[0.58rem] uppercase tracking-[0.16em] text-accent transition hover:bg-[#2a1400] sm:inline-flex"
               aria-label="Open command palette"
             >
               ⌘ palette
@@ -361,9 +411,6 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
                   <p className="mt-2 text-[0.62rem] uppercase tracking-[0.18em] text-accent">
                     {profileData.hero.subtitle}
                   </p>
-                  <p className="mt-3 text-[0.58rem] uppercase tracking-[0.22em] text-muted">
-                    {profileData.home.hint}
-                  </p>
                 </div>
               </div>
 
@@ -376,13 +423,15 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
                       key={route.href}
                       href={route.href}
                       className={clsx(
-                        "mr-1 inline-flex items-center gap-2 border border-transparent border-b-0 px-4 py-2 text-[0.62rem] uppercase tracking-[0.18em] transition",
+                        "mr-1 inline-flex items-center gap-1 border border-transparent border-b-0 px-2 py-2 text-[0.52rem] uppercase tracking-[0.18em] transition sm:gap-2 sm:px-4 sm:text-[0.62rem]",
                         isActive
                           ? "border-border border-b-panel bg-surface text-accent"
-                          : "bg-panel-alt text-accent hover:bg-[#31373e] hover:text-[#ff8a43]"
+                          : "bg-panel-alt text-accent hover:bg-[#2e2e31] hover:text-[#ff8a43]"
                       )}
                     >
-                      <span className={clsx("text-[0.58rem] text-accent", isActive ? "opacity-70" : "opacity-55")}>
+                      <span
+                        className={clsx("hidden text-[0.58rem] text-accent sm:inline", isActive ? "opacity-70" : "opacity-55")}
+                      >
                         {route.hotkey}
                       </span>
                       <span>{route.label}</span>
@@ -437,8 +486,12 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
         items={paletteItems}
         initialQuery={paletteInitialQuery}
         onClose={closePalette}
+        onSecretCommand={handleSecretCommand}
         onSelect={runPaletteItem}
       />
+
+      <SpaceInvadersModal open={activeEasterEgg === "space-invaders"} onClose={closeEasterEgg} />
+      <StarWarsModal open={activeEasterEgg === "star-wars"} onClose={closeEasterEgg} />
     </div>
   );
 }

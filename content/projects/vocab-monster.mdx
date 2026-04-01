@@ -9,27 +9,165 @@ highlights:
   - "Keep the repetition loop tight for daily study."
   - "Make progress legible without burying the core flow."
   - "Favor keyboard-friendly interaction over feature sprawl."
-github: "https://github.com/stephendunn/vocab-monster"
-demo: "https://vocab-monster.netlify.app"
+demo: "https://vocabmonster.com"
 displayMode: "readme"
 featured: true
 date: "2026-01-15"
 ---
 
-## Overview
+# From Hello World to Vocab Monster: Building a Local-First App with Codex, Claude, Supabase, and Netlify
 
-Vocab Monster is built around a simple premise: language study tools fail when the loop is slow. The app keeps the repetition cycle tight, makes progress legible, and reduces friction around adding and reviewing terms.
+![January 2, 2026 hello world deploy](/blog/vocab-monster-history/2026-01-02-hello-world.webp)
+*January 2, 2026: the project started as a literal hello-world placeholder.*
 
-## Technical Notes
+When I started building Vocab Monster, the first version was intentionally small. On January 2, 2026, the deploy was basically just "Hello, world!" and a sentence explaining that it was a placeholder for a vocab builder. That tiny starting point is useful because it makes the rest of the story very real: this was not a polished app that appeared fully formed. It grew commit by commit, deploy by deploy, and a lot of that growth happened through a tight terminal-based workflow using Codex and Claude on localhost.
 
-- React and TypeScript drive the client application.
-- Supabase handles persistence and authentication.
-- The UI emphasizes quick keyboard-friendly repetition over dense feature menus.
+What I like about this project is that it became more than a simple dictionary search box. It turned into a local-first vocabulary app with saved words, collections, practice flows, stats, authentication, sync, and a real deployment pipeline. It also became a good example of what AI-assisted software development actually looks like when it is grounded in a normal engineering loop instead of magic.
 
-## Challenges
+## The Stack I Ended Up With
 
-The main constraint was not algorithmic difficulty. It was resisting feature sprawl and protecting the speed of the core review loop while still making the app feel encouraging rather than clinical.
+Today, Vocab Monster runs on a stack that feels practical rather than trendy for the sake of being trendy:
 
-## Outcome
+- Next.js 16 + React 19 + TypeScript for the app itself
+- Tailwind CSS for styling
+- Dexie over IndexedDB for local-first storage in the browser
+- Supabase Auth + Postgres-backed APIs for sign-in and cloud sync
+- Merriam-Webster's API for dictionary data
+- Vitest + Testing Library for tests
+- Netlify for deployment using `@netlify/plugin-nextjs`
 
-The project serves as both a product experiment and a proving ground for interface decisions that prioritize daily use instead of one-time demo appeal.
+The most important architectural choice was not the framework. It was the decision to make the app local-first. In the current version, IndexedDB is still the primary client-side store, and Supabase acts as the remote sync layer for auth, saved words, collections, and user stats. That gave me a fast UI locally while still making multi-device sync possible once the app matured.
+
+## How I Used Codex and Claude on Localhost
+
+The development loop was simple: prompt the CLI agent, inspect the code, run the app locally, test the behavior, and repeat. I did not use Codex or Claude as "build the whole thing for me" buttons. I used them as coding partners inside a real local environment.
+
+That meant using them to:
+
+- scaffold routes and components
+- refactor messy files after fast iteration
+- troubleshoot build failures
+- tighten TypeScript types
+- wire up auth and sync flows
+- sanity-check edge cases
+- accelerate repetitive UI and plumbing work
+
+The real source of truth was still localhost. I would make changes, run `npm run dev`, test flows in the browser, hit the API routes locally, and keep pushing until the app behaved correctly. Later, that same loop expanded to `npm run test:run` and `npm run build` as the project hardened. As of April 1, 2026, the current repo passes all 33 Vitest tests and completes a clean production build.
+
+That is the part of AI-assisted development that I think is worth talking about honestly: the model can help you move faster, but the engineering loop still matters. You still need to read the code, understand the architecture, and verify what actually runs.
+
+## A Bigger Change Than It Looks: From Notion to Supabase
+
+One of the most interesting parts of the project's history is that the current architecture is not the same architecture it started with.
+
+Early commits on January 2, 2026 were still centered around Notion-backed ideas and compatibility with an iOS app's data model. You can still see traces of that in the codebase today, including a legacy IndexedDB schema comment that references earlier Notion-backed sync. But by the January 5 production work, the project had clearly shifted. The `First Prod Deploy for end user user` commit removed Notion routes and sync code and replaced them with Supabase-backed auth, sync endpoints, migrations, and browser/server Supabase clients.
+
+That shift made the app feel more like a real product and less like a prototype glued to someone else's interface. Supabase gave the project:
+
+- authentication
+- a cleaner backend data model
+- migrations checked into source control
+- APIs for words, collections, and user stats
+- a better path to multi-device sync
+
+## Why the Local-First Design Worked
+
+![Early January 2, 2026 search UI](/blog/vocab-monster-history/2026-01-02-early-search-ui.webp)
+*Later on January 2, 2026: the app already had a real UI, dictionary search, and local data handling.*
+
+The local-first part is what made the app feel responsive from the beginning. Instead of treating the browser as a thin shell over a backend, Vocab Monster stores words, collections, practice sessions, and practice results locally first. The UI reacts to IndexedDB changes directly, and Supabase sync comes afterward.
+
+That matters because vocabulary practice is a personal workflow app. Saving a word, filtering a collection, or logging practice results should feel instant. Dexie made that straightforward on the client side, while Supabase handled the durable backend concerns later in the flow.
+
+By the time the project matured, the app also had:
+
+- protected routes for signed-in areas
+- CSRF protection for mutating routes
+- rate limiting on dictionary and Supabase-backed API endpoints
+- environment-status panels for debugging configuration
+- GitHub Actions CI for lint, test, build, and audit checks
+
+In other words, the project stopped being "just features" and started growing operational guardrails too.
+
+## Netlify Deployment Structure
+
+Netlify ended up being a clean match for how the project was organized.
+
+The repo is linked to a Netlify site called `vocab-monster`, and the deployment pattern is easy to explain:
+
+- `staging` is used for branch deploys
+- `main` is used for production deploys
+- Netlify runs `npm run build`
+- `@netlify/plugin-nextjs` handles the Next.js runtime adaptation
+- production redirects force traffic to `https://www.vocabmonster.com`
+
+Netlify's deploy history also shows the shape of the workflow very clearly. Early on, branch deploys were doing the fast iteration work. Production was rougher. The first recorded production attempt on January 2, 2026 failed before the code even built because Netlify could not resolve GitHub while preparing the repo. Then January 3 through January 5 became a very real shipping phase: repeated fixes, repeated deploys, build failures, and then finally successful publishes.
+
+One detail I especially like is that the `First Prod Deploy for end user user` commit on January 5, 2026 did not actually publish successfully. It failed during the build step. The successful production publishes landed immediately afterward through follow-up fixes. That is exactly what software shipping often looks like in practice: the milestone is emotionally important, but the actual production-ready state comes from the cleanup work that follows.
+
+Today, Netlify is effectively doing three jobs for the app:
+
+- building the Next.js app
+- serving production and branch deploys
+- acting as the clean boundary between local development and public delivery
+
+## DNS, Resend, and the Registrar Layer
+
+This is the part of the project that matters a lot operationally but is only partially visible in the repo.
+
+The repo confirms that the site is canonicalized around `www.vocabmonster.com`, with redirects from the apex domain and from `http` to `https`. But the rest of the domain and email story lives outside source control, so this section is where I would add the exact details from memory and account history.
+
+Suggested version to personalize:
+
+I bought `vocabmonster.com` on Namecheap, used Netlify for hosting, and used Resend for email delivery. That meant the "deployment" story was not only about React components and API routes. It also meant handling registrar setup, DNS records, domain verification, and email authentication records correctly so the product could behave like a real service instead of a localhost-only experiment.
+
+You can make this section stronger by adding the exact choices you made:
+
+- whether DNS stayed in Namecheap or moved to Netlify DNS
+- which records you added for the web app
+- which records Resend required for domain verification
+- whether you set up SPF, DKIM, and DMARC
+- what was surprisingly easy and what was annoyingly manual
+
+That part is worth including because it shows the full stack of launching a real product. Buying the domain and wiring DNS is not glamour work, but it is part of what makes the app real.
+
+## How the Project Grew Over Time
+
+![January 22, 2026 branded UI](/blog/vocab-monster-history/2026-01-22-branded-oauth-ui.webp)
+*By January 22, 2026, the project had a real brand, fuller navigation, and auth-driven UI.*
+
+The git and Netlify history make the growth pretty easy to summarize:
+
+- **January 2, 2026:** hello-world placeholder
+- **January 2, 2026:** Next.js + Tailwind starter
+- **January 2, 2026:** dictionary search, data layer, and early Notion-based thinking
+- **January 2, 2026:** practice, stats, settings, and collections arrive quickly
+- **January 5, 2026:** the project shifts hard toward Supabase and production concerns
+- **January 22, 2026:** OAuth and UI branding get tighter
+- **February 2, 2026:** testing, CI, rate limiting, CSP, and error handling harden the app
+- **February 20-25, 2026:** protected routes and broader UX polish continue
+- **March 30, 2026:** structural refactors clean up the codebase and improve maintainability
+
+The visual arc is just as clear as the architectural arc. The app went from placeholder text, to an early "Vocab Builder (Web)" interface, to a more branded and cohesive Vocab Monster experience with auth, navigation, and a much sharper identity.
+
+![March 30, 2026 current UI](/blog/vocab-monster-history/2026-03-30-current-ui.webp)
+*March 30, 2026: the current Vocab Monster UI is more focused, more branded, and clearly product-shaped.*
+
+## What I Learned
+
+If I had to summarize the build in one sentence, it would be this: Vocab Monster got better when it stopped being just a UI project and became a systems project.
+
+The frontend mattered. The branding mattered. The practice flows mattered. But the project really leveled up when auth, sync, migrations, testing, build reliability, deployments, and domain setup all started working together.
+
+Codex and Claude helped me move faster inside that process. Supabase gave the app a real backend. Netlify gave it a clean deployment path. Namecheap and DNS work made it a real domain. Resend made it capable of real email workflows. And the git history tells the truth about all of it: the product improved because it was iterated on continuously, not because the first version was perfect.
+
+If anything, that is my favorite part of the story. The history is visible. You can see the placeholder. You can see the rough edges. You can see the failed deploys. And you can also see the point where the app starts feeling like an actual product.
+
+---
+
+## Notes To Personalize Before Publishing
+
+- Add your exact Namecheap purchase date.
+- Add the exact Resend setup you used and which DNS records you configured.
+- Add a short paragraph on what it felt like to work with Codex versus Claude in the CLI, since that part comes from your lived workflow rather than source control.
+- If you want a stronger founder-style voice, add one concrete moment where an AI-generated patch was wrong and you had to debug it manually.

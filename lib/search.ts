@@ -1,5 +1,5 @@
 import type { Route } from "next";
-import { getAllPosts, getAllProjects, getPostBySlug, getProjectBySlug, getResumeData } from "@/lib/content";
+import { getAllPosts, getAllProjects, getPostBySlug, getProjectBySlug } from "@/lib/content";
 import { buildMailtoLink, primaryRoutes, profileData, siteConfig } from "@/lib/site";
 
 export type SearchItem = {
@@ -30,7 +30,6 @@ function stripMdx(source: string) {
 }
 
 export function buildSiteSearchItems(): SearchItem[] {
-  const resume = getResumeData();
   const projects = getAllProjects();
   const posts = getAllPosts();
 
@@ -45,71 +44,6 @@ export function buildSiteSearchItems(): SearchItem[] {
       keywords: [route.key, route.label.toLowerCase(), route.href],
       href: route.href
     })),
-    {
-      id: "home:overview",
-      label: profileData.name,
-      section: "Home",
-      glyph: "■",
-      hint: siteConfig.domain,
-      description: profileData.description,
-      href: "/" as Route,
-      keywords: [
-        profileData.name,
-        profileData.domain,
-        profileData.description,
-        profileData.sidebar.role,
-        profileData.sidebar.company,
-        profileData.hero.subtitle,
-        profileData.home.currentRole.title,
-        profileData.home.currentRole.subtitle,
-        profileData.home.sideProject.title,
-        profileData.home.sideProject.subtitle,
-        profileData.home.hint,
-        ...profileData.home.specialties
-      ]
-    },
-    {
-      id: "resume:summary",
-      label: "Resume Summary",
-      section: "Resume",
-      glyph: "▤",
-      hint: "overview",
-      description: resume.summary,
-      href: "/resume" as Route,
-      keywords: [
-        resume.summary,
-        ...resume.skillRatings.map((rating) => rating.label),
-        ...resume.platforms,
-        ...resume.toolkit,
-        ...resume.interests
-      ]
-    },
-    ...resume.experience.map((role) => ({
-      id: `resume:${role.company}:${role.role}`,
-      label: `${role.role} · ${role.company}`,
-      section: "Resume",
-      glyph: "▤",
-      hint: `${role.start} - ${role.end}`,
-      description: role.bullets[0],
-      href: "/resume" as Route,
-      keywords: [role.company, role.role, role.start, role.end, ...role.bullets]
-    })),
-    {
-      id: "resume:education",
-      label: "Education",
-      section: "Resume",
-      glyph: "▤",
-      hint: resume.education.years,
-      description: `${resume.education.degree} · ${resume.education.school}`,
-      href: "/resume" as Route,
-      keywords: [
-        resume.education.degree,
-        resume.education.school,
-        resume.education.years,
-        resume.education.concentration ?? "",
-        ...(resume.education.highlights ?? [])
-      ]
-    },
     {
       id: "contact:overview",
       label: "Contact and Availability",
@@ -143,7 +77,7 @@ export function buildSiteSearchItems(): SearchItem[] {
       section: "Actions",
       glyph: "↗",
       hint: "external",
-      description: "linkedin.com/in/stephendunn",
+      description: "linkedin.com/in/stephendunn24",
       externalHref: siteConfig.socialLinks.linkedin,
       keywords: ["linkedin", "social", "profile", "resume"]
     },
@@ -153,9 +87,9 @@ export function buildSiteSearchItems(): SearchItem[] {
       section: "Actions",
       glyph: "✉",
       hint: "external",
-      description: "stephen@stephenjdunn.com",
+      description: "stephendunn2424@gmail.com",
       externalHref: buildMailtoLink(profileData.contact.quickMessageSubject),
-      keywords: ["email", "contact", "mailto", "stephen@stephenjdunn.com"]
+      keywords: ["email", "contact", "mailto", "stephendunn2424@gmail.com"]
     },
     {
       id: "action:apollo-labs",

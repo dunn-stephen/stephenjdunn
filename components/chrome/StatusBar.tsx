@@ -30,13 +30,27 @@ export function StatusBar() {
     return () => window.clearInterval(timer);
   }, []);
 
+  const scrollMainToTop = () => {
+    document.querySelector("main")?.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <footer className="flex flex-col justify-between gap-2 border-t border-border bg-surface px-4 py-2 text-[0.58rem] uppercase tracking-[0.16em] text-subtle sm:flex-row sm:items-center">
-      <p>
+      <div className="flex items-center justify-between gap-4 sm:hidden">
+        <button
+          type="button"
+          onClick={scrollMainToTop}
+          className="text-[0.58rem] uppercase tracking-[0.16em] text-subtle transition hover:text-accent"
+        >
+          ↑ Top
+        </button>
+        <p>{clock}</p>
+      </div>
+      <p className="hidden sm:inline">
         <span className="text-muted">⌘P</span> nav · <span className="text-muted">⌘K</span> palette ·{" "}
         <span className="text-muted">1–5</span> navigate
       </p>
-      <p>{clock}</p>
+      <p className="hidden sm:block">{clock}</p>
     </footer>
   );
 }

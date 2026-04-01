@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import type { ProjectDetail as ProjectDetailType } from "@/lib/content";
 import Link from "next/link";
-import { BackLink, Panel, SectionLabel, StatusPill, Tag } from "@/components/shared/Tui";
+import { BackLink, Panel, SectionLabel, Tag } from "@/components/shared/Tui";
 
 type ProjectDetailProps = {
   project: ProjectDetailType;
@@ -15,16 +15,9 @@ export function ProjectDetail({ project, content }: ProjectDetailProps) {
       <BackLink href="/projects">Back to Projects</BackLink>
 
       <Panel className="space-y-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-[1rem] uppercase tracking-[0.28em] text-accent">{project.title}</h1>
-            <p className="mt-3 max-w-3xl text-[0.72rem] leading-7 text-muted">{project.description}</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <StatusPill status={project.status ?? "done"} />
-            <Tag accent>{project.primaryTech ?? project.tech[0]}</Tag>
-            <Tag>{project.displayMode}</Tag>
-          </div>
+        <div>
+          <h1 className="text-[1rem] uppercase tracking-[0.28em] text-accent">{project.title}</h1>
+          <p className="mt-3 max-w-3xl text-[0.72rem] leading-7 text-muted">{project.description}</p>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -45,7 +38,7 @@ export function ProjectDetail({ project, content }: ProjectDetailProps) {
               rel="noreferrer"
               className="inline-flex items-center gap-2 border border-border bg-panel px-3 py-2 text-[0.62rem] uppercase tracking-[0.14em] text-muted transition hover:border-[#6a320d] hover:text-accent"
             >
-              [ Demo ↗ ]
+              [ Visit Site ↗ ]
             </a>
           ) : null}
           {project.relatedPost ? (

@@ -20,7 +20,7 @@ export function QuickMessageForm() {
         const body = [`Name: ${name || "Anonymous"}`, "", message].join("\n");
         window.location.href = buildMailtoLink(profileData.contact.quickMessageSubject, body);
       }}
-      className="border border-border bg-panel p-4"
+      className="p-4"
     >
       <div className="mb-3">
         <label

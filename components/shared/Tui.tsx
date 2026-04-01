@@ -6,16 +6,19 @@ import type { ReactNode } from "react";
 export function Panel({
   children,
   className,
+  id,
   accent = false
 }: {
   children: ReactNode;
   className?: string;
+  id?: string;
   accent?: boolean;
 }) {
   return (
     <section
+      id={id}
       className={clsx(
-        "border border-border bg-panel px-4 py-4 sm:px-5",
+        "border border-border bg-panel px-4 py-4 transition-[border-color,box-shadow] duration-200 hover:border-[#6a320d] hover:shadow-[0_0_0_1px_rgba(232,100,12,0.22),0_0_18px_rgba(232,100,12,0.12)] sm:px-5",
         accent && "border-l-2 border-l-accent",
         className
       )}

@@ -1,0 +1,132 @@
+{
+  "ticker": {
+    "label": "Now",
+    "items": [
+      "Replace this line with your current focus",
+      "Add a second short update for visitors",
+      "Add a third status item when ready"
+    ]
+  },
+  "stats": [
+    {
+      "value": "00+",
+      "label": "Years Building"
+    },
+    {
+      "value": "00",
+      "label": "Active Projects"
+    },
+    {
+      "value": "00",
+      "label": "Featured Posts"
+    },
+    {
+      "value": "$0M+",
+      "label": "Impact Metric"
+    }
+  ],
+  "projects": {
+    "items": [
+      {
+        "index": "01",
+        "title": "Project Placeholder One",
+        "status": "active",
+        "description": "Replace this line with a concise summary of the first featured project.",
+        "tags": ["Primary Tag", "Stack", "Status"]
+      },
+      {
+        "index": "02",
+        "title": "Project Placeholder Two",
+        "status": "wip",
+        "description": "Use this row for another current build, experiment, or consulting engagement.",
+        "tags": ["Workflow", "Platform", "Launch"]
+      },
+      {
+        "index": "03",
+        "title": "Project Placeholder Three",
+        "status": "done",
+        "description": "Keep the copy short so the card stays dense and readable at a glance.",
+        "tags": ["Archive", "Case Study", "Notes"]
+      }
+    ]
+  },
+  "posts": {
+    "items": [
+      {
+        "date": "2026-00-00",
+        "meta": "X min read",
+        "title": "Post Placeholder One",
+        "description": "Replace with a one-line summary of a recent post or essay.",
+        "tags": ["Topic", "Writing"]
+      },
+      {
+        "date": "2026-00-00",
+        "meta": "X min read",
+        "title": "Post Placeholder Two",
+        "description": "Use this row for another article summary or note from the blog.",
+        "tags": ["Debugging", "Systems"]
+      },
+      {
+        "date": "2026-00-00",
+        "meta": "X min read",
+        "title": "Post Placeholder Three",
+        "description": "Keep titles and descriptions brief to preserve the terminal dashboard feel.",
+        "tags": ["Process", "Reflection"]
+      }
+    ]
+  },
+  "resume": {
+    "role": "Role Placeholder",
+    "company": "Company Placeholder",
+    "tenure": "Month YYYY - Present",
+    "summary": "Replace this paragraph with a short resume summary, current role snapshot, or positioning statement.",
+    "skills": [
+      {
+        "label": "Skill One",
+        "value": 90
+      },
+      {
+        "label": "Skill Two",
+        "value": 82
+      },
+      {
+        "label": "Skill Three",
+        "value": 75
+      },
+      {
+        "label": "Skill Four",
+        "value": 68
+      }
+    ]
+  },
+  "contact": {
+    "methods": [
+      {
+        "label": "Email",
+        "value": "your-email@example.com"
+      },
+      {
+        "label": "GitHub",
+        "value": "github.com/your-handle"
+      },
+      {
+        "label": "LinkedIn",
+        "value": "linkedin.com/in/your-profile"
+      },
+      {
+        "label": "Website",
+        "value": "your-site.com"
+      }
+    ],
+    "availability": [
+      {
+        "label": "Replace with your primary availability note",
+        "tone": "open"
+      },
+      {
+        "label": "Add a second note for speaking, advising, or consulting",
+        "tone": "neutral"
+      }
+    ]
+  }
+}

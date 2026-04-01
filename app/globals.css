@@ -5,16 +5,16 @@
 @tailwind utilities;
 
 :root {
-  --color-shell: #101214;
-  --color-surface: #171a1d;
-  --color-panel: #1d2125;
-  --color-panel-alt: #252a30;
-  --color-border: #363c43;
+  --color-shell: #0d0d0e;
+  --color-surface: #151516;
+  --color-panel: #1c1c1f;
+  --color-panel-alt: #242428;
+  --color-border: #3a3a3f;
   --color-text: #ece9e4;
   --color-dim: #c6c1ba;
   --color-muted: #c6c1ba;
-  --color-subtle: #9ea5ad;
-  --color-faint: #6e7680;
+  --color-subtle: #a5a5a5;
+  --color-faint: #787878;
   --color-accent: #e8640c;
   --color-accent-ink: #6d2e07;
   --color-accent-surface: #2b170a;
@@ -37,7 +37,7 @@ body {
   margin: 0;
   background:
     radial-gradient(circle at top, rgba(232, 100, 12, 0.09), transparent 32%),
-    linear-gradient(180deg, #0e1114 0%, #15191d 100%);
+    linear-gradient(180deg, #0b0b0c 0%, #141415 100%);
   color: var(--color-text);
   font-family:
     "Share Tech Mono",
@@ -85,7 +85,7 @@ select {
 
 .app-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #434a52 transparent;
+  scrollbar-color: #454549 transparent;
 }
 
 .app-scrollbar::-webkit-scrollbar {
