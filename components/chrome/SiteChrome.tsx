@@ -318,14 +318,14 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
           </button>
 
           <div className="flex items-center gap-1.5" aria-hidden="true">
-            <span className="relative flex h-[11px] w-[11px] items-center justify-center rounded-full bg-[#ff5f56]">
-              <X size={7} strokeWidth={2.5} className="absolute text-[#1c1c1f]" />
+            <span className="grid h-[11px] w-[11px] place-items-center rounded-full bg-[#ff5f56]">
+              <X size={7} strokeWidth={2.5} className="block text-[#1c1c1f]" />
             </span>
-            <span className="relative flex h-[11px] w-[11px] items-center justify-center rounded-full bg-[#ffbd2e]">
-              <Minus size={7} strokeWidth={2.5} className="absolute text-[#1c1c1f]" />
+            <span className="grid h-[11px] w-[11px] place-items-center rounded-full bg-[#ffbd2e]">
+              <Minus size={7} strokeWidth={2.5} className="block text-[#1c1c1f]" />
             </span>
-            <span className="relative flex h-[11px] w-[11px] items-center justify-center rounded-full bg-[#27c93f]">
-              <Maximize2 size={7} strokeWidth={2.2} className="absolute text-[#1c1c1f]" />
+            <span className="grid h-[11px] w-[11px] place-items-center rounded-full bg-[#27c93f]">
+              <Maximize2 size={7} strokeWidth={2.2} className="block text-[#1c1c1f]" />
             </span>
           </div>
 
