@@ -79,6 +79,10 @@ function getSecretCommandId(query: string) {
     return "star-wars";
   }
 
+  if (normalized === "weather") {
+    return "weather";
+  }
+
   return null;
 }
 
@@ -120,12 +124,9 @@ export function CommandPalette({
       return;
     }
 
-    setQuery(initialQuery);
-    setSelectedIndex(0);
-
     const timeout = window.setTimeout(() => inputRef.current?.focus(), 0);
     return () => window.clearTimeout(timeout);
-  }, [initialQuery, open]);
+  }, [open]);
 
   const closePalette = () => {
     onClose();

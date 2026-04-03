@@ -7,6 +7,9 @@ dist/
 tsconfig.tsbuildinfo
 tsconfig.typecheck.tsbuildinfo
 .DS_Store
+.env
+.env.*
+!.env.example
 
 # Playwright
 /test-results/

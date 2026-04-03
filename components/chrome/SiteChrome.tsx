@@ -10,6 +10,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CommandPalette } from "@/components/chrome/CommandPalette";
 import { SpaceInvadersModal } from "@/components/easter-eggs/SpaceInvadersModal";
 import { StarWarsModal } from "@/components/easter-eggs/StarWarsModal";
+import { WeatherModal } from "@/components/easter-eggs/WeatherModal";
 import { StatusBar } from "@/components/chrome/StatusBar";
 import {
   getActivePrimaryRoute,
@@ -492,6 +493,7 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
 
       <SpaceInvadersModal open={activeEasterEgg === "space-invaders"} onClose={closeEasterEgg} />
       <StarWarsModal open={activeEasterEgg === "star-wars"} onClose={closeEasterEgg} />
+      <WeatherModal open={activeEasterEgg === "weather"} onClose={closeEasterEgg} />
     </div>
   );
 }
