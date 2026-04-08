@@ -5,6 +5,18 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
+[[redirects]]
+  from = "https://space.stephenjdunn.com/"
+  to = "/easter-eggs/space-invaders/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://space.stephenjdunn.com/*"
+  to = "/easter-eggs/space-invaders/:splat"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
