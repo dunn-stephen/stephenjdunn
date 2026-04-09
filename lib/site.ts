@@ -147,9 +147,51 @@ export function getSectionState(pathname: string): {
     };
   }
 
+  if (pathname.startsWith("/easter-eggs/space-invaders")) {
+    return {
+      title: "SPACE INVADERS",
+      breadcrumb: {
+        href: "/" as Route,
+        label: "Home"
+      }
+    };
+  }
+
+  if (pathname.startsWith("/easter-eggs/weather")) {
+    return {
+      title: "WEATHER UPLINK",
+      breadcrumb: {
+        href: "/" as Route,
+        label: "Home"
+      }
+    };
+  }
+
+  if (pathname.startsWith("/easter-eggs/star-wars")) {
+    return {
+      title: "STAR WARS",
+      breadcrumb: {
+        href: "/" as Route,
+        label: "Home"
+      }
+    };
+  }
+
   return {
     title: getActivePrimaryRoute(pathname).label
   };
+}
+
+export function isStandaloneEasterEggRoute(pathname: string | null) {
+  if (!pathname) {
+    return false;
+  }
+
+  return (
+    pathname === "/easter-eggs/weather/index.html" ||
+    pathname === "/easter-eggs/star-wars/index.html" ||
+    pathname === "/easter-eggs/space-invaders/index.html"
+  );
 }
 
 export function isTypingTarget(target: EventTarget | null) {

@@ -9,7 +9,6 @@ type CommandPaletteProps = {
   items: SearchItem[];
   initialQuery?: string;
   onClose: () => void;
-  onSecretCommand: (id: string) => void;
   onSelect: (item: SearchItem) => void;
 };
 
@@ -68,30 +67,11 @@ function getSearchScore(item: SearchItem, terms: string[]) {
   return score;
 }
 
-function getSecretCommandId(query: string) {
-  const normalized = normalizeValue(query);
-
-  if (normalized === "spaceinvaders" || normalized === "space invaders" || normalized === "space-invaders") {
-    return "space-invaders";
-  }
-
-  if (normalized === "starwars" || normalized === "star wars" || normalized === "star-wars") {
-    return "star-wars";
-  }
-
-  if (normalized === "weather") {
-    return "weather";
-  }
-
-  return null;
-}
-
 export function CommandPalette({
   open,
   items,
   initialQuery = "",
   onClose,
-  onSecretCommand,
   onSelect
 }: CommandPaletteProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -188,11 +168,6 @@ export function CommandPalette({
 
                   if (event.key === "Enter") {
                     event.preventDefault();
-                    const secretCommandId = getSecretCommandId(query);
-                    if (secretCommandId) {
-                      onSecretCommand(secretCommandId);
-                      return;
-                    }
                     runSelected(selectedIndex);
                     return;
                   }

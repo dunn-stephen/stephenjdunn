@@ -1,5 +1,6 @@
 "use client";
 
+import clsx from "clsx";
 import type { FormEvent } from "react";
 import { useEffect, useRef } from "react";
 
@@ -8,9 +9,10 @@ type WeatherSearchProps = {
   loading: boolean;
   onQueryChange: (value: string) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  className?: string;
 };
 
-export function WeatherSearch({ query, loading, onQueryChange, onSubmit }: WeatherSearchProps) {
+export function WeatherSearch({ query, loading, onQueryChange, onSubmit, className }: WeatherSearchProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -18,10 +20,7 @@ export function WeatherSearch({ query, loading, onQueryChange, onSubmit }: Weath
   }, []);
 
   return (
-    <section className="border border-border bg-panel">
-      <div className="border-b border-border bg-panel-alt px-4 py-2 text-[0.58rem] uppercase tracking-[0.22em] text-subtle">
-        Live Query
-      </div>
+    <section className={clsx("border border-border bg-panel", className)}>
       <form onSubmit={onSubmit} className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center">
         <label htmlFor="weather-query" className="sr-only">
           Search weather by city or ZIP code
@@ -51,10 +50,6 @@ export function WeatherSearch({ query, loading, onQueryChange, onSubmit }: Weath
           {loading ? "Fetching" : "Search"}
         </button>
       </form>
-      <div className="border-t border-border px-4 py-2 text-[0.58rem] uppercase tracking-[0.16em] text-subtle">
-        Enter a city name or a 5-digit US ZIP code. The modal only opens from the secret `weather` command.
-      </div>
     </section>
   );
 }
-

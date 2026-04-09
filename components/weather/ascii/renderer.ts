@@ -334,14 +334,6 @@ function drawSceneHeader(grid: Grid, options: RenderSceneOptions) {
     drawText(grid, "examples: austin, tx   90210", 2, 5);
     return;
   }
-
-  const locationText = locationName ? `[ ${locationName.toLowerCase()} ]` : "[ weather uplink ]";
-  const summaryText = conditionLabel
-    ? `${conditionLabel.toLowerCase()}${typeof temperature === "number" ? `  ${Math.round(temperature)}f` : ""}`
-    : "live weather";
-
-  drawText(grid, locationText, 2, 1);
-  drawText(grid, summaryText, 2, 3);
 }
 
 export function renderWeatherScene(options: RenderSceneOptions) {
@@ -363,4 +355,3 @@ export function renderWeatherScene(options: RenderSceneOptions) {
 
   return grid.map((row) => row.join("")).join("\n");
 }
-

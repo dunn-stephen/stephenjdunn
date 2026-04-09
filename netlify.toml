@@ -12,8 +12,14 @@
   force = true
 
 [[redirects]]
-  from = "https://space.stephenjdunn.com/*"
-  to = "/easter-eggs/space-invaders/:splat"
+  from = "https://weather.stephenjdunn.com/"
+  to = "/easter-eggs/weather/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://starwars.stephenjdunn.com/"
+  to = "/easter-eggs/star-wars/index.html"
   status = 200
   force = true
 

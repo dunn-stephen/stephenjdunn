@@ -12,6 +12,7 @@ export type SearchItem = {
   description?: string;
   href?: Route;
   externalHref?: string;
+  externalTarget?: "_blank" | "_self";
 };
 
 function compactWhitespace(value: string) {
@@ -100,6 +101,47 @@ export function buildSiteSearchItems(): SearchItem[] {
       description: "apollolabsconsulting.com",
       externalHref: siteConfig.socialLinks.apolloLabs,
       keywords: ["apollo", "apollo labs", "consulting", "agency"]
+    },
+    {
+      id: "action:weather",
+      label: "Open Weather Uplink",
+      section: "Actions",
+      glyph: "↗",
+      hint: "external",
+      description: "weather.stephenjdunn.com",
+      externalHref: "https://weather.stephenjdunn.com",
+      externalTarget: "_self",
+      keywords: ["weather", "forecast", "rain", "temperature", "climate", "weather uplink", "meteorology"]
+    },
+    {
+      id: "action:star-wars",
+      label: "Open Star Wars Crawl",
+      section: "Actions",
+      glyph: "↗",
+      hint: "external",
+      description: "starwars.stephenjdunn.com",
+      externalHref: "https://starwars.stephenjdunn.com",
+      externalTarget: "_self",
+      keywords: ["star wars", "starwars", "star-wars", "sw", "ascii", "crawl", "galaxy", "easter egg"]
+    },
+    {
+      id: "action:space-invaders",
+      label: "Play Space Invaders",
+      section: "Actions",
+      glyph: "↗",
+      hint: "external",
+      description: "space.stephenjdunn.com",
+      externalHref: "https://space.stephenjdunn.com",
+      externalTarget: "_self",
+      keywords: [
+        "space invaders",
+        "space-invaders",
+        "spaceinvaders",
+        "space",
+        "invaders",
+        "arcade",
+        "easter egg"
+      ]
     }
   ];
 

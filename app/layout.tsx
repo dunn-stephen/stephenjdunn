@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import { buildSiteSearchItems } from "@/lib/search";
 import { siteConfig } from "@/lib/site";
-import { SiteChrome } from "@/components/chrome/SiteChrome";
+import { AppShell } from "@/components/chrome/AppShell";
 
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${siteConfig.domain}`),
@@ -35,9 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body className="app-scrollbar">
-        <SiteChrome paletteItems={paletteItems}>
-          {children}
-        </SiteChrome>
+        <AppShell paletteItems={paletteItems}>{children}</AppShell>
       </body>
     </html>
   );

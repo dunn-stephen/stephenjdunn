@@ -8,9 +8,6 @@ import { ArrowLeftFromLine, ArrowRightFromLine, Github, Linkedin, Mail, Maximize
 import type { FormEvent, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CommandPalette } from "@/components/chrome/CommandPalette";
-import { SpaceInvadersModal } from "@/components/easter-eggs/SpaceInvadersModal";
-import { StarWarsModal } from "@/components/easter-eggs/StarWarsModal";
-import { WeatherModal } from "@/components/easter-eggs/WeatherModal";
 import { StatusBar } from "@/components/chrome/StatusBar";
 import {
   getActivePrimaryRoute,
@@ -185,13 +182,11 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [paletteInitialQuery, setPaletteInitialQuery] = useState("");
   const [headerSearchQuery, setHeaderSearchQuery] = useState("");
-  const [activeEasterEgg, setActiveEasterEgg] = useState<string | null>(null);
   const mobileNavOpen = mobileNavPathname === pathname;
 
   const closeMobileNav = useCallback(() => setMobileNavPathname(null), []);
   const openMobileNav = useCallback(() => setMobileNavPathname(pathname), [pathname]);
   const closePalette = useCallback(() => setPaletteOpen(false), []);
-  const closeEasterEgg = useCallback(() => setActiveEasterEgg(null), []);
   const openPalette = useCallback((query = "") => {
     setMobileNavPathname(null);
     setPaletteInitialQuery(query);
@@ -216,11 +211,6 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
     setPaletteOpen(false);
     router.push(href);
   }, [router]);
-  const handleSecretCommand = useCallback((id: string) => {
-    setMobileNavPathname(null);
-    setPaletteOpen(false);
-    setActiveEasterEgg(id);
-  }, []);
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
@@ -241,12 +231,6 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
       }
 
       if (event.key === "Escape") {
-        if (activeEasterEgg) {
-          event.preventDefault();
-          setActiveEasterEgg(null);
-          return;
-        }
-
         if (paletteOpen) {
           event.preventDefault();
           setPaletteOpen(false);
@@ -281,7 +265,7 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
 
     window.addEventListener("keydown", handleKeydown);
     return () => window.removeEventListener("keydown", handleKeydown);
-  }, [activeEasterEgg, focusHeaderSearch, mobileNavOpen, paletteOpen, router]);
+  }, [focusHeaderSearch, mobileNavOpen, paletteOpen, router]);
 
   const runPaletteItem = (item: SearchItem) => {
     if (item.href) {
@@ -293,6 +277,8 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
       const isMailto = item.externalHref.startsWith("mailto:");
       if (isMailto) {
         window.location.href = item.externalHref;
+      } else if (item.externalTarget === "_self") {
+        window.location.assign(item.externalHref);
       } else {
         window.open(item.externalHref, "_blank", "noopener,noreferrer");
       }
@@ -487,13 +473,8 @@ export function SiteChrome({ children, paletteItems }: SiteChromeProps) {
         items={paletteItems}
         initialQuery={paletteInitialQuery}
         onClose={closePalette}
-        onSecretCommand={handleSecretCommand}
         onSelect={runPaletteItem}
       />
-
-      <SpaceInvadersModal open={activeEasterEgg === "space-invaders"} onClose={closeEasterEgg} />
-      <StarWarsModal open={activeEasterEgg === "star-wars"} onClose={closeEasterEgg} />
-      <WeatherModal open={activeEasterEgg === "weather"} onClose={closeEasterEgg} />
     </div>
   );
 }

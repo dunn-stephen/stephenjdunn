@@ -1,4 +1,19 @@
 import clsx from "clsx";
+import {
+  Cloud,
+  CloudDrizzle,
+  CloudFog,
+  CloudLightning,
+  CloudMoon,
+  CloudMoonRain,
+  CloudSnow,
+  CloudSun,
+  CloudSunRain,
+  MoonStar,
+  Sun,
+  type LucideIcon
+} from "lucide-react";
+import { useState } from "react";
 import { Panel, SectionLabel, Tag } from "@/components/shared/Tui";
 import {
   buildLocationLabel,
@@ -16,6 +31,27 @@ type WeatherDataPanelProps = {
   className?: string;
 };
 
+const weatherIconMap: Record<string, LucideIcon> = {
+  "01d": Sun,
+  "01n": MoonStar,
+  "02d": CloudSun,
+  "02n": CloudMoon,
+  "03d": Cloud,
+  "03n": Cloud,
+  "04d": Cloud,
+  "04n": Cloud,
+  "09d": CloudDrizzle,
+  "09n": CloudDrizzle,
+  "10d": CloudSunRain,
+  "10n": CloudMoonRain,
+  "11d": CloudLightning,
+  "11n": CloudLightning,
+  "13d": CloudSnow,
+  "13n": CloudSnow,
+  "50d": CloudFog,
+  "50n": CloudFog
+};
+
 function formatTemperature(value: number) {
   return `${Math.round(value)}F`;
 }
@@ -28,35 +64,9 @@ function formatPercent(value: number) {
   return `${Math.round(value)}%`;
 }
 
-function formatCategory(value: WeatherSnapshot["category"]) {
-  return toTitleCase(value.replace(/-/g, " "));
-}
-
 function formatVisibility(value: number) {
   const miles = value / 1609.344;
   return `${miles.toFixed(miles >= 10 ? 0 : 1)} mi`;
-}
-
-function formatOffset(seconds: number) {
-  const sign = seconds >= 0 ? "+" : "-";
-  const absoluteSeconds = Math.abs(seconds);
-  const hours = String(Math.floor(absoluteSeconds / 3600)).padStart(2, "0");
-  const minutes = String(Math.floor((absoluteSeconds % 3600) / 60)).padStart(2, "0");
-
-  return `UTC ${sign}${hours}:${minutes}`;
-}
-
-function formatObservedAt(timestamp: number, timezoneOffset: number) {
-  return formatWeatherTime(timestamp, timezoneOffset, {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit"
-  });
-}
-
-function formatCoordinate(value: number) {
-  return value.toFixed(4);
 }
 
 function formatOptionalSpeed(value: number | null) {
@@ -104,6 +114,18 @@ function formatPrecipitationVolume(value: number | null) {
   }
 
   return value.toFixed(value >= 1 ? 1 : 2);
+}
+
+function WeatherConditionIcon({
+  icon,
+  className
+}: {
+  icon: string;
+  className?: string;
+}) {
+  const Icon = weatherIconMap[icon] ?? Cloud;
+
+  return <Icon aria-hidden="true" className={clsx("shrink-0", className)} strokeWidth={1.8} />;
 }
 
 function SectionIntro({
@@ -213,15 +235,19 @@ function SummaryContent({
   }
 
   return (
-    <div className={clsx("flex h-full flex-col justify-between", className)}>
+    <div className={clsx("space-y-5", className)}>
       <div>
         <p className="text-[0.62rem] uppercase tracking-[0.18em] text-subtle">
           {buildLocationLabel(weather.location)}
         </p>
         <div className="mt-4 flex flex-wrap items-end gap-4">
           <div className="min-w-[140px]">
-            <p className="text-[2.8rem] leading-none text-accent">{formatTemperature(weather.current.temperature)}</p>
-            <p className="mt-3 text-[0.78rem] uppercase tracking-[0.14em] text-text">
+            <div className="flex items-end gap-3 text-accent">
+              <p className="text-[2.8rem] leading-none">{formatTemperature(weather.current.temperature)}</p>
+              <WeatherConditionIcon icon={weather.current.icon} className="mb-1 h-8 w-8" />
+            </div>
+            <p className="mt-3 flex items-center gap-2 text-[0.78rem] uppercase tracking-[0.14em] text-text">
+              <WeatherConditionIcon icon={weather.current.icon} className="h-4 w-4 text-subtle" />
               {toTitleCase(weather.current.description)}
             </p>
           </div>
@@ -231,22 +257,114 @@ function SummaryContent({
             <QuickStat label="Humidity" value={formatPercent(weather.current.humidity)} />
             <QuickStat label="Wind" value={formatWind(weather.current.windSpeed, weather.current.windDirection)} />
             <QuickStat label="UV Index" value={formatUvIndex(weather.current.uvIndex)} />
+            <QuickStat label="Sunrise" value={formatClock(weather.current.sunrise, weather.timezoneOffset)} />
+            <QuickStat label="Sunset" value={formatClock(weather.current.sunset, weather.timezoneOffset)} />
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Tag accent>{weather.current.isDay ? "Day" : "Night"}</Tag>
-          <Tag>{weather.current.condition}</Tag>
-          <Tag>{formatCategory(weather.category)}</Tag>
+type TelemetryContentProps = {
+  weather: WeatherSnapshot | null;
+  loading: boolean;
+  error: string | null;
+  className?: string;
+  title?: string | null;
+  subtitle?: string;
+  compact?: boolean;
+};
+
+export function TelemetryContent({
+  weather,
+  loading,
+  error,
+  className,
+  title = null,
+  subtitle,
+  compact = false
+}: TelemetryContentProps) {
+  if (loading) {
+    return (
+      <div className={className}>
+        {title ? <SectionIntro title={title} subtitle={subtitle} /> : null}
+        <p className="text-[0.7rem] leading-6 text-muted">Waiting for current telemetry and local daylight values.</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={className}>
+        {title ? <SectionIntro title={title} subtitle={subtitle} /> : null}
+        <p className="text-[0.7rem] leading-6 text-muted">Resolve the weather query to inspect detailed telemetry.</p>
+      </div>
+    );
+  }
+
+  if (!weather) {
+    return (
+      <div className={className}>
+        {title ? <SectionIntro title={title} subtitle={subtitle} /> : null}
+        <p className="text-[0.7rem] leading-6 text-muted">Detailed telemetry appears after a successful weather query.</p>
+      </div>
+    );
+  }
+
+  const primaryMetrics = [
+    ["Feels Like", formatTemperature(weather.current.feelsLike)],
+    ["Humidity", formatPercent(weather.current.humidity)],
+    ["Cloud Cover", formatPercent(weather.current.cloudCover)],
+    ["Pressure", formatPressure(weather.current.pressure)],
+    ["Dew Point", formatTemperature(weather.current.dewPoint)],
+    ["UV Index", formatUvIndex(weather.current.uvIndex)]
+  ] as const;
+
+  const secondaryMetrics = [
+    ["Wind", formatWind(weather.current.windSpeed, weather.current.windDirection)],
+    ["Wind Gust", formatOptionalSpeed(weather.current.windGust)],
+    ["Visibility", formatVisibility(weather.current.visibility)],
+    ["Precip 1H", formatPrecipitationVolume(weather.current.precipitationLastHour)],
+    ["Sunrise", formatClock(weather.current.sunrise, weather.timezoneOffset)],
+    ["Sunset", formatClock(weather.current.sunset, weather.timezoneOffset)]
+  ] as const;
+
+  const compactMetrics = [...primaryMetrics, ...secondaryMetrics];
+  const compactColumnSize = Math.ceil(compactMetrics.length / 3);
+  const compactColumns = compact
+    ? Array.from({ length: 3 }, (_, index) =>
+        compactMetrics.slice(index * compactColumnSize, (index + 1) * compactColumnSize)
+      ).filter((column) => column.length > 0)
+    : [];
+
+  return (
+    <div className={className}>
+      {title ? <SectionIntro title={title} subtitle={subtitle} /> : null}
+      {compact ? (
+        <div className="grid gap-x-6 gap-y-0 md:grid-cols-3">
+          {compactColumns.map((column, index) => (
+            <div key={index}>
+              {column.map(([label, value]) => (
+                <MetricRow key={label} label={label} value={value} />
+              ))}
+            </div>
+          ))}
         </div>
-      </div>
-
-      <div className="mt-4 grid gap-2 border-t border-border pt-4 text-[0.56rem] uppercase tracking-[0.16em] text-faint sm:grid-cols-2 xl:grid-cols-4">
-        <span>{`Observed ${formatObservedAt(weather.current.observedAt, weather.timezoneOffset)}`}</span>
-        <span>{`Sunrise ${formatClock(weather.current.sunrise, weather.timezoneOffset)}`}</span>
-        <span>{`Sunset ${formatClock(weather.current.sunset, weather.timezoneOffset)}`}</span>
-        <span>{formatOffset(weather.timezoneOffset)}</span>
-      </div>
+      ) : (
+        <div className="grid gap-x-6 lg:grid-cols-2">
+          <div>
+            {primaryMetrics.map(([label, value]) => (
+              <MetricRow key={label} label={label} value={value} />
+            ))}
+          </div>
+          <div>
+            {secondaryMetrics.map(([label, value]) => (
+              <MetricRow key={label} label={label} value={value} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -270,14 +388,20 @@ function HourlyForecastCard({
                 minute: "2-digit"
               })}
             </p>
-            <p className="mt-2 text-[1rem] text-accent">{formatTemperature(entry.temperature)}</p>
+            <div className="mt-2 flex items-center gap-2 text-accent">
+              <p className="text-[1rem]">{formatTemperature(entry.temperature)}</p>
+              <WeatherConditionIcon icon={entry.icon} className="h-4 w-4" />
+            </div>
           </div>
           <Tag accent={entry.isDay} className="shrink-0">
             {entry.isDay ? "Day" : "Night"}
           </Tag>
         </div>
 
-        <p className="mt-3 text-[0.62rem] uppercase tracking-[0.14em] text-text">{toTitleCase(entry.description)}</p>
+        <p className="mt-3 flex items-center gap-2 text-[0.62rem] uppercase tracking-[0.14em] text-text">
+          <WeatherConditionIcon icon={entry.icon} className="h-3.5 w-3.5 text-subtle" />
+          <span>{toTitleCase(entry.description)}</span>
+        </p>
         <div className="mt-3 space-y-2">
           <DetailRow label="Feels" value={formatTemperature(entry.feelsLike)} />
           <DetailRow label="POP" value={formatChance(entry.precipitationChance)} />
@@ -303,23 +427,40 @@ function HourlyForecastCard({
 
 function DailyForecastRow({
   entry,
-  timezoneOffset
+  timezoneOffset,
+  expanded,
+  onToggle
 }: {
   entry: DailyForecast;
   timezoneOffset: number;
+  expanded: boolean;
+  onToggle: () => void;
 }) {
   return (
-    <details className="group border border-border bg-surface px-3 py-3">
-      <summary className="list-none cursor-pointer [&::-webkit-details-marker]:hidden">
+    <details open={expanded} className="group border border-border bg-surface px-3 py-3">
+      <summary
+        className="list-none cursor-pointer [&::-webkit-details-marker]:hidden"
+        aria-expanded={expanded}
+        onClick={(event) => {
+          event.preventDefault();
+          onToggle();
+        }}
+      >
         <div className="grid items-start gap-3 md:grid-cols-[124px_104px_minmax(0,1fr)_92px_auto]">
           <p className="text-[0.58rem] uppercase tracking-[0.18em] text-subtle">
             {formatDailyDate(entry.timestamp, timezoneOffset)}
           </p>
-          <p className="text-[0.72rem] uppercase tracking-[0.12em] text-accent">
-            {formatTemperature(entry.tempMax)} / {formatTemperature(entry.tempMin)}
-          </p>
+          <div className="flex items-center gap-2 text-[0.72rem] uppercase tracking-[0.12em] text-accent">
+            <WeatherConditionIcon icon={entry.icon} className="h-4 w-4" />
+            <p>
+              {formatTemperature(entry.tempMax)} / {formatTemperature(entry.tempMin)}
+            </p>
+          </div>
           <div className="min-w-0">
-            <p className="truncate text-[0.66rem] uppercase tracking-[0.12em] text-text">{entry.condition}</p>
+            <p className="flex items-center gap-2 truncate text-[0.66rem] uppercase tracking-[0.12em] text-text">
+              <WeatherConditionIcon icon={entry.icon} className="h-3.5 w-3.5 text-subtle" />
+              <span className="truncate">{entry.condition}</span>
+            </p>
             <p className="mt-1 truncate text-[0.58rem] uppercase tracking-[0.14em] text-muted">
               {toTitleCase(entry.description)}
             </p>
@@ -402,32 +543,13 @@ function TelemetryPanel({
 
   return (
     <Panel className={className}>
-      <SectionIntro title="Detailed Telemetry" subtitle="Full current snapshot with aligned label and value pairs." />
-      <div className="grid gap-x-6 lg:grid-cols-2">
-        <div>
-          <MetricRow label="Observed" value={formatObservedAt(weather.current.observedAt, weather.timezoneOffset)} />
-          <MetricRow label="Temp" value={formatTemperature(weather.current.temperature)} />
-          <MetricRow label="Feels Like" value={formatTemperature(weather.current.feelsLike)} />
-          <MetricRow label="Humidity" value={formatPercent(weather.current.humidity)} />
-          <MetricRow label="Pressure" value={formatPressure(weather.current.pressure)} />
-          <MetricRow label="Dew Point" value={formatTemperature(weather.current.dewPoint)} />
-          <MetricRow label="UV Index" value={formatUvIndex(weather.current.uvIndex)} />
-          <MetricRow label="Cloud Cover" value={formatPercent(weather.current.cloudCover)} />
-          <MetricRow label="Visibility" value={formatVisibility(weather.current.visibility)} />
-        </div>
-        <div>
-          <MetricRow label="Wind" value={formatWind(weather.current.windSpeed, weather.current.windDirection)} />
-          <MetricRow label="Wind Gust" value={formatOptionalSpeed(weather.current.windGust)} />
-          <MetricRow label="Sunrise" value={formatClock(weather.current.sunrise, weather.timezoneOffset)} />
-          <MetricRow label="Sunset" value={formatClock(weather.current.sunset, weather.timezoneOffset)} />
-          <MetricRow label="Precip 1H" value={formatPrecipitationVolume(weather.current.precipitationLastHour)} />
-          <MetricRow label="Condition" value={weather.current.condition} />
-          <MetricRow label="Icon" value={weather.current.icon} />
-          <MetricRow label="Code" value={String(weather.current.conditionCode)} />
-          <MetricRow label="Coordinates" value={`${formatCoordinate(weather.location.lat)}, ${formatCoordinate(weather.location.lon)}`} />
-          <MetricRow label="UTC Offset" value={formatOffset(weather.timezoneOffset)} />
-        </div>
-      </div>
+      <TelemetryContent
+        weather={weather}
+        loading={loading}
+        error={error}
+        title="Detailed Telemetry"
+        subtitle="Full current snapshot with aligned label and value pairs."
+      />
     </Panel>
   );
 }
@@ -503,6 +625,8 @@ function DailyPanel({
   error: string | null;
   className?: string;
 }) {
+  const [detailsExpanded, setDetailsExpanded] = useState(false);
+
   if (loading) {
     return (
       <PlaceholderPanel
@@ -545,6 +669,8 @@ function DailyPanel({
             key={entry.timestamp}
             entry={entry}
             timezoneOffset={weather.timezoneOffset}
+            expanded={detailsExpanded}
+            onToggle={() => setDetailsExpanded((current) => !current)}
           />
         ))}
       </div>
