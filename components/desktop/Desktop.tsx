@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AboutDialog } from "@/components/desktop/AboutDialog";
+import { DesktopIcons } from "@/components/desktop/DesktopIcons";
 import { MenuBar } from "@/components/desktop/MenuBar";
 import { MobileFallback } from "@/components/desktop/MobileFallback";
 import { Wallpaper } from "@/components/desktop/Wallpaper";
@@ -39,6 +40,7 @@ export function Desktop({ projects }: DesktopProps) {
           console.info("Shut Down requested.");
         }}
       />
+      <DesktopIcons />
       <AboutDialog
         isOpen={aboutOpen}
         onClose={() => setAboutOpen(false)}
