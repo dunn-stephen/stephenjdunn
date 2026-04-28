@@ -57,6 +57,7 @@ body {
     linear-gradient(180deg, #85b7d3 0%, #77a8ca 26%, #6b99bc 60%, #5f88aa 100%);
   color: var(--color-text);
   font-family:
+    "Charcoal",
     Geneva,
     "Trebuchet MS",
     Tahoma,
@@ -355,6 +356,10 @@ button {
     inset 1px 1px 0 #ffffff,
     inset -1px -1px 0 #9d9d9d,
     0 1px 0 rgba(255, 255, 255, 0.55);
+  font-family:
+    "Chicago",
+    system-ui,
+    monospace;
 }
 
 .os9-menubar-button {
@@ -387,6 +392,10 @@ button {
     inset 1px 1px 0 #ffffff,
     inset -1px -1px 0 #9f9f9f,
     5px 6px 0 rgba(0, 0, 0, 0.18);
+  font-family:
+    "Chicago",
+    system-ui,
+    monospace;
 }
 
 .os9-menubar-status {
@@ -404,6 +413,10 @@ button {
   font-size: 11px;
   font-weight: 700;
   line-height: 1;
+  font-family:
+    "Chicago",
+    system-ui,
+    monospace;
 }
 
 .os9-button {
