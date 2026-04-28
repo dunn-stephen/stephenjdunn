@@ -1,7 +1,27 @@
+import { createElement } from "react";
 import type { AppDefinition, AppId, AppProps } from "@/types";
 
-function PlaceholderApp(_: AppProps) {
-  return null;
+function PlaceholderApp({ props }: AppProps) {
+  return createElement(
+    "div",
+    { className: "flex h-full flex-col gap-3 bg-[#f5f5f5] p-4 text-[12px] text-[#2b2b2b]" },
+    createElement(
+      "p",
+      { className: "font-['Chicago'] text-[13px]" },
+      "App content coming in Phase 4."
+    ),
+    props
+      ? createElement(
+          "pre",
+          { className: "os9-surface-inset overflow-auto p-2 text-[11px] leading-4 text-[#4a4a4a]" },
+          JSON.stringify(props, null, 2)
+        )
+      : createElement(
+          "p",
+          { className: "text-[#5a5a5a]" },
+          "This is a window-shell placeholder."
+        )
+  );
 }
 
 export const appRegistry: Record<AppId, AppDefinition> = {

@@ -250,14 +250,20 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
   },
   moveWindow: (id, position) => {
     const nextWindows = applyFocus(
-      get().windows.map((windowState) => (
-        windowState.id === id
-          ? {
-              ...windowState,
-              position: clampPosition(position, windowState.size)
-            }
-          : windowState
-      )),
+      get().windows.map((windowState) => {
+        if (windowState.id !== id) {
+          return windowState;
+        }
+
+        const frameSize = windowState.isShaded
+          ? { ...windowState.size, height: MENUBAR_HEIGHT }
+          : windowState.size;
+
+        return {
+          ...windowState,
+          position: clampPosition(position, frameSize)
+        };
+      }),
       id
     );
 
