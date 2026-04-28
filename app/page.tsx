@@ -1,6 +1,8 @@
-import { HomeSeoView } from "@/components/home/HomeSeoView";
-import { getAllPosts, getAllProjects, getResumeData } from "@/lib/content";
+import { Desktop } from "@/components/desktop/Desktop";
+import { getAllProjects } from "@/lib/projects";
 
-export default function HomePage() {
-  return <HomeSeoView projects={getAllProjects()} posts={getAllPosts()} resume={getResumeData()} />;
+export default async function HomePage() {
+  const projects = await getAllProjects();
+
+  return <Desktop projects={projects} />;
 }

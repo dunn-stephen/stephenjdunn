@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { siteConfig } from "@/lib/site";
-import { buildFinderTree } from "@/lib/os/finderTree";
-import { DesktopShellBridge } from "@/components/os/DesktopShellBridge";
 
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${siteConfig.domain}`),
@@ -30,13 +28,9 @@ export default function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const initialFinderTree = buildFinderTree();
-
   return (
     <html lang="en" data-scroll-behavior="smooth">
-      <body className="app-scrollbar">
-        <DesktopShellBridge initialFinderTree={initialFinderTree}>{children}</DesktopShellBridge>
-      </body>
+      <body className="app-scrollbar">{children}</body>
     </html>
   );
 }
