@@ -23,7 +23,7 @@ export function Desktop({ projects }: DesktopProps) {
   const [aboutOpen, setAboutOpen] = useState(false);
 
   useEffect(() => {
-    if (soundInitialized) {
+    if (isMobile || soundInitialized) {
       return;
     }
 
@@ -38,33 +38,32 @@ export function Desktop({ projects }: DesktopProps) {
       window.removeEventListener("pointerdown", handleUnlock);
       window.removeEventListener("keydown", handleUnlock);
     };
-  }, [initializeSound, soundInitialized]);
-
-  if (isMobile) {
-    return <MobileFallback />;
-  }
+  }, [initializeSound, isMobile, soundInitialized]);
 
   return (
-    <main
-      className="fixed inset-0 overflow-hidden bg-[#C0C0C0]"
-      data-project-count={projects.length}
-    >
-      <Wallpaper />
-      <MenuBar
-        activeAppName="Finder"
-        soundEnabled={soundEnabled}
-        onAbout={() => setAboutOpen(true)}
-        onToggleSound={toggleSound}
-        onShutDown={() => {
-          // Task 1.2 only needs the Apple menu action present.
-          console.info("Shut Down requested.");
-        }}
-      />
-      <DesktopIcons />
-      <AboutDialog
-        isOpen={aboutOpen}
-        onClose={() => setAboutOpen(false)}
-      />
-    </main>
+    <>
+      <main
+        className="fixed inset-0 overflow-hidden bg-[#C0C0C0] max-md:hidden"
+        data-project-count={projects.length}
+      >
+        <Wallpaper />
+        <MenuBar
+          activeAppName="Finder"
+          soundEnabled={soundEnabled}
+          onAbout={() => setAboutOpen(true)}
+          onToggleSound={toggleSound}
+          onShutDown={() => {
+            // Task 1.2 only needs the Apple menu action present.
+            console.info("Shut Down requested.");
+          }}
+        />
+        <DesktopIcons />
+        <AboutDialog
+          isOpen={aboutOpen}
+          onClose={() => setAboutOpen(false)}
+        />
+      </main>
+      <MobileFallback projects={projects} />
+    </>
   );
 }
