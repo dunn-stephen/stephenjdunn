@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        chicago: ["Chicago", "system-ui", "monospace"],
+        charcoal: ["Charcoal", "system-ui", "sans-serif"]
+      },
       colors: {
         shell: "var(--color-shell)",
         surface: "var(--color-surface)",
