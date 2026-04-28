@@ -54,42 +54,77 @@ function parseFrontmatter(data: Record<string, unknown>, slug: string): ProjectF
   };
 }
 
-async function readProjectFiles(slug: string): Promise<ProjectFile[]> {
-  const projectDirectory = path.join(PROJECTS_DIRECTORY, slug);
-  const entries = await fs.readdir(projectDirectory, { withFileTypes: true });
+function getImageMimeType(filename: string) {
+  if (filename.endsWith(".png")) {
+    return "image/png";
+  }
+
+  if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
+    return "image/jpeg";
+  }
+
+  if (filename.endsWith(".gif")) {
+    return "image/gif";
+  }
+
+  if (filename.endsWith(".webp")) {
+    return "image/webp";
+  }
+
+  return "image/svg+xml";
+}
+
+async function readProjectFilesFromDirectory(slug: string, directory: string, relativeDirectory = ""): Promise<ProjectFile[]> {
+  const entries = await fs.readdir(directory, { withFileTypes: true });
   const files: ProjectFile[] = [];
 
   for (const entry of entries) {
+    const absolutePath = path.join(directory, entry.name);
+    const relativePath = path.posix.join("content", "projects", slug, relativeDirectory, entry.name);
+
     if (entry.isDirectory()) {
+      files.push(...await readProjectFilesFromDirectory(
+        slug,
+        absolutePath,
+        path.posix.join(relativeDirectory, entry.name)
+      ));
       continue;
     }
 
-    const absolutePath = path.join(projectDirectory, entry.name);
-    const relativePath = path.posix.join("content", "projects", slug, entry.name);
-
     if (entry.name.endsWith(".mdx")) {
       const source = await fs.readFile(absolutePath, "utf8");
+      const parsed = matter(source);
 
       files.push({
         name: entry.name,
         type: "mdx",
         path: relativePath,
-        content: source
+        content: parsed.content
       });
 
       continue;
     }
 
     if (/\.(png|jpe?g|gif|webp|svg)$/i.test(entry.name)) {
+      const buffer = await fs.readFile(absolutePath);
+
       files.push({
         name: entry.name,
         type: "image",
-        path: relativePath
+        path: relativePath,
+        content: `data:${getImageMimeType(entry.name.toLowerCase())};base64,${buffer.toString("base64")}`
       });
     }
   }
 
-  return files.sort((left, right) => left.name.localeCompare(right.name));
+  return files;
+}
+
+async function readProjectFiles(slug: string): Promise<ProjectFile[]> {
+  const projectDirectory = path.join(PROJECTS_DIRECTORY, slug);
+  const files = await readProjectFilesFromDirectory(slug, projectDirectory);
+
+  return files.sort((left, right) => left.path.localeCompare(right.path));
 }
 
 async function readProject(slug: string): Promise<Project> {

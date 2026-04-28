@@ -1,4 +1,6 @@
 import { createElement } from "react";
+import { Finder } from "@/components/apps/finder/Finder";
+import { TextEdit } from "@/components/apps/textedit/TextEdit";
 import type { AppDefinition, AppId, AppProps } from "@/types";
 
 function PlaceholderApp({ props }: AppProps) {
@@ -33,7 +35,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     minSize: { width: 420, height: 300 },
     singleton: false,
     resizable: true,
-    component: PlaceholderApp
+    component: Finder
   },
   textedit: {
     id: "textedit",
@@ -43,7 +45,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     minSize: { width: 320, height: 220 },
     singleton: false,
     resizable: true,
-    component: PlaceholderApp
+    component: TextEdit
   },
   simpletext: {
     id: "simpletext",

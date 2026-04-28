@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { DesktopIcon } from "@/components/desktop/DesktopIcon";
 import { useSound } from "@/hooks/useSound";
 import { useWindowStore } from "@/lib/window-store";
-import type { AppId } from "@/types";
+import type { AppId, Project } from "@/types";
 
 const DESKTOP_ICON_POSITIONS_KEY = "desktop-icon-positions";
 const MENUBAR_HEIGHT = 28;
@@ -111,10 +111,11 @@ function clampPosition(position: IconPosition, viewport: { width: number; height
 }
 
 interface DesktopIconsProps {
+  projects: Project[];
   revealMode: "hidden" | "shown" | "stagger";
 }
 
-export function DesktopIcons({ revealMode }: DesktopIconsProps) {
+export function DesktopIcons({ projects, revealMode }: DesktopIconsProps) {
   const openWindow = useWindowStore((state) => state.openWindow);
   const { play: playClick } = useSound("click");
   const { play: playAlert } = useSound("alert");
@@ -210,7 +211,10 @@ export function DesktopIcons({ revealMode }: DesktopIconsProps) {
             }
 
             playOpen();
-            openWindow(item.appId, item.windowProps);
+            openWindow(item.appId, {
+              ...(item.appId === "finder" ? { projects } : {}),
+              ...item.windowProps
+            });
           }}
           onPointerDown={(event) => {
             event.preventDefault();

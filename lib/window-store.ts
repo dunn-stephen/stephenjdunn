@@ -51,6 +51,7 @@ function getNextFocusedWindowId(windows: WindowState[], excludedId?: string) {
 function createWindowState(appId: AppId, existingWindows: WindowState[], props?: Record<string, unknown>): WindowState {
   const definition = appRegistry[appId];
   const cascadeIndex = existingWindows.length;
+  const title = typeof props?.title === "string" ? props.title : definition.name;
   const position = clampPosition(
     {
       x: 80 + cascadeIndex * CASCADE_OFFSET,
@@ -62,7 +63,7 @@ function createWindowState(appId: AppId, existingWindows: WindowState[], props?:
   return {
     id: `${appId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     appId,
-    title: definition.name,
+    title,
     isOpen: true,
     isMinimized: false,
     isMaximized: false,

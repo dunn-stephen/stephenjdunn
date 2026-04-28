@@ -124,7 +124,10 @@ export function Desktop({ projects }: DesktopProps) {
             console.info("Shut Down requested.");
           }}
         />
-        <DesktopIcons revealMode={iconRevealMode} />
+        <DesktopIcons
+          projects={projects}
+          revealMode={iconRevealMode}
+        />
         <WindowManager />
         <AboutDialog
           isOpen={aboutOpen}
