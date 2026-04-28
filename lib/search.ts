@@ -15,6 +15,20 @@ export type SearchItem = {
   externalTarget?: "_blank" | "_self";
 };
 
+export interface SearchableItem {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  tags: string[];
+  content: string;
+}
+
+export interface SearchResult {
+  item: SearchableItem;
+  score: number;
+}
+
 function compactWhitespace(value: string) {
   return value.replace(/\s+/g, " ").trim();
 }
@@ -210,4 +224,21 @@ export function buildSiteSearchItems(): SearchItem[] {
   );
 
   return items;
+}
+
+export async function buildSearchIndex(): Promise<SearchableItem[]> {
+  return [];
+}
+
+export function search(query: string, index: SearchableItem[]): SearchResult[] {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (normalizedQuery.length === 0) {
+    return index.map((item) => ({
+      item,
+      score: 1
+    }));
+  }
+
+  return [];
 }
