@@ -32,17 +32,22 @@ function useClockLabel() {
 export function MenuBar(props: MenuBarProps) {
   const formatter = useClockLabel();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const [tick, setTick] = useState(() => Date.now());
+  const [tick, setTick] = useState<number | null>(null);
 
   useEffect(() => {
-    const interval = window.setInterval(() => {
+    const updateTick = () => {
       setTick(Date.now());
+    };
+
+    updateTick();
+    const interval = window.setInterval(() => {
+      updateTick();
     }, 1000 * 30);
 
     return () => window.clearInterval(interval);
   }, []);
 
-  const time = formatter.format(new Date(tick));
+  const time = tick === null ? "" : formatter.format(new Date(tick));
   const menus = [
     {
       id: "apple",
