@@ -140,6 +140,8 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
           return windowState;
         }
 
+        const definition = appRegistry[windowState.appId];
+
         if (windowState.isMaximized && windowState.restoreBounds) {
           return {
             ...windowState,
@@ -157,7 +159,7 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
           position: { x: 0, y: MENUBAR_HEIGHT },
           size: {
             width: viewport.width,
-            height: Math.max(windowState.size.height, viewport.height - MENUBAR_HEIGHT)
+            height: Math.max(definition.minSize.height, viewport.height - MENUBAR_HEIGHT)
           },
           restoreBounds: {
             position: windowState.position,
