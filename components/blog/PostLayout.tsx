@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import type { BlogDetail, BlogFrontmatter } from "@/lib/content";
+import type { BlogDetail } from "@/lib/content";
+import type { BlogFrontmatter } from "@/lib/content-schema";
 import { DEFAULT_READ_TIME_MINUTES } from "@/lib/contentConstants";
 import Link from "next/link";
 import { BackLink, Panel, SectionLabel, Tag } from "@/components/shared/Tui";

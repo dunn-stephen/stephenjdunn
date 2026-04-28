@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { BlogFrontmatter } from "@/lib/content";
+import type { BlogFrontmatter } from "@/lib/content-schema";
 import { SectionLabel, Tag } from "@/components/shared/Tui";
 import { DEFAULT_READ_TIME_MINUTES } from "@/lib/contentConstants";
 

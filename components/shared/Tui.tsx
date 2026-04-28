@@ -17,11 +17,7 @@ export function Panel({
   return (
     <section
       id={id}
-      className={clsx(
-        "border border-border bg-panel px-4 py-4 transition-[border-color,box-shadow] duration-200 hover:border-[#6a320d] hover:shadow-[0_0_0_1px_rgba(232,100,12,0.22),0_0_18px_rgba(232,100,12,0.12)] sm:px-5",
-        accent && "border-l-2 border-l-accent",
-        className
-      )}
+      className={clsx("os9-panel rounded-[3px] px-4 py-4 sm:px-5", accent && "os9-panel-accent", className)}
     >
       {children}
     </section>
@@ -36,7 +32,12 @@ export function SectionLabel({
   className?: string;
 }) {
   return (
-    <p className={clsx("mb-3 text-[0.6rem] uppercase tracking-[0.32em] text-subtle", className)}>
+    <p
+      className={clsx(
+        "mb-3 text-[11px] font-bold uppercase tracking-[0.12em] text-subtle",
+        className
+      )}
+    >
       {children}
     </p>
   );
@@ -54,8 +55,10 @@ export function Tag({
   return (
     <span
       className={clsx(
-        "inline-flex items-center border px-2 py-1 text-[0.6rem] uppercase tracking-[0.16em]",
-        accent ? "border-[#6a320d] bg-accent-surface text-accent" : "border-border bg-surface text-muted",
+        "inline-flex items-center rounded-[2px] border px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em]",
+        accent
+          ? "border-[#6a88b3] bg-accent-surface text-accent-ink"
+          : "border-[#8c8c8c] bg-[#f3f3f3] text-subtle",
         className
       )}
     >
@@ -66,25 +69,28 @@ export function Tag({
 
 export function ProgressMeter({ label, value }: { label: string; value: number }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="min-w-[128px] text-[0.68rem] text-muted">{label}</span>
-      <div className="h-[6px] flex-1 border border-border bg-surface">
-        <div className="h-full bg-accent" style={{ width: `${value}%` }} />
+    <div className="grid items-center gap-2 sm:grid-cols-[120px_minmax(0,1fr)_44px]">
+      <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-subtle">{label}</span>
+      <div className="os9-surface-inset h-4 overflow-hidden rounded-[2px]">
+        <div
+          className="h-full border-r border-[#5d7da6] bg-[linear-gradient(180deg,#7fb0e3_0%,#2e67a8_100%)]"
+          style={{ width: `${value}%` }}
+        />
       </div>
-      <span className="min-w-[34px] text-right text-[0.6rem] text-accent">{value}%</span>
+      <span className="text-right text-[11px] font-bold text-accent-ink">{value}%</span>
     </div>
   );
 }
 
 const statusToneMap = {
-  active: "border-[#3a1800] text-accent",
-  done: "border-border bg-surface text-subtle",
-  wip: "border-[#5f471d] bg-[#2a1e0f] text-[#d59a56]"
+  active: "border-[#5d7da6] bg-[#dce9fb] text-accent-ink",
+  done: "border-[#8c8c8c] bg-[#efefef] text-subtle",
+  wip: "border-[#9a8a47] bg-[#fff4cc] text-[#705f11]"
 } as const;
 
 const statusLabelMap = {
-  active: "ACTIVE",
-  done: "DONE",
+  active: "Active",
+  done: "Done",
   wip: "WIP"
 } as const;
 
@@ -98,7 +104,7 @@ export function StatusPill({
   return (
     <span
       className={clsx(
-        "inline-flex min-w-[58px] items-center justify-center border px-2 py-1 text-[0.58rem] uppercase tracking-[0.18em]",
+        "inline-flex min-w-[60px] items-center justify-center rounded-[2px] border px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em]",
         statusToneMap[status],
         className
       )}
@@ -116,11 +122,8 @@ export function BackLink({
   children: ReactNode;
 }) {
   return (
-    <Link
-      href={href}
-      className="inline-flex items-center gap-2 border border-border bg-panel px-3 py-1.5 text-[0.62rem] uppercase tracking-[0.14em] text-muted transition hover:border-[#6a320d] hover:text-accent"
-    >
-      <span aria-hidden="true">◄</span>
+    <Link href={href} className="os9-button inline-flex rounded-[2px]">
+      <span aria-hidden="true">◀</span>
       <span>{children}</span>
     </Link>
   );

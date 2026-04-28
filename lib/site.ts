@@ -1,7 +1,7 @@
 import type { Route } from "next";
 import profile from "@/content/profile.json";
 
-type ProfileData = {
+export type ProfileData = {
   name: string;
   domain: string;
   description: string;

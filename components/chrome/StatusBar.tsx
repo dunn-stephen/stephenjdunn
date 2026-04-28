@@ -3,54 +3,37 @@
 import { useEffect, useState } from "react";
 
 function formatDateTime(date: Date) {
-  const weekday = new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date).toUpperCase();
-  const day = [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, "0"),
-    String(date.getDate()).padStart(2, "0")
-  ].join("-");
-  const time = new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
     hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit"
+    minute: "2-digit"
   }).format(date);
-
-  return `${weekday} ${day} · ${time}`;
 }
 
 export function StatusBar() {
-  const [clock, setClock] = useState("-- --- --:--:--");
+  const [clock, setClock] = useState("Loading...");
 
   useEffect(() => {
     const updateClock = () => setClock(formatDateTime(new Date()));
 
     updateClock();
-    const timer = window.setInterval(updateClock, 1000);
+    const timer = window.setInterval(updateClock, 1000 * 30);
 
     return () => window.clearInterval(timer);
   }, []);
 
-  const scrollMainToTop = () => {
-    document.querySelector("main")?.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
-    <footer className="flex flex-col justify-between gap-2 border-t border-border bg-surface px-4 py-2 text-[0.58rem] uppercase tracking-[0.16em] text-subtle sm:flex-row sm:items-center">
-      <div className="flex items-center justify-between gap-4 sm:hidden">
-        <button
-          type="button"
-          onClick={scrollMainToTop}
-          className="text-[0.58rem] uppercase tracking-[0.16em] text-subtle transition hover:text-accent"
-        >
-          ↑ Top
-        </button>
-        <p>{clock}</p>
+    <footer className="pointer-events-none fixed bottom-3 left-3 right-3 z-30 flex justify-center sm:justify-end">
+      <div className="pointer-events-auto os9-surface-outset flex w-full max-w-[560px] flex-wrap items-center justify-between gap-2 rounded-[3px] px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-subtle sm:w-auto">
+        <div className="flex flex-wrap items-center gap-3">
+          <span>Command+K Find</span>
+          <span>1-5 Open</span>
+          <span>Esc Close</span>
+        </div>
+        <p className="text-text">{clock}</p>
       </div>
-      <p className="hidden sm:inline">
-        <span className="text-muted">⌘P</span> nav · <span className="text-muted">⌘K</span> palette ·{" "}
-        <span className="text-muted">1–5</span> navigate
-      </p>
-      <p className="hidden sm:block">{clock}</p>
     </footer>
   );
 }

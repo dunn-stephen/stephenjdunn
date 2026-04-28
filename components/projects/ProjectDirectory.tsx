@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ProjectFrontmatter } from "@/lib/content";
+import type { ProjectFrontmatter } from "@/lib/content-schema";
 import { SectionLabel, StatusPill, Tag } from "@/components/shared/Tui";
 
 type ProjectDirectoryProps = {
