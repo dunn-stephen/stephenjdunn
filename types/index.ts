@@ -79,6 +79,7 @@ export interface SoundStore {
   initialized: boolean;
   setEnabled: (enabled: boolean) => void;
   setInitialized: (initialized: boolean) => void;
+  initializeFromInteraction: () => Promise<void>;
   toggle: () => void;
   play: (sound: SoundId) => void;
 }

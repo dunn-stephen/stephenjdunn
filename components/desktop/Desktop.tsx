@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AboutDialog } from "@/components/desktop/AboutDialog";
 import { DesktopIcons } from "@/components/desktop/DesktopIcons";
 import { MenuBar } from "@/components/desktop/MenuBar";
@@ -17,8 +17,28 @@ interface DesktopProps {
 export function Desktop({ projects }: DesktopProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const soundEnabled = useSoundStore((state) => state.enabled);
+  const soundInitialized = useSoundStore((state) => state.initialized);
   const toggleSound = useSoundStore((state) => state.toggle);
+  const initializeSound = useSoundStore((state) => state.initializeFromInteraction);
   const [aboutOpen, setAboutOpen] = useState(false);
+
+  useEffect(() => {
+    if (soundInitialized) {
+      return;
+    }
+
+    const handleUnlock = () => {
+      void initializeSound();
+    };
+
+    window.addEventListener("pointerdown", handleUnlock, { once: true });
+    window.addEventListener("keydown", handleUnlock, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", handleUnlock);
+      window.removeEventListener("keydown", handleUnlock);
+    };
+  }, [initializeSound, soundInitialized]);
 
   if (isMobile) {
     return <MobileFallback />;

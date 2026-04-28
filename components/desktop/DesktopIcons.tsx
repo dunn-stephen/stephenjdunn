@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DesktopIcon } from "@/components/desktop/DesktopIcon";
+import { useSound } from "@/hooks/useSound";
 
 const DESKTOP_ICON_POSITIONS_KEY = "desktop-icon-positions";
 const MENUBAR_HEIGHT = 28;
@@ -102,6 +103,7 @@ function clampPosition(position: IconPosition, viewport: { width: number; height
 }
 
 export function DesktopIcons() {
+  const { play: playClick } = useSound("click");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [viewport, setViewport] = useState({ width: 1280, height: 800 });
   const [positions, setPositions] = useState<Record<string, IconPosition>>(() => {
@@ -175,7 +177,10 @@ export function DesktopIcons() {
           label={item.label}
           position={item.position}
           selected={selectedId === item.id}
-          onClick={() => setSelectedId(item.id)}
+          onClick={() => {
+            setSelectedId(item.id);
+            playClick();
+          }}
           onDoubleClick={() => {
             console.info(`Launch requested: ${item.launchTarget}`);
           }}
