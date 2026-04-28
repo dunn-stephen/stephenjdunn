@@ -6,8 +6,10 @@ import { AppleMenu } from "@/components/desktop/AppleMenu";
 
 interface MenuBarProps {
   activeAppName: string;
+  canCloseActiveApp: boolean;
   soundEnabled: boolean;
   onAbout: () => void;
+  onCloseActiveApp: () => void;
   onToggleSound: () => void;
   onShutDown: () => void;
 }
@@ -25,8 +27,10 @@ function useClockLabel() {
 
 export function MenuBar({
   activeAppName,
+  canCloseActiveApp,
   soundEnabled,
   onAbout,
+  onCloseActiveApp,
   onToggleSound,
   onShutDown
 }: MenuBarProps) {
@@ -92,9 +96,13 @@ export function MenuBar({
           />
           <AppMenu
             label={activeAppName}
+            canClose={canCloseActiveApp}
             isOpen={openMenu === "app"}
             onToggleOpen={() => setOpenMenu((current) => (current === "app" ? null : "app"))}
-            onSelect={() => setOpenMenu(null)}
+            onClose={() => {
+              setOpenMenu(null);
+              onCloseActiveApp();
+            }}
           />
         </div>
         <div className="flex items-center gap-2">

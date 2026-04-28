@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DesktopIcon } from "@/components/desktop/DesktopIcon";
 import { useSound } from "@/hooks/useSound";
+import { useWindowStore } from "@/lib/window-store";
+import type { AppId } from "@/types";
 
 const DESKTOP_ICON_POSITIONS_KEY = "desktop-icon-positions";
 const MENUBAR_HEIGHT = 28;
@@ -18,7 +20,9 @@ interface DesktopItem {
   id: string;
   label: string;
   icon: string;
-  launchTarget: string;
+  appId?: AppId;
+  windowProps?: Record<string, unknown>;
+  isVisualOnly?: boolean;
   defaultPosition: IconPosition;
 }
 
@@ -27,70 +31,74 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     id: "trash",
     label: "Trash",
     icon: "/icons/png/7.png",
-    launchTarget: "trash",
+    isVisualOnly: true,
     defaultPosition: { x: 1100, y: 620 }
   },
   {
     id: "read-me",
     label: "Read Me",
     icon: "/icons/png/28.png",
-    launchTarget: "textedit",
+    appId: "textedit",
     defaultPosition: { x: 24, y: 52 }
   },
   {
     id: "resume",
     label: "Resume",
     icon: "/icons/png/79.png",
-    launchTarget: "simpletext",
+    appId: "simpletext",
     defaultPosition: { x: 24, y: 148 }
   },
   {
     id: "mail",
     label: "Mail",
     icon: "/icons/png/20.png",
-    launchTarget: "mail",
+    appId: "mail",
     defaultPosition: { x: 24, y: 244 }
   },
   {
     id: "space-invaders",
     label: "Space Invaders",
     icon: "/icons/png/62.png",
-    launchTarget: "space-invaders",
+    appId: "space-invaders",
     defaultPosition: { x: 24, y: 340 }
   },
   {
     id: "projects",
     label: "Projects",
     icon: "/icons/png/37.png",
-    launchTarget: "finder",
+    appId: "finder",
     defaultPosition: { x: 24, y: 436 }
   },
   {
     id: "note-1",
     label: "Note 1",
     icon: "/icons/png/77.png",
-    launchTarget: "notepad:1",
+    appId: "notepad",
+    windowProps: { noteId: 1 },
     defaultPosition: { x: 128, y: 52 }
   },
   {
     id: "note-2",
     label: "Note 2",
     icon: "/icons/png/77.png",
-    launchTarget: "notepad:2",
+    appId: "notepad",
+    windowProps: { noteId: 2 },
     defaultPosition: { x: 128, y: 148 }
   },
   {
     id: "note-3",
     label: "Note 3",
     icon: "/icons/png/77.png",
-    launchTarget: "notepad:3",
+    appId: "notepad",
+    windowProps: { noteId: 3 },
     defaultPosition: { x: 128, y: 244 }
   },
   {
     id: "note-4",
     label: "Note 4",
     icon: "/icons/png/77.png",
-    launchTarget: "notepad:4",
+    appId: "notepad",
+    windowProps: { noteId: 4 },
     defaultPosition: { x: 128, y: 340 }
   }
 ];
@@ -103,7 +111,10 @@ function clampPosition(position: IconPosition, viewport: { width: number; height
 }
 
 export function DesktopIcons() {
+  const openWindow = useWindowStore((state) => state.openWindow);
   const { play: playClick } = useSound("click");
+  const { play: playAlert } = useSound("alert");
+  const { play: playOpen } = useSound("open");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [viewport, setViewport] = useState({ width: 1280, height: 800 });
   const [positions, setPositions] = useState<Record<string, IconPosition>>(() => {
@@ -182,7 +193,18 @@ export function DesktopIcons() {
             playClick();
           }}
           onDoubleClick={() => {
-            console.info(`Launch requested: ${item.launchTarget}`);
+            if (item.isVisualOnly) {
+              playAlert();
+              window.alert("This feature is not available.");
+              return;
+            }
+
+            if (!item.appId) {
+              return;
+            }
+
+            playOpen();
+            openWindow(item.appId, item.windowProps);
           }}
           onPointerDown={(event) => {
             event.preventDefault();
