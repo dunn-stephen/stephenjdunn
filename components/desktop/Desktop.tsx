@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { AboutDialog } from "@/components/desktop/AboutDialog";
+import { BootSequence } from "@/components/desktop/BootSequence";
 import { DesktopIcons } from "@/components/desktop/DesktopIcons";
 import { MenuBar } from "@/components/desktop/MenuBar";
 import { MobileFallback } from "@/components/desktop/MobileFallback";
@@ -17,6 +19,10 @@ interface DesktopProps {
   projects: Project[];
 }
 
+type BootState = "checking" | "playing" | "done";
+
+const BOOT_SESSION_KEY = "has-booted";
+
 export function Desktop({ projects }: DesktopProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const soundEnabled = useSoundStore((state) => state.enabled);
@@ -27,12 +33,33 @@ export function Desktop({ projects }: DesktopProps) {
   const focusedWindowId = useWindowStore((state) => state.focusedWindowId);
   const windows = useWindowStore((state) => state.windows);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [bootState, setBootState] = useState<BootState>("checking");
+  const [iconRevealMode, setIconRevealMode] = useState<"hidden" | "shown" | "stagger">("hidden");
 
   const activeWindow = useMemo(
     () => windows.find((windowState) => windowState.id === focusedWindowId) ?? null,
     [focusedWindowId, windows]
   );
   const activeAppName = activeWindow ? getAppDefinition(activeWindow.appId).name : "Finder";
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const hasBooted = window.sessionStorage.getItem(BOOT_SESSION_KEY);
+
+      if (hasBooted) {
+        setBootState("done");
+        setIconRevealMode("shown");
+        return;
+      }
+
+      setBootState("playing");
+      setIconRevealMode("hidden");
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   useEffect(() => {
     if (isMobile || soundInitialized) {
@@ -52,10 +79,32 @@ export function Desktop({ projects }: DesktopProps) {
     };
   }, [initializeSound, isMobile, soundInitialized]);
 
+  useEffect(() => {
+    if (iconRevealMode !== "stagger") {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setIconRevealMode("shown");
+    }, 800);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [iconRevealMode]);
+
+  const handleBootComplete = () => {
+    window.sessionStorage.setItem(BOOT_SESSION_KEY, "1");
+    setBootState("done");
+    setIconRevealMode("stagger");
+  };
+
   return (
     <>
       <main
-        className="fixed inset-0 overflow-hidden bg-[#C0C0C0] max-md:hidden"
+        className={`fixed inset-0 overflow-hidden bg-[#C0C0C0] transition-opacity max-md:hidden ${
+          bootState === "checking" ? "opacity-0" : "opacity-100"
+        }`}
         data-project-count={projects.length}
       >
         <Wallpaper />
@@ -75,7 +124,7 @@ export function Desktop({ projects }: DesktopProps) {
             console.info("Shut Down requested.");
           }}
         />
-        <DesktopIcons />
+        <DesktopIcons revealMode={iconRevealMode} />
         <WindowManager />
         <AboutDialog
           isOpen={aboutOpen}
@@ -83,6 +132,11 @@ export function Desktop({ projects }: DesktopProps) {
         />
       </main>
       <MobileFallback projects={projects} />
+      <AnimatePresence>
+        {bootState !== "done" ? (
+          <BootSequence onComplete={handleBootComplete} />
+        ) : null}
+      </AnimatePresence>
     </>
   );
 }

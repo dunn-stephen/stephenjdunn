@@ -110,7 +110,11 @@ function clampPosition(position: IconPosition, viewport: { width: number; height
   };
 }
 
-export function DesktopIcons() {
+interface DesktopIconsProps {
+  revealMode: "hidden" | "shown" | "stagger";
+}
+
+export function DesktopIcons({ revealMode }: DesktopIconsProps) {
   const openWindow = useWindowStore((state) => state.openWindow);
   const { play: playClick } = useSound("click");
   const { play: playAlert } = useSound("alert");
@@ -181,12 +185,14 @@ export function DesktopIcons() {
 
   return (
     <div className="absolute inset-0 pointer-events-none">
-      {items.map((item) => (
+      {items.map((item, index) => (
         <DesktopIcon
           key={item.id}
           icon={item.icon}
           label={item.label}
           position={item.position}
+          revealIndex={index}
+          revealMode={revealMode}
           selected={selectedId === item.id}
           onClick={() => {
             setSelectedId(item.id);
