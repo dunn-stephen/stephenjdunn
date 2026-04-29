@@ -1,5 +1,6 @@
 "use client";
 
+import { useSound } from "@/hooks/useSound";
 import { useEffect, useRef, useState } from "react";
 
 const SESSION_START_KEY = "os9-session-started-at";
@@ -49,6 +50,8 @@ export function About({ isOpen, onClose, onEasterEgg }: AboutProps) {
   const easterEggTriggered = useRef(false);
   const [elapsed, setElapsed] = useState(0);
   const [iconClicks, setIconClicks] = useState(0);
+  const { play: playClick } = useSound("click");
+  const { play: playClose } = useSound("close");
 
   useEffect(() => {
     if (startTime.current !== null) {
@@ -128,7 +131,10 @@ export function About({ isOpen, onClose, onEasterEgg }: AboutProps) {
           <div className="os9-titlebar-label">About This Computer</div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => {
+              playClose();
+              onClose();
+            }}
             className="os9-button px-2 py-0 text-[10px]"
           >
             Close
@@ -138,7 +144,10 @@ export function About({ isOpen, onClose, onEasterEgg }: AboutProps) {
         <div className="os9-window-body flex h-[calc(280px-28px)] flex-col gap-3 overflow-hidden px-4 py-4 text-[12px] leading-4 text-[#242424]">
           <div className="flex items-start gap-4">
             <HappyMacButton
-              onClick={() => setIconClicks((currentClicks) => currentClicks + 1)}
+              onClick={() => {
+                playClick();
+                setIconClicks((currentClicks) => currentClicks + 1);
+              }}
             />
 
             <div className="min-w-0 flex-1 space-y-1">

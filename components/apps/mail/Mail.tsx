@@ -1,5 +1,6 @@
 "use client";
 
+import { useSound } from "@/hooks/useSound";
 import { buildMailtoLink, siteConfig } from "@/lib/site";
 import type { AppProps } from "@/types";
 
@@ -8,6 +9,8 @@ const MAILTO_HREF = buildMailtoLink(MAIL_SUBJECT);
 const RECIPIENT_EMAIL = siteConfig.socialLinks.email.replace(/^mailto:/, "").split("?")[0];
 
 export function Mail(_: AppProps) {
+  const { play: playClick } = useSound("click");
+
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#d4d0c8] text-[#1f1f1f]">
       <div className="border-b border-[#8f8f8f] bg-[#d9d9d9] px-4 py-2">
@@ -46,7 +49,11 @@ export function Mail(_: AppProps) {
             </div>
 
             <div className="flex justify-end">
-              <a className="os9-button inline-flex rounded-[2px] px-4 py-1 text-[11px]" href={MAILTO_HREF}>
+              <a
+                className="os9-button inline-flex rounded-[2px] px-4 py-1 text-[11px]"
+                href={MAILTO_HREF}
+                onClick={() => playClick()}
+              >
                 Open in Mail
               </a>
             </div>

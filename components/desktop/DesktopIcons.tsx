@@ -10,8 +10,8 @@ import type { AppId, Project } from "@/types";
 
 const DESKTOP_ICON_POSITIONS_KEY = "desktop-icon-positions";
 const MENUBAR_HEIGHT = 28;
-const ICON_WIDTH = 84;
-const ICON_HEIGHT = 92;
+const ICON_WIDTH = 96;
+const ICON_HEIGHT = 112;
 
 interface IconPosition {
   x: number;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useReducer } from "react";
+import { useSound } from "@/hooks/useSound";
 import type { AppProps } from "@/types";
 
 type Operator = "add" | "subtract" | "multiply" | "divide";
@@ -423,6 +424,7 @@ function CalculatorButton({ definition, isActive, onPress }: CalculatorButtonPro
 
 export function Calculator(_: AppProps) {
   const [state, dispatch] = useReducer(calculatorReducer, INITIAL_STATE);
+  const { play: playClick } = useSound("click");
   const easterEggLabel = CALCULATOR_EASTER_EGGS[state.display];
 
   return (
@@ -455,7 +457,10 @@ export function Calculator(_: AppProps) {
                 key={`${buttonDefinition.label}-${buttonDefinition.action.type}`}
                 definition={buttonDefinition}
                 isActive={isActive}
-                onPress={dispatch}
+                onPress={(action) => {
+                  playClick();
+                  dispatch(action);
+                }}
               />
             );
           })}
