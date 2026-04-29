@@ -66,7 +66,7 @@ SKILLS
 
 Languages:    TypeScript, JavaScript, Swift, Python
 Frameworks:   Next.js, React, Node.js
-Tools:        MCP, Zustand, Tailwind CSS, Resend, Netlify
+Tools:        MCP, Zustand, Tailwind CSS, Netlify
 Other:        System design, API integration, developer tooling
 
 ────────────────────────────────────────────────
@@ -99,54 +99,23 @@ Site:      stephenjdunn.com
 
 ## Mail
 
-**Files:**
-- `components/apps/mail/Mail.tsx`
-- `app/api/contact/route.ts`
+**File:** `components/apps/mail/Mail.tsx`
 
 **Window size:** defaultSize 480×380, minSize 380×300, singleton, resizable
 
-**Form fields:**
-- Name (text input, required)
-- Email (email input, required)
-- Message (textarea, required, min-height 120px)
-- Honeypot (hidden text input, `name="website"` — if populated server-side, silently drop)
-- Send button
-
-**API route:**
-```typescript
-// POST /api/contact
-// Body: { name: string, email: string, message: string, website?: string }
-// If website is non-empty → silently return { success: true } (honeypot triggered)
-// Uses Resend to send to stephendunn2424@gmail.com
-// Returns: { success: true } or { error: string }
-```
-
-**Resend setup:**
-```typescript
-import { Resend } from 'resend'
-const resend = new Resend(process.env.RESEND_API_KEY)
-
-await resend.emails.send({
-  from: 'Portfolio Contact <noreply@stephenjdunn.com>',
-  to: 'stephendunn2424@gmail.com',
-  subject: `Portfolio message from ${name}`,
-  text: `From: ${name} <${email}>\n\n${message}`,
-})
-```
-
-**UI states:**
-- Default: form ready to fill
-- Loading: Send button shows "Sending…", inputs disabled
-- Success: form replaced with "Your message has been sent." + OK button that closes window
-- Error: alert dialog "Something went wrong. Please try again." form remains filled
+**Behavior:**
+- Window looks like a Classic Mac compose window
+- Read-only `To:` field is pre-filled with `stephendunn2424@gmail.com`
+- Single OS9-style button: `Open in Mail`
+- Clicking the button opens the visitor's default mail client via:
+  `mailto:stephendunn2424@gmail.com?subject=Hello from stephenjdunn.com`
+- No form state, no API route, no environment variables
 
 **Acceptance criteria:**
-- [ ] All three fields validate (non-empty, valid email format)
-- [ ] Honeypot field present and checked server-side
-- [ ] Loading state prevents double-submit
-- [ ] Email arrives at stephendunn2424@gmail.com
-- [ ] Success state renders and close button works
-- [ ] Error state renders with form still filled
+- [ ] Classic Mac compose styling renders correctly
+- [ ] `To:` field is pre-filled with `stephendunn2424@gmail.com`
+- [ ] `Open in Mail` button opens the exact `mailto:` link
+- [ ] No API route, no Resend dependency, no environment variables required
 
 ---
 
@@ -388,7 +357,7 @@ Uptime:             [real uptime since session start — e.g. "0:04:32"]
 stephenjdunn.com
 
 Built with: Next.js · TypeScript · Tailwind
-            Zustand · Framer Motion · MDX · Resend
+            Zustand · Framer Motion · MDX
 
 Deployed on: Netlify
 Icons: bearz314/MacOS9-icons (MIT)

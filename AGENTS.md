@@ -26,7 +26,7 @@ You are building **stephenjdunn.com** — a pixel-faithful macOS 9 desktop envir
 | State | Zustand |
 | Animation | Framer Motion (window open/close scale, desktop icon stagger, boot crossfade) |
 | Search | Fuse.js |
-| Email | Resend |
+| Email | `mailto:` launcher |
 | Fonts | Chicago/Charcoal-style web fonts, lazy-loaded |
 | Icons | bearz314/MacOS9-icons (primary), Slimes set (secondary) |
 | Deployment | Netlify |
@@ -70,8 +70,6 @@ stephenjdunn/
 │   ├── layout.tsx
 │   ├── page.tsx            ← renders the desktop shell (desktop + mobile detection)
 │   └── api/
-│       └── contact/
-│           └── route.ts    ← Resend mail endpoint
 ├── components/
 │   ├── desktop/            ← Desktop, Menubar, Icons, Wallpaper, BootSequence, MobileFallback
 │   ├── windows/            ← WindowFrame, WindowManager, TitleBar
@@ -149,11 +147,16 @@ npm run type-check   # tsc --noEmit — must pass with zero errors
 ```
 
 ### Git
+
+**Branch model:**
+- `staging` — the working branch. All development happens here. **This is the only branch Codex pushes to.**
+- `main` — production only. Never commit or push directly to `main`. Production is promoted via a PR from `staging` → `main` after full QA (Task 6.4 only).
+
 ```bash
 git status
 git add -A
 git commit -m "descriptive message"
-git push origin main
+git push origin staging          # always push to staging, never main
 ```
 
 Commit message format: `[scope] short description`
@@ -174,14 +177,15 @@ If `netlify status` does not show the correct project, run:
 netlify link          # link local repo to the Netlify project
 ```
 
-**Per-task commands:**
+**Per-task workflow:**
+Pushing to `staging` automatically triggers a Netlify staging deploy via GitHub integration. You do **not** need to run `netlify deploy` manually for regular tasks.
+
 ```bash
-netlify build                     # run Netlify build locally
-netlify deploy --prod             # deploy to production
-netlify open                      # open live site in browser
+netlify build                     # run Netlify build locally (Gate 3 check)
+netlify open                      # opens the most recent staging deploy in browser
 ```
 
-Always run `npm run build` before `netlify deploy --prod`. Never deploy a broken build.
+**`netlify deploy --prod` is reserved for Task 6.4 only** (final production ship). Do not run it at any other point.
 
 ---
 
@@ -214,18 +218,26 @@ npm run dev
 Open http://localhost:3000. Manually verify the feature you just built works as described in the task's acceptance criteria. Check browser console — zero errors, zero unhandled warnings.
 
 ### Gate 5 — Commit & push
+**Skip this gate if the task made no file changes** (e.g. Task 0.0 — pre-flight check). Only commit when there is actual work to commit.
+
 ```bash
 git add -A
 git commit -m "[scope] description"
-git push origin main
+git push origin staging          # always push to staging
 ```
 
-### Gate 6 — Deploy & verify live
+Pushing to `staging` automatically triggers a Netlify staging deploy.
+
+### Gate 6 — Verify staging deploy
+**Skip this gate if Gate 5 was skipped** (no file changes).
+
+After pushing, wait ~60 seconds for Netlify to build, then verify:
 ```bash
-netlify deploy --prod
-netlify open
+netlify open                     # opens the latest staging deploy in browser
 ```
-Confirm the feature works on the live URL (https://www.stephenjdunn.com). Check on both desktop and mobile viewport sizes.
+Confirm the feature works on the staging URL. Check browser console — zero errors. Check on both desktop and mobile viewport sizes.
+
+Do **not** run `netlify deploy --prod` here. That command is reserved for Task 6.4 only.
 
 ---
 
@@ -237,7 +249,7 @@ Confirm the feature works on the live URL (https://www.stephenjdunn.com). Check 
 - A required file, dependency, or asset is missing and you cannot source it
 - A task's acceptance criteria are ambiguous or contradictory
 - Two subagents have made conflicting changes to the same file
-- A `netlify deploy --prod` results in a broken live site
+- A staging deploy results in a broken staging site and you cannot fix it in 2 attempts
 
 When halting, output:
 ```
@@ -272,9 +284,10 @@ These systems have no shared file dependencies and can be built simultaneously:
 - **All apps** must be complete before the boot sequence is finalized (boot transitions into a working desktop)
 
 ### Merge discipline
-- Each subagent works on a feature branch: `git checkout -b feature/[scope]`
-- Branch merges to `main` only after all 6 gates pass
-- Never force push to main
+- Each subagent works on a feature branch off `staging`: `git checkout -b feature/[scope]`
+- Feature branches merge to `staging` (not `main`) only after all gates pass
+- Never push directly to `main` — `main` is production and is promoted via PR only (Task 6.4)
+- Never force push to any branch
 
 ---
 
@@ -284,9 +297,11 @@ These systems have no shared file dependencies and can be built simultaneously:
 - Do not add analytics or tracking of any kind
 - Do not use `any` in TypeScript
 - Do not deploy without passing `npm run build`
-- Do not commit broken code to main
+- Do not push to `main` — ever. `main` is production. All work goes to `staging`.
+- Do not run `netlify deploy --prod` except in Task 6.4 (final production ship)
 - Do not create CSS files (use Tailwind classes only, except `@font-face` in `globals.css`)
 - Do not skip verification gates, even for "small" changes
+- Do not skip Gates 5 and 6 unless the task made zero file changes
 - Do not make assumptions about ambiguous requirements — halt and surface them
 
 ---
@@ -300,7 +315,7 @@ The project is shippable when every item below is checked:
 - [ ] All 9 apps open, are draggable/resizable/windowshade-collapsible, and close correctly
 - [ ] Finder shows full project folder hierarchy with MDX content
 - [ ] SimpleText shows placeholder resume with LinkedIn button
-- [ ] Mail sends via Resend and shows confirmation dialog
+- [ ] Mail opens the visitor's default email client via `mailto:`
 - [ ] Space Invaders is playable
 - [ ] Sherlock search works across all project content
 - [ ] Calculator computes correctly

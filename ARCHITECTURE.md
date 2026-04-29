@@ -9,7 +9,6 @@
 The app is a **single Next.js page** (`app/page.tsx`) that renders a full-viewport desktop shell. Everything the user sees is React state — open windows, their positions, which app is focused, whether sound is on. There is no routing between pages for the desktop experience. The only real routes are:
 
 - `/` — the desktop (the entire app)
-- `/api/contact` — server-side Resend email endpoint
 
 MDX content is loaded at build time via Next.js static generation. No database. No server-side state.
 
@@ -230,11 +229,10 @@ Desktop icons are draggable and save their positions to `localStorage` key `desk
 - "View on LinkedIn" button in the header
 
 ### 5.5 Mail
-- Compose form: Name, Email, Message
-- Submit → POST to `/api/contact` → Resend sends email to stephendunn2424@gmail.com
-- Success → alert dialog: "Your message has been sent."
-- Error → alert dialog: "Something went wrong. Try again."
-- Honeypot hidden field for basic spam prevention
+- Classic Mac compose-window styling
+- Read-only `To:` field pre-filled with `stephendunn2424@gmail.com`
+- "Open in Mail" button opens `mailto:stephendunn2424@gmail.com?subject=Hello from stephenjdunn.com`
+- No API route or server-side mail handling
 
 ### 5.6 Space Invaders
 - Canvas-based game, self-contained in `components/apps/space-invaders/`
@@ -437,22 +435,6 @@ if (isMobile) return <MobileFallback />
 - "This experience is designed for desktop. Come back on a real computer."
 - GitHub link, LinkedIn link
 - Links to each of the 8 project URLs (for recruiters on mobile)
-
----
-
-## 13. API Route — Contact
-
-```typescript
-// app/api/contact/route.ts
-// POST { name, email, message }
-// → validates fields
-// → checks honeypot (if populated, silently drop)
-// → Resend sends to stephendunn2424@gmail.com
-// → returns { success: true } or { error: string }
-```
-
-Resend API key stored in `.env.local` as `RESEND_API_KEY`.
-On Netlify: set in environment variables in the Netlify dashboard.
 
 ---
 

@@ -153,13 +153,13 @@ Each app opens in a draggable, resizable window with authentic OS9 chrome.
 - Opened from Finder (double-click index.mdx) or from "Read Me" desktop icon
 - Stephen's bio at launch; also renders project case studies from Finder
 
-#### 5.5.3 Mail — Contact Form
+#### 5.5.3 Mail — Mailto Launcher
 
-- Name, Email, Message form styled like Classic Mac Mail
-- Submit → Next.js API route → Resend to Stephen's email
-- Honeypot hidden field for spam prevention
-- Success state: classic alert dialog
-- Error state: Sosumi alert
+- Classic Mac compose-window styling
+- Read-only `To:` field pre-filled with `stephendunn2424@gmail.com`
+- `Open in Mail` button opens the visitor's default email client
+- Uses `mailto:stephendunn2424@gmail.com?subject=Hello from stephenjdunn.com`
+- No form submission or server-side email handling
 
 #### 5.5.4 SimpleText — Resume Viewer
 
@@ -199,7 +199,7 @@ Each app opens in a draggable, resizable window with authentic OS9 chrome.
 - Opens from **Apple menu only** — not a desktop icon
 - Fixed 360×280px dialog, not resizable
 - Fake specs: "Mac OS 9.2.2", made-up CPU/RAM, real uptime counter (since session start)
-- Tech credits: Next.js, TypeScript, Tailwind, Zustand, Framer Motion, MDX, Resend; deployed on Netlify
+- Tech credits: Next.js, TypeScript, Tailwind, Zustand, Framer Motion, MDX; deployed on Netlify
 - Icon credits: bearz314/MacOS9-icons (MIT)
 
 ### 5.6 Mobile Experience
@@ -241,7 +241,7 @@ Functional, on-brand, doesn't try to fake a windowed UX on a phone.
 - **Animation:** Framer Motion (window open/close, windowshade, boot crossfade, icon stagger)
 - **Search:** Fuse.js for client-side fuzzy search
 - **Content:** MDX with frontmatter, organized as `content/projects/[slug]/`
-- **Mail:** Resend via Next.js API route
+- **Mail:** `mailto:` launcher to the visitor's default email client
 - **Hosting:** Netlify (existing, with GitHub continuous deployment)
 - **Domain:** stephenjdunn.com (existing)
 - **Analytics:** none
@@ -385,7 +385,7 @@ The site ships when:
 - [ ] Menu bar works: Apple menu (About, Sound toggle, Shut Down) + per-app menus
 - [ ] All 8 project folders are live with `index.mdx` content
 - [ ] Mobile fallback is live (boot + Sad Mac)
-- [ ] Contact form sends real email via Resend
+- [ ] Mail app opens the visitor's default email client via `mailto:`
 - [ ] Custom domain configured, HTTPS active
 - [ ] Sound toggle works and is respected across all apps
 - [ ] No console errors on any page

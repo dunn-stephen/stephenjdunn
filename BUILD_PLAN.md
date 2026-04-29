@@ -13,24 +13,34 @@
 ### Task 0.0 — Pre-flight check
 **Goal:** Verify every CLI tool and prerequisite is in place before writing a single line of code. This task must pass completely before any other task begins. Do not proceed if any check fails.
 
+**⚠️ This task makes no file changes. Gates 5 and 6 are skipped. Do not create an empty commit.**
+
 **Run these checks in order:**
 
 ```bash
 # ── 1. Node.js ────────────────────────────────────────────
 node --version
-# Must print a version number (v18+ required). If missing: install Node.js from nodejs.org
+# Must print v18 or higher. If missing: install from nodejs.org
 
 # ── 2. npm ────────────────────────────────────────────────
 npm --version
 # Must print a version number.
 
-# ── 3. Git ────────────────────────────────────────────────
+# ── 3. Git — branch and remote ────────────────────────────
 git --version
 # Must print a version number.
+
+git branch --show-current
+# Must print: staging
+# If on a different branch: git checkout staging
 
 git remote -v
 # Must show origin pointing to https://github.com/dunn-stephen/stephenjdunn
 # If wrong remote: git remote set-url origin https://github.com/dunn-stephen/stephenjdunn
+
+git status --short
+# Should be clean or show only expected untracked files.
+# If there are unexpected uncommitted changes, review before proceeding.
 
 # ── 4. Netlify CLI ────────────────────────────────────────
 netlify --version
@@ -41,7 +51,7 @@ netlify status
 #   Current user: [your account]
 #   Netlify Site Info: stephenjdunn  (ID: 652f6ca1-b6b3-47bb-8628-b7ed2f80e4b0)
 # If "Not linked": run `netlify link` and select the stephenjdunn project
-# If "Not logged in": run `netlify login` (opens browser for OAuth)
+# If "Not logged in": run `netlify login` (opens browser for OAuth — human step, halt if needed)
 
 # ── 5. Python 3 (for sound generation in Task 0.4) ────────
 python3 --version
@@ -52,8 +62,8 @@ pip3 install numpy scipy --break-system-packages 2>/dev/null || pip3 install num
 
 # ── 6. ffmpeg (for audio conversion) ─────────────────────
 ffmpeg -version 2>/dev/null && echo "ffmpeg available" || echo "ffmpeg not found"
-# ffmpeg is preferred but optional — the sound script has a fallback.
-# To install if missing: brew install ffmpeg  (macOS)  or  apt install ffmpeg  (Linux)
+# Preferred but optional — the sound script has a fallback without it.
+# To install: brew install ffmpeg  (macOS)  or  apt install ffmpeg  (Linux)
 
 # ── 7. curl ───────────────────────────────────────────────
 curl --version
@@ -65,11 +75,13 @@ curl --version
 **Acceptance criteria:**
 - [ ] `node --version` returns v18 or higher
 - [ ] `npm --version` returns a version number
+- [ ] `git branch --show-current` returns `staging`
 - [ ] `git remote -v` shows origin pointing to the correct GitHub repo
 - [ ] `netlify status` shows project linked to `stephenjdunn` (ID: 652f6ca1-b6b3-47bb-8628-b7ed2f80e4b0)
 - [ ] `python3 --version` returns Python 3.8+
 - [ ] `numpy` and `scipy` install without errors
 - [ ] `curl --version` returns a version number
+- [ ] Gates 5 and 6 skipped (no file changes in this task)
 
 ---
 
@@ -100,7 +112,7 @@ netlify status        # verify again
 **Commands:**
 ```bash
 npx create-next-app@latest . --typescript --tailwind --app --no-src-dir --import-alias "@/*"
-npm install zustand @next/mdx fuse.js resend framer-motion
+npm install zustand @next/mdx fuse.js framer-motion
 npm install -D @netlify/plugin-nextjs
 ```
 
@@ -116,7 +128,6 @@ npx tsc --noEmit         # must pass with zero errors
 - `tailwind.config.ts` — extend with Chicago/Charcoal font families (see ARCHITECTURE.md §10)
 - `app/globals.css` — add `@font-face` declarations (font files added in Task 0.3)
 - `tsconfig.json` — confirm `strict: true`
-- `.env.local` — add `RESEND_API_KEY=placeholder` (real key added before Task 4.4)
 
 **Acceptance criteria:**
 - [ ] `npm run build` passes
@@ -125,7 +136,7 @@ npx tsc --noEmit         # must pass with zero errors
 - [ ] Framer Motion resolves without type errors
 - [ ] `netlify build` passes locally
 
-**Verification:** Run all 6 gates from AGENTS.md §6. Deploy to Netlify. Confirm https://www.stephenjdunn.com loads (even if blank).
+**Verification:** Run Gates 1–5 from AGENTS.md §6. Push to `staging` — Netlify will auto-deploy. For Gate 6, run `netlify open` and confirm the staging deploy loads (even if blank). Do not deploy to production.
 
 ---
 
@@ -636,19 +647,17 @@ See `specs/finder.md` for full detail.
 ### Task 4.4 — Mail
 **Files:**
 - `components/apps/mail/Mail.tsx`
-- `app/api/contact/route.ts`
 
-**Pre-requisite:** `RESEND_API_KEY` must be set in `.env.local` and in Netlify environment variables before this task can be fully tested end-to-end. Verify with Stephen before testing.
-
-**Flow:** Name + Email + Message form → POST `/api/contact` → Resend → success/error dialog
+**Flow:** Classic Mac compose-window styling with:
+- a pre-filled `To:` field showing `stephendunn2424@gmail.com`
+- one OS9-style button: `Open in Mail`
+- clicking the button opens the visitor's default email client via `mailto:stephendunn2424@gmail.com?subject=Hello from stephenjdunn.com`
 
 **Acceptance criteria:**
-- [ ] All three fields validate (required, valid email format)
-- [ ] Honeypot field is present and checked server-side
-- [ ] Loading state prevents double-submit
-- [ ] Email arrives at stephendunn2424@gmail.com
-- [ ] Success dialog renders and close button works
-- [ ] Error dialog renders with form still filled
+- [ ] Window renders with Classic Mac compose styling
+- [ ] `To:` field is pre-filled with `stephendunn2424@gmail.com`
+- [ ] `Open in Mail` button opens `mailto:stephendunn2424@gmail.com?subject=Hello from stephenjdunn.com`
+- [ ] No API route, no Resend dependency, no environment variables required
 
 ---
 
@@ -741,7 +750,7 @@ export const NOTES: Record<number, { title: string; content: string }> = {
 - "Mac OS 9.2.2" + "© Apple Computer, Inc."
 - "Built-in Memory: 256 MB" + "Virtual Memory: Off"
 - "Stephen Dunn — Software Engineer"
-- Tech stack: Next.js, TypeScript, Tailwind, Zustand, Framer Motion, MDX, Resend
+- Tech stack: Next.js, TypeScript, Tailwind, Zustand, Framer Motion, MDX
 - Icons: bearz314/MacOS9-icons (MIT)
 
 **Easter egg hook:** clicking the Happy Mac icon 5× triggers the easter egg from Task 5.1.
@@ -799,7 +808,7 @@ Run through every item in AGENTS.md §10. Every box must be checked before proce
 - [ ] Chrome (latest)
 - [ ] Firefox (latest)
 - [ ] Safari (latest)
-Test the full user journey in each browser: boot → desktop → open all 9 apps → send test email → search → mobile viewport.
+Test the full user journey in each browser: boot → desktop → open all 9 apps → launch Mail → search → mobile viewport.
 
 ### Task 6.3 — Performance check
 ```bash
@@ -807,18 +816,37 @@ npm run build
 ```
 Check build output for bundle sizes. No single chunk should exceed 500kb. Verify lazy-loading is working for app components (`next/dynamic`).
 
-### Task 6.4 — Final deploy
+### Task 6.4 — Promote staging → production
+
+All prior tasks have been verified on staging. This task merges staging into main, triggering the production deploy.
+
+**Step 1 — Ensure staging is clean and fully up to date:**
 ```bash
-netlify deploy --prod
-netlify open
+git checkout staging
+git status              # must be clean
+git push origin staging # ensure all commits are pushed
 ```
-Verify live site at https://www.stephenjdunn.com. Walk through full user journey:
+
+**Step 2 — Open a PR on GitHub and merge staging → main:**
+```
+https://github.com/dunn-stephen/stephenjdunn/compare/main...staging
+```
+Title: `Release: stephenjdunn.com v1`
+Merge when ready. Netlify will automatically deploy `main` to production (https://www.stephenjdunn.com).
+
+**Step 3 — Wait for production deploy, then verify:**
+```bash
+netlify open            # opens the production site
+```
+Walk through the full user journey on the live production URL:
 1. Boot sequence plays
 2. Desktop loads with all icons
 3. Open each of the 9 apps
-4. Send a test email via Mail
+4. Open the Mail app and verify the `mailto:` launcher
 5. Search via Sherlock
 6. Trigger at least one easter egg
 7. Mobile viewport shows boot + Sad Mac
+
+**⚠️ This is the only time `main` is ever touched. Do not push to `main` directly — only via PR merge.**
 
 **Ship when all 6.1–6.4 tasks pass. Not before.**

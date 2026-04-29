@@ -1,5 +1,6 @@
 import { createElement } from "react";
 import { Finder } from "@/components/apps/finder/Finder";
+import { Mail } from "@/components/apps/mail/Mail";
 import { SimpleText } from "@/components/apps/simpletext/SimpleText";
 import { TextEdit } from "@/components/apps/textedit/TextEdit";
 import type { AppDefinition, AppId, AppProps } from "@/types";
@@ -66,7 +67,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     minSize: { width: 380, height: 300 },
     singleton: true,
     resizable: true,
-    component: PlaceholderApp
+    component: Mail
   },
   "space-invaders": {
     id: "space-invaders",

@@ -23,7 +23,7 @@ const RESUME_LINES = [
   "",
   "Languages:    TypeScript, JavaScript, Swift, Python",
   "Frameworks:   Next.js, React, Node.js",
-  "Tools:        MCP, Zustand, Tailwind CSS, Resend, Netlify",
+  "Tools:        MCP, Zustand, Tailwind CSS, Netlify",
   "Other:        System design, API integration, developer tooling",
   "",
   "----------------------------------------",

@@ -14,8 +14,6 @@ export const SOUNDS: Record<SoundId, string> = {
   alert: "/sounds/alert.mp3"
 };
 
-let sharedAudioContext: AudioContext | null = null;
-
 function readStoredPreference() {
   if (typeof window === "undefined") {
     return null;
@@ -36,34 +34,6 @@ function writeStoredPreference(enabled: boolean) {
   }
 
   window.localStorage.setItem(SOUND_PREFERENCE_KEY, String(enabled));
-}
-
-async function unlockAudioContext() {
-  if (typeof window === "undefined") {
-    return false;
-  }
-
-  const AudioContextConstructor =
-    window.AudioContext ??
-    (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-
-  if (!AudioContextConstructor) {
-    return false;
-  }
-
-  try {
-    if (!sharedAudioContext) {
-      sharedAudioContext = new AudioContextConstructor();
-    }
-
-    if (sharedAudioContext.state === "suspended") {
-      await sharedAudioContext.resume();
-    }
-
-    return sharedAudioContext.state === "running";
-  } catch {
-    return false;
-  }
 }
 
 function playSoundFile(sound: SoundId, enabled: boolean, initialized: boolean) {
@@ -89,12 +59,11 @@ export const useSoundStore = create<SoundStore>((set, get) => ({
       return;
     }
 
-    const allowed = await unlockAudioContext();
     const storedPreference = readStoredPreference();
 
     set({
       initialized: true,
-      enabled: allowed ? storedPreference ?? true : false
+      enabled: storedPreference ?? true
     });
   },
   toggle: () =>
