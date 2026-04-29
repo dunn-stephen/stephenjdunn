@@ -15,7 +15,7 @@ type CalculatorAction =
   | { type: "toggle-sign" }
   | { type: "percent" };
 
-type ButtonTone = "number" | "utility" | "operator" | "equals";
+type ButtonTone = "number" | "utility" | "operator";
 
 interface CalculatorState {
   display: string;
@@ -69,7 +69,7 @@ const BUTTONS: CalculatorButtonDefinition[] = [
   { label: "+", tone: "operator", action: { type: "set-operator", operator: "add" } },
   { label: "0", tone: "number", span: 2, action: { type: "input-digit", digit: "0" } },
   { label: ".", tone: "number", action: { type: "input-decimal" } },
-  { label: "=", tone: "equals", action: { type: "evaluate" } }
+  { label: "=", tone: "operator", action: { type: "evaluate" } }
 ];
 
 const CALCULATOR_EASTER_EGGS: Record<string, string> = {
@@ -397,8 +397,6 @@ function getButtonClasses(tone: ButtonTone) {
       return "border-[#616161] bg-[linear-gradient(180deg,#fefefe_0%,#d8d8d8_100%)] text-[#2b2b2b]";
     case "operator":
       return "border-[#5c5f67] bg-[linear-gradient(180deg,#f4f7fb_0%,#b7bec8_100%)] text-[#222a35]";
-    case "equals":
-      return "border-[#2b4e72] bg-[linear-gradient(180deg,#7fb2de_0%,#4f7fad_100%)] text-white";
     case "number":
     default:
       return "border-[#636363] bg-[linear-gradient(180deg,#ffffff_0%,#d0d0d0_100%)] text-[#1f1f1f]";
@@ -409,7 +407,7 @@ function CalculatorButton({ definition, isActive, onPress }: CalculatorButtonPro
   return (
     <button
       className={[
-        "flex h-[40px] items-center justify-center border text-[16px] font-['Chicago'] leading-none shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#8d8d8d] outline-none transition-none active:translate-y-px active:shadow-[inset_1px_1px_0_#8d8d8d,inset_-1px_-1px_0_#ffffff]",
+        "flex h-[40px] items-center justify-center border text-[16px] font-['Chicago'] leading-none shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#8d8d8d] outline-none transition-none focus:outline-none focus-visible:outline-none active:translate-y-px active:shadow-[inset_1px_1px_0_#8d8d8d,inset_-1px_-1px_0_#ffffff]",
         getButtonClasses(definition.tone)
       ].join(" ")}
       data-active={isActive ? "true" : undefined}

@@ -109,8 +109,8 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     id: "calculator",
     name: "Calculator",
     icon: "/icons/png/13.png",
-    defaultSize: { width: 240, height: 320 },
-    minSize: { width: 240, height: 320 },
+    defaultSize: { width: 280, height: 320 },
+    minSize: { width: 280, height: 320 },
     singleton: true,
     resizable: false,
     component: Calculator
