@@ -71,6 +71,11 @@ const BUTTONS: CalculatorButtonDefinition[] = [
   { label: "=", tone: "equals", action: { type: "evaluate" } }
 ];
 
+const CALCULATOR_EASTER_EGGS: Record<string, string> = {
+  "1337": "ELITE",
+  "80085": "HA. NICE."
+};
+
 function isErrorState(state: CalculatorState) {
   return state.display === "Error";
 }
@@ -418,6 +423,7 @@ function CalculatorButton({ definition, isActive, onPress }: CalculatorButtonPro
 
 export function Calculator(_: AppProps) {
   const [state, dispatch] = useReducer(calculatorReducer, INITIAL_STATE);
+  const easterEggLabel = CALCULATOR_EASTER_EGGS[state.display];
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#d4d0c8] p-2 text-[#1f1f1f]">
@@ -425,9 +431,15 @@ export function Calculator(_: AppProps) {
         <div className="os9-surface-inset flex items-end justify-end bg-[linear-gradient(180deg,#f8f8df_0%,#d8d8bf_100%)] px-3 py-2">
           <div
             aria-label="Calculator display"
-            className="w-full overflow-hidden text-right font-mono text-[31px] leading-none tracking-[-0.08em] text-[#202020]"
+            className={[
+              "w-full overflow-hidden text-right leading-none text-[#202020]",
+              easterEggLabel
+                ? "font-['Chicago'] text-[20px] tracking-[0.04em]"
+                : "font-mono text-[31px] tracking-[-0.08em]"
+            ].join(" ")}
+            data-calculator-easter-egg={easterEggLabel ? "triggered" : "idle"}
           >
-            {state.display}
+            {easterEggLabel ?? state.display}
           </div>
         </div>
 
