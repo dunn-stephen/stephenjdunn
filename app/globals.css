@@ -8,12 +8,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "Charcoal";
-  src: url("/fonts/charcoal.woff2") format("woff2");
-  font-display: swap;
-}
-
 :root {
   --color-shell: #6b99bc;
   --color-surface: #efefef;
@@ -57,7 +51,6 @@ body {
     linear-gradient(180deg, #85b7d3 0%, #77a8ca 26%, #6b99bc 60%, #5f88aa 100%);
   color: var(--color-text);
   font-family:
-    "Charcoal",
     Geneva,
     "Trebuchet MS",
     Tahoma,

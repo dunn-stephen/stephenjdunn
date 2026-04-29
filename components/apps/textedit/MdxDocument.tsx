@@ -55,19 +55,19 @@ const mdxComponents = {
   h1: (props: HTMLAttributes<HTMLHeadingElement>) => (
     <h1
       {...props}
-      className="mb-3 font-['Charcoal'] text-[18px] font-bold text-[#111111]"
+      className="mb-3 text-[18px] font-bold text-[#111111]"
     />
   ),
   h2: (props: HTMLAttributes<HTMLHeadingElement>) => (
     <h2
       {...props}
-      className="mb-3 mt-6 font-['Charcoal'] text-[15px] font-bold text-[#111111]"
+      className="mb-3 mt-6 text-[15px] font-bold text-[#111111]"
     />
   ),
   h3: (props: HTMLAttributes<HTMLHeadingElement>) => (
     <h3
       {...props}
-      className="mb-2 mt-5 font-['Charcoal'] text-[13px] font-bold text-[#111111]"
+      className="mb-2 mt-5 text-[13px] font-bold text-[#111111]"
     />
   ),
   hr: (props: HTMLAttributes<HTMLHRElement>) => (
@@ -110,7 +110,7 @@ const mdxComponents = {
   strong: (props: HTMLAttributes<HTMLElement>) => (
     <strong
       {...props}
-      className="font-['Charcoal'] font-bold text-[#111111]"
+      className="font-bold text-[#111111]"
     />
   ),
   ul: (props: HTMLAttributes<HTMLUListElement>) => (

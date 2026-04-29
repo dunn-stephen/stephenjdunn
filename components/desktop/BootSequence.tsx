@@ -25,6 +25,10 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
 
   useEffect(() => {
     const chimeTimer = window.setTimeout(() => {
+      if (typeof navigator !== "undefined" && "userActivation" in navigator && !navigator.userActivation.hasBeenActive) {
+        return;
+      }
+
       void initializeSound().then(() => {
         playSound("boot");
       });
