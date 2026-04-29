@@ -1,13 +1,15 @@
 import { createElement } from "react";
-import { Calculator } from "@/components/apps/calculator/Calculator";
-import { Finder } from "@/components/apps/finder/Finder";
-import { Mail } from "@/components/apps/mail/Mail";
-import { NotePad } from "@/components/apps/notepad/NotePad";
-import { Sherlock } from "@/components/apps/sherlock/Sherlock";
-import { SimpleText } from "@/components/apps/simpletext/SimpleText";
-import { SpaceInvaders } from "@/components/apps/space-invaders/SpaceInvaders";
-import { TextEdit } from "@/components/apps/textedit/TextEdit";
+import dynamic from "next/dynamic";
 import type { AppDefinition, AppId, AppProps } from "@/types";
+
+const Finder = dynamic<AppProps>(() => import("@/components/apps/finder/Finder").then((module) => module.Finder));
+const TextEdit = dynamic<AppProps>(() => import("@/components/apps/textedit/TextEdit").then((module) => module.TextEdit));
+const SimpleText = dynamic<AppProps>(() => import("@/components/apps/simpletext/SimpleText").then((module) => module.SimpleText));
+const Mail = dynamic<AppProps>(() => import("@/components/apps/mail/Mail").then((module) => module.Mail));
+const SpaceInvaders = dynamic<AppProps>(() => import("@/components/apps/space-invaders/SpaceInvaders").then((module) => module.SpaceInvaders));
+const Sherlock = dynamic<AppProps>(() => import("@/components/apps/sherlock/Sherlock").then((module) => module.Sherlock));
+const NotePad = dynamic<AppProps>(() => import("@/components/apps/notepad/NotePad").then((module) => module.NotePad));
+const Calculator = dynamic<AppProps>(() => import("@/components/apps/calculator/Calculator").then((module) => module.Calculator));
 
 function PlaceholderApp({ props }: AppProps) {
   return createElement(
