@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { AboutDialog } from "@/components/desktop/AboutDialog";
+import { About } from "@/components/apps/about/About";
 import { BootSequence } from "@/components/desktop/BootSequence";
 import { DesktopIcons } from "@/components/desktop/DesktopIcons";
 import { MenuBar } from "@/components/desktop/MenuBar";
@@ -35,6 +35,7 @@ export function Desktop({ projects, searchIndex }: DesktopProps) {
   const focusedWindowId = useWindowStore((state) => state.focusedWindowId);
   const windows = useWindowStore((state) => state.windows);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [aboutEasterEggTriggered, setAboutEasterEggTriggered] = useState(false);
   const [bootState, setBootState] = useState<BootState>("checking");
   const [iconRevealMode, setIconRevealMode] = useState<"hidden" | "shown" | "stagger">("hidden");
 
@@ -107,6 +108,7 @@ export function Desktop({ projects, searchIndex }: DesktopProps) {
         className={`fixed inset-0 overflow-hidden bg-[#C0C0C0] transition-opacity max-md:hidden ${
           bootState === "checking" ? "opacity-0" : "opacity-100"
         }`}
+        data-about-easter-egg={aboutEasterEggTriggered ? "triggered" : "idle"}
         data-project-count={projects.length}
       >
         <Wallpaper />
@@ -132,9 +134,10 @@ export function Desktop({ projects, searchIndex }: DesktopProps) {
           revealMode={iconRevealMode}
         />
         <WindowManager />
-        <AboutDialog
+        <About
           isOpen={aboutOpen}
           onClose={() => setAboutOpen(false)}
+          onEasterEgg={() => setAboutEasterEggTriggered(true)}
         />
       </main>
       <MobileFallback projects={projects} />
