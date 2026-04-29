@@ -128,11 +128,12 @@ function clampPosition(position: IconPosition, viewport: { width: number; height
 
 interface DesktopIconsProps {
   projects: Project[];
+  readMeContent: string;
   searchIndex: SearchableItem[];
   revealMode: "hidden" | "shown" | "stagger";
 }
 
-export function DesktopIcons({ projects, searchIndex, revealMode }: DesktopIconsProps) {
+export function DesktopIcons({ projects, readMeContent, searchIndex, revealMode }: DesktopIconsProps) {
   const openWindow = useWindowStore((state) => state.openWindow);
   const { play: playClick } = useSound("click");
   const { play: playAlert } = useSound("alert");
@@ -229,6 +230,7 @@ export function DesktopIcons({ projects, searchIndex, revealMode }: DesktopIcons
 
             playOpen();
             openWindow(item.appId, {
+              ...(item.appId === "textedit" ? { content: readMeContent, title: "Read Me" } : {}),
               ...(item.appId === "finder" || item.appId === "sherlock" ? { projects } : {}),
               ...(item.appId === "sherlock" ? { searchIndex } : {}),
               ...item.windowProps

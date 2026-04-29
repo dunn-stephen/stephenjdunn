@@ -18,6 +18,7 @@ import type { Project } from "@/types";
 
 interface DesktopProps {
   projects: Project[];
+  readMeContent: string;
   searchIndex: SearchableItem[];
 }
 
@@ -36,7 +37,7 @@ const ALL_APPS_EASTER_EGG_IDS = [
   "about"
 ] as const;
 
-export function Desktop({ projects, searchIndex }: DesktopProps) {
+export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const soundEnabled = useSoundStore((state) => state.enabled);
   const soundInitialized = useSoundStore((state) => state.initialized);
@@ -183,6 +184,7 @@ export function Desktop({ projects, searchIndex }: DesktopProps) {
         />
         <DesktopIcons
           projects={projects}
+          readMeContent={readMeContent}
           searchIndex={searchIndex}
           revealMode={iconRevealMode}
         />

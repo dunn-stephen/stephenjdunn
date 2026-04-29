@@ -1,5 +1,6 @@
 "use client";
 
+import { siteConfig } from "@/lib/site";
 import type { AppProps } from "@/types";
 
 const RESUME_LINES = [
@@ -49,7 +50,7 @@ export function SimpleText(_: AppProps) {
         <span className="font-['Chicago'] text-[11px] text-[#3f3f3f]">Resume</span>
         <a
           className="os9-button inline-flex rounded-[2px] px-3 py-1 text-[11px]"
-          href="https://www.linkedin.com/in/dunn-stephen"
+          href={siteConfig.socialLinks.linkedin}
           target="_blank"
           rel="noreferrer"
         >
