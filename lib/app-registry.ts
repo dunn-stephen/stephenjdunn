@@ -1,4 +1,5 @@
 import { createElement } from "react";
+import { Calculator } from "@/components/apps/calculator/Calculator";
 import { Finder } from "@/components/apps/finder/Finder";
 import { Mail } from "@/components/apps/mail/Mail";
 import { NotePad } from "@/components/apps/notepad/NotePad";
@@ -110,7 +111,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     minSize: { width: 240, height: 320 },
     singleton: true,
     resizable: false,
-    component: PlaceholderApp
+    component: Calculator
   },
   about: {
     id: "about",

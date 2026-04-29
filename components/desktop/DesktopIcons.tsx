@@ -109,6 +109,13 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     appId: "notepad",
     windowProps: { noteId: 4, title: NOTES[4].title },
     defaultPosition: { x: 128, y: 340 }
+  },
+  {
+    id: "calculator",
+    label: "Calculator",
+    icon: "/icons/png/13.png",
+    appId: "calculator",
+    defaultPosition: { x: 128, y: 436 }
   }
 ];
 
