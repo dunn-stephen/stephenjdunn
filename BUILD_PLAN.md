@@ -816,37 +816,24 @@ npm run build
 ```
 Check build output for bundle sizes. No single chunk should exceed 500kb. Verify lazy-loading is working for app components (`next/dynamic`).
 
-### Task 6.4 — Promote staging → production
+### Task 6.4 — Final staging verification
+Stephen handles production promotion. Your job ends here.
 
-All prior tasks have been verified on staging. This task merges staging into main, triggering the production deploy.
-
-**Step 1 — Ensure staging is clean and fully up to date:**
+Ensure staging is clean and fully deployed:
 ```bash
 git checkout staging
-git status              # must be clean
-git push origin staging # ensure all commits are pushed
+git status           # must be clean
+git push origin staging
+netlify open         # verify the staging deploy is working end-to-end
 ```
 
-**Step 2 — Open a PR on GitHub and merge staging → main:**
-```
-https://github.com/dunn-stephen/stephenjdunn/compare/main...staging
-```
-Title: `Release: stephenjdunn.com v1`
-Merge when ready. Netlify will automatically deploy `main` to production (https://www.stephenjdunn.com).
-
-**Step 3 — Wait for production deploy, then verify:**
-```bash
-netlify open            # opens the production site
-```
-Walk through the full user journey on the live production URL:
+Walk through the full user journey on the staging URL:
 1. Boot sequence plays
 2. Desktop loads with all icons
 3. Open each of the 9 apps
-4. Open the Mail app and verify the `mailto:` launcher
+4. Mail button opens mailto link
 5. Search via Sherlock
 6. Trigger at least one easter egg
 7. Mobile viewport shows boot + Sad Mac
 
-**⚠️ This is the only time `main` is ever touched. Do not push to `main` directly — only via PR merge.**
-
-**Ship when all 6.1–6.4 tasks pass. Not before.**
+When all pass, the project is complete. Report done.

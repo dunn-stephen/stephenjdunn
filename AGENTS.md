@@ -299,6 +299,7 @@ These systems have no shared file dependencies and can be built simultaneously:
 - Do not deploy without passing `npm run build`
 - Do not push to `main` — ever. `main` is production. All work goes to `staging`.
 - Do not run `netlify deploy --prod` except in Task 6.4 (final production ship)
+- Do not merge to `main`. Do not open PRs. Do not run `netlify deploy --prod`. Production is Stephen's responsibility.
 - Do not create CSS files (use Tailwind classes only, except `@font-face` in `globals.css`)
 - Do not skip verification gates, even for "small" changes
 - Do not skip Gates 5 and 6 unless the task made zero file changes
