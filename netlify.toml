@@ -5,9 +5,27 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
+[[redirects]]
+  from = "https://space.stephenjdunn.com/"
+  to = "/easter-eggs/space-invaders/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://weather.stephenjdunn.com/"
+  to = "/easter-eggs/weather/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://starwars.stephenjdunn.com/"
+  to = "/easter-eggs/star-wars/index.html"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
+    X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"

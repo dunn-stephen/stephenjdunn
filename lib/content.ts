@@ -1,58 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import type { BlogFrontmatter, ProjectFrontmatter, ResumeData } from "@/lib/content-schema";
 
 const root = process.cwd();
 const contentRoot = path.join(root, "content");
-
-export type ProjectFrontmatter = {
-  title: string;
-  slug: string;
-  description: string;
-  tech: string[];
-  github?: string;
-  demo?: string;
-  displayMode: "iframe" | "screenshot" | "readme";
-  screenshot?: string;
-  featured?: boolean;
-  date: string;
-};
-
-export type BlogFrontmatter = {
-  title: string;
-  slug: string;
-  date: string;
-  tags: string[];
-  description: string;
-  readTime?: number;
-};
-
-export type ResumeData = {
-  summary: string;
-  contact: {
-    phone: string;
-    email: string;
-    github: string;
-    linkedin: string;
-    headline: string[];
-  };
-  skills: Array<{ category: string; color: "accent" | "green" | "pink" | "cyan"; items: string[] }>;
-  interests: string[];
-  education: {
-    degree: string;
-    school: string;
-    years: string;
-    concentration?: string;
-    highlights?: string[];
-  };
-  experience: Array<{
-    company: string;
-    role: string;
-    start: string;
-    end: string;
-    bullets: string[];
-  }>;
-};
 
 export type ProjectDetail = ProjectFrontmatter & { content: string; headings: string[] };
 export type BlogDetail = BlogFrontmatter & { content: string; headings: string[] };

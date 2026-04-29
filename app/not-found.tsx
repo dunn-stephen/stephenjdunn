@@ -1,22 +1,20 @@
-import { TerminalPage } from "@/components/terminal/TerminalPage";
-import { TerminalNavLink } from "@/components/terminal/TerminalNavLink";
+import Link from "next/link";
+import { Panel, SectionLabel } from "@/components/shared/Tui";
 
 export default function NotFoundPage() {
   return (
-    <TerminalPage command="cat missing-route" cwd="~">
-      <div className="rounded-3xl border border-border bg-black/25 p-8">
-        <p className="text-xs uppercase tracking-[0.28em] text-dim">404</p>
-        <h1 className="mt-3 text-4xl text-text">File not found.</h1>
-        <p className="mt-4 max-w-2xl leading-7 text-dim">
-          The requested path does not exist in this portfolio tree.
-        </p>
-        <TerminalNavLink
-          href="/"
-          className="mt-6 inline-flex rounded-2xl border border-accent px-4 py-3 text-sm text-accent transition hover:bg-accent hover:text-black"
-        >
-          return to README.md
-        </TerminalNavLink>
-      </div>
-    </TerminalPage>
+    <Panel className="max-w-3xl">
+      <SectionLabel>404</SectionLabel>
+      <h1 className="text-[1rem] uppercase tracking-[0.2em] text-text">File not found.</h1>
+      <p className="mt-4 max-w-2xl text-[0.72rem] leading-7 text-muted">
+        The requested path does not exist in this portfolio tree.
+      </p>
+      <Link
+        href="/"
+        className="mt-5 inline-flex items-center gap-2 border border-border bg-panel px-3 py-2 text-[0.62rem] uppercase tracking-[0.14em] text-muted transition hover:border-[#6a320d] hover:text-accent"
+      >
+        return to home
+      </Link>
+    </Panel>
   );
 }

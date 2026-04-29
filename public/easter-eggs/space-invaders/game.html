@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Space Invaders</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Press Start 2P',monospace;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.12) 2px,rgba(0,0,0,.12) 4px);pointer-events:none;z-index:100}
+#game-wrapper{position:relative;display:flex;flex-direction:column;align-items:center;width:100%;max-width:640px;margin:0 auto}
+#hud{width:100%;display:flex;justify-content:space-between;align-items:center;padding:6px 12px;background:#0a0a0a;border:2px solid #1a3a1a;border-bottom:none;border-radius:8px 8px 0 0}
+.hud-item{display:flex;flex-direction:column;gap:2px}
+.hud-label{font-size:6px;color:#3a7a3a;letter-spacing:2px}
+.hud-value{font-size:12px;color:#4aff4a;text-shadow:0 0 8px #4aff4a88}
+.hud-value.combo-active{color:#ffcc00;text-shadow:0 0 8px #ffcc0088}
+#lives-display{display:flex;gap:4px;align-items:center}
+.life-icon{width:12px;height:9px;background:#4aff4a;clip-path:polygon(50% 0%,0% 100%,100% 100%);filter:drop-shadow(0 0 3px #4aff4a88)}
+canvas{display:block;width:100%;height:auto;border:2px solid #1a3a1a;border-top:1px solid #1a3a1a;background:#030803;image-rendering:pixelated}
+#bottom-bar{width:100%;padding:6px 12px;background:#0a0a0a;border:2px solid #1a3a1a;border-top:1px solid #1a3a1a;border-radius:0 0 8px 8px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.control-hint{font-size:6px;color:#3a6a3a;letter-spacing:1px}
+.control-hint span{color:#4aff4a;border:1px solid #2a5a2a;padding:1px 3px;border-radius:2px;background:#0f1f0f}
+#overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;background:rgba(0,5,0,.88);z-index:50;gap:12px;border-radius:8px;padding:20px}
+#overlay.hidden{display:none}
+#overlay h1{font-size:24px;color:#4aff4a;text-shadow:0 0 20px #4aff4a,0 0 40px #4aff4a88;letter-spacing:4px;animation:pulse 2s ease-in-out infinite;text-align:center}
+#overlay h1.red{color:#ff4a4a;text-shadow:0 0 20px #ff4a4a,0 0 40px #ff4a4a88}
+#overlay h1.gold{color:#ffcc00;text-shadow:0 0 20px #ffcc00,0 0 40px #ffcc0088}
+#overlay .subtitle{font-size:8px;color:#3a8a3a;letter-spacing:2px;text-align:center}
+#overlay .start-prompt{font-size:9px;color:#4aff4a;animation:blink 1.2s step-start infinite}
+#overlay .final-score{font-size:11px;color:#4aff4a;text-shadow:0 0 8px #4aff4a88;text-align:center}
+.score-table{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+.score-row{display:flex;align-items:center;gap:10px;font-size:7px;color:#3a8a3a}
+.alien-preview{width:28px;height:20px}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 16px;margin-top:4px}
+.stat-item{font-size:6px;color:#3a7a3a}.stat-item b{color:#4aff4a;font-weight:normal}
+.powerup-legend{display:flex;gap:10px;margin-top:2px;flex-wrap:wrap;justify-content:center}
+.pu-item{display:flex;align-items:center;gap:4px;font-size:6px;color:#3a7a3a}
+.pu-dot{width:7px;height:7px;border-radius:50%}
+#touch-controls{display:none;width:100%;padding:10px 20px;justify-content:space-between;align-items:center;background:#0a0a0a;border:2px solid #1a3a1a;border-top:none;border-radius:0 0 8px 8px}
+.touch-btn{width:58px;height:58px;border:2px solid #2a5a2a;border-radius:12px;background:#0f1f0f;color:#4aff4a;font-family:'Press Start 2P',monospace;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.touch-btn:active{background:#1a3a1a}
+.touch-btn.fire{width:76px;background:#1a2a0a;border-color:#3a6a1a;font-size:9px;letter-spacing:1px}
+.touch-move{display:flex;gap:10px}
+@media(hover:none)and (pointer:coarse){#touch-controls{display:flex}#bottom-bar{display:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+@keyframes blink{50%{opacity:0}}
+.overlay-btn{font-family:'Press Start 2P',monospace;font-size:8px;color:#4aff4a;background:#0f1f0f;border:2px solid #2a5a2a;border-radius:6px;padding:10px 20px;cursor:pointer;letter-spacing:1px;transition:background .15s,border-color .15s}
+.overlay-btn:hover{background:#1a3a1a;border-color:#4aff4a}
+.overlay-btn.exit{color:#ff6a4a;border-color:#5a2a2a}
+.overlay-btn.exit:hover{background:#2a1a1a;border-color:#ff6a4a}
+.overlay-btn.gold{color:#ffcc00;border-color:#5a5a1a}
+.overlay-btn.gold:hover{background:#2a2a0a;border-color:#ffcc00}
+.overlay-btns{display:flex;gap:14px;margin-top:4px;flex-wrap:wrap;justify-content:center}
+.cfg-panel{width:100%;max-width:560px;max-height:70vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding:4px 8px}
+.cfg-panel::-webkit-scrollbar{width:6px}
+.cfg-panel::-webkit-scrollbar-track{background:#0a0a0a}
+.cfg-panel::-webkit-scrollbar-thumb{background:#2a5a2a;border-radius:3px}
+.cfg-section{display:flex;flex-direction:column;gap:8px}
+.cfg-section-title{font-size:8px;color:#ffcc00;letter-spacing:2px;border-bottom:1px solid #1a3a1a;padding-bottom:4px}
+.cfg-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:2px 0}
+.cfg-label{font-size:7px;color:#3a8a3a;flex-shrink:0}
+.cfg-options{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.cfg-opt{font-family:'Press Start 2P',monospace;font-size:6px;color:#3a6a3a;background:#0a0a0a;border:1px solid #1a3a1a;border-radius:4px;padding:5px 8px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.cfg-opt:hover{border-color:#3a7a3a;color:#4aff4a}
+.cfg-opt.active{color:#4aff4a;background:#0f2f0f;border-color:#4aff4a;box-shadow:0 0 6px #4aff4a44}
+.cfg-opt.active-gold{color:#ffcc00;background:#1f1f0a;border-color:#ffcc00;box-shadow:0 0 6px #ffcc0044}
+.cfg-opt.active-red{color:#ff6a4a;background:#1f0f0a;border-color:#ff6a4a;box-shadow:0 0 6px #ff6a4a44}
+.cfg-toggle{display:flex;align-items:center;gap:6px;cursor:pointer}
+.cfg-toggle-box{width:14px;height:14px;border:2px solid #2a5a2a;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;transition:all .15s}
+.cfg-toggle-box.on{border-color:#4aff4a;background:#0f2f0f;color:#4aff4a}
+.cfg-toggle-box.off{border-color:#5a2a2a;background:#1f0f0a;color:#ff6a4a}
+.cfg-toggle-label{font-size:7px;color:#3a8a3a}
+#toast-container{position:absolute;top:50px;right:10px;z-index:60;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{background:rgba(10,30,10,.92);border:1px solid #3a7a3a;border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:8px;animation:toastIn .4s ease-out,toastOut .4s ease-in 2.6s forwards;font-size:7px;color:#4aff4a}
+.toast-icon{font-size:14px}
+.toast-text{display:flex;flex-direction:column;gap:2px}
+.toast-title{color:#ffcc00;font-size:7px}
+.toast-desc{color:#3a8a3a;font-size:6px}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(40px)}}
+</style>
+</head>
+<body>
+<div id="game-wrapper">
+  <div id="hud">
+    <div class="hud-item"><div class="hud-label">SCORE</div><div class="hud-value" id="score">0000</div></div>
+    <div class="hud-item"><div class="hud-label">COMBO</div><div class="hud-value" id="combo">x1</div></div>
+    <div class="hud-item"><div class="hud-label">WAVE</div><div class="hud-value" id="wave">1</div></div>
+    <div class="hud-item"><div class="hud-label">HI-SCORE</div><div class="hud-value" id="hi-score">0000</div></div>
+    <div class="hud-item"><div class="hud-label">LIVES</div><div id="lives-display"></div></div>
+  </div>
+  <canvas id="game" width="640" height="480"></canvas>
+  <div id="bottom-bar">
+    <div class="control-hint"><span>&larr;</span> <span>&rarr;</span> MOVE</div>
+    <div class="control-hint"><span>SPACE</span> FIRE</div>
+    <div class="control-hint"><span>P</span> PAUSE</div>
+    <div class="control-hint"><span>M</span> MUTE</div>
+    <div class="control-hint"><span>TAB</span> STATS</div>
+  </div>
+  <div id="touch-controls">
+    <div class="touch-move">
+      <div class="touch-btn" id="btn-left">&larr;</div>
+      <div class="touch-btn" id="btn-right">&rarr;</div>
+    </div>
+    <div class="touch-btn fire" id="btn-fire">FIRE</div>
+  </div>
+  <div id="overlay"></div>
+  <div id="toast-container"></div>
+</div>
+<script src="sprites.js"></script>
+<script src="audio.js"></script>
+<script src="config.js"></script>
+<script src="stats.js"></script>
+<script src="ui.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

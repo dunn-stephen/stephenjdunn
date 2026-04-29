@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 340" fill="none">
+  <defs>
+    <clipPath id="shield-clip-workflows">
+      <path d="M46 18h168c11 0 20 9 20 20v177c0 59-42 111-104 132C68 326 26 274 26 215V38c0-11 9-20 20-20Z" />
+    </clipPath>
+    <pattern id="dots-workflows" width="6" height="6" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.1" fill="#000" />
+    </pattern>
+  </defs>
+
+  <path
+    d="M46 18h168c11 0 20 9 20 20v177c0 59-42 111-104 132C68 326 26 274 26 215V38c0-11 9-20 20-20Z"
+    fill="#fff"
+    stroke="#fff"
+    stroke-linejoin="round"
+    stroke-width="10"
+  />
+
+  <g clip-path="url(#shield-clip-workflows)">
+    <rect x="26" y="18" width="208" height="158" fill="#fff" />
+    <rect x="26" y="176" width="208" height="171" fill="#247fdd" />
+  </g>
+
+  <path
+    d="M46 18h168c11 0 20 9 20 20v177c0 59-42 111-104 132C68 326 26 274 26 215V38c0-11 9-20 20-20Z"
+    stroke="#000"
+    stroke-linejoin="round"
+    stroke-width="5"
+  />
+  <line x1="26" x2="234" y1="176" y2="176" stroke="#000" stroke-width="5" />
+
+  <text
+    x="56"
+    y="72"
+    fill="#000"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="28"
+    font-weight="700"
+    letter-spacing="-0.5"
+  >
+    Notion
+  </text>
+  <text
+    x="56"
+    y="107"
+    fill="#000"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="28"
+    font-weight="700"
+    letter-spacing="-0.5"
+  >
+    Academy
+  </text>
+  <text
+    x="56"
+    y="141"
+    fill="#000"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="24"
+    font-weight="500"
+    letter-spacing="-0.4"
+  >
+    Workflows
+  </text>
+
+  <circle cx="82" cy="228" r="20" fill="url(#dots-workflows)" stroke="#000" stroke-width="5" />
+  <circle cx="178" cy="228" r="20" fill="url(#dots-workflows)" stroke="#000" stroke-width="5" />
+  <circle cx="130" cy="288" r="20" fill="url(#dots-workflows)" stroke="#000" stroke-width="5" />
+
+  <circle cx="111" cy="235" r="4" fill="#000" />
+  <circle cx="130" cy="235" r="4" fill="#000" />
+  <circle cx="149" cy="235" r="4" fill="#000" />
+
+  <circle cx="89" cy="248" r="4" fill="#000" />
+  <circle cx="98" cy="264" r="4" fill="#000" />
+  <circle cx="112" cy="279" r="4" fill="#000" />
+
+  <circle cx="171" cy="248" r="4" fill="#000" />
+  <circle cx="162" cy="264" r="4" fill="#000" />
+  <circle cx="148" cy="279" r="4" fill="#000" />
+</svg>

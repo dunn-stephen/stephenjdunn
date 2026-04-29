@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
-import { getAllPosts, getAllProjects } from "@/lib/content";
 import { siteConfig } from "@/lib/site";
-import { TerminalShell } from "@/components/terminal/TerminalShell";
-import { HomeWorkspace } from "@/components/views/HomeWorkspace";
 
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${siteConfig.domain}`),
@@ -31,16 +28,9 @@ export default function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const projects = getAllProjects().map(({ title, slug }) => ({ title, slug }));
-  const posts = getAllPosts().map(({ title, slug }) => ({ title, slug }));
-
   return (
-    <html lang="en">
-      <body className="tui-scrollbar">
-        <TerminalShell projects={projects} posts={posts} workspace={<HomeWorkspace />}>
-          {children}
-        </TerminalShell>
-      </body>
+    <html lang="en" data-scroll-behavior="smooth">
+      <body className="app-scrollbar">{children}</body>
     </html>
   );
 }
