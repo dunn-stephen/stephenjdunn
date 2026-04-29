@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DesktopIcon } from "@/components/desktop/DesktopIcon";
 import { useSound } from "@/hooks/useSound";
+import { NOTES } from "@/lib/notes-config";
 import { useWindowStore } from "@/lib/window-store";
 import type { SearchableItem } from "@/lib/search";
 import type { AppId, Project } from "@/types";
@@ -82,7 +83,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     label: "Note 1",
     icon: "/icons/png/77.png",
     appId: "notepad",
-    windowProps: { noteId: 1 },
+    windowProps: { noteId: 1, title: NOTES[1].title },
     defaultPosition: { x: 128, y: 52 }
   },
   {
@@ -90,7 +91,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     label: "Note 2",
     icon: "/icons/png/77.png",
     appId: "notepad",
-    windowProps: { noteId: 2 },
+    windowProps: { noteId: 2, title: NOTES[2].title },
     defaultPosition: { x: 128, y: 148 }
   },
   {
@@ -98,7 +99,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     label: "Note 3",
     icon: "/icons/png/77.png",
     appId: "notepad",
-    windowProps: { noteId: 3 },
+    windowProps: { noteId: 3, title: NOTES[3].title },
     defaultPosition: { x: 128, y: 244 }
   },
   {
@@ -106,7 +107,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     label: "Note 4",
     icon: "/icons/png/77.png",
     appId: "notepad",
-    windowProps: { noteId: 4 },
+    windowProps: { noteId: 4, title: NOTES[4].title },
     defaultPosition: { x: 128, y: 340 }
   }
 ];

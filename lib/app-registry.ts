@@ -1,6 +1,7 @@
 import { createElement } from "react";
 import { Finder } from "@/components/apps/finder/Finder";
 import { Mail } from "@/components/apps/mail/Mail";
+import { NotePad } from "@/components/apps/notepad/NotePad";
 import { Sherlock } from "@/components/apps/sherlock/Sherlock";
 import { SimpleText } from "@/components/apps/simpletext/SimpleText";
 import { SpaceInvaders } from "@/components/apps/space-invaders/SpaceInvaders";
@@ -99,7 +100,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     minSize: { width: 220, height: 160 },
     singleton: false,
     resizable: true,
-    component: PlaceholderApp
+    component: NotePad
   },
   calculator: {
     id: "calculator",
