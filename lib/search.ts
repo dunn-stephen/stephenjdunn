@@ -1,6 +1,5 @@
-import type { Route } from "next";
-import { getAllPosts, getAllProjects, getPostBySlug, getProjectBySlug } from "@/lib/content";
-import { buildMailtoLink, primaryRoutes, profileData, siteConfig } from "@/lib/site";
+import Fuse from "fuse.js";
+import type { Project } from "@/types";
 
 export type SearchItem = {
   id: string;
@@ -10,7 +9,7 @@ export type SearchItem = {
   keywords: string[];
   hint?: string;
   description?: string;
-  href?: Route;
+  href?: string;
   externalHref?: string;
   externalTarget?: "_blank" | "_self";
 };
@@ -25,7 +24,9 @@ export interface SearchableItem {
 }
 
 export interface SearchResult {
-  item: SearchableItem;
+  projectSlug: string;
+  projectTitle: string;
+  excerpt: string;
   score: number;
 }
 
@@ -44,201 +45,78 @@ function stripMdx(source: string) {
   );
 }
 
-export function buildSiteSearchItems(): SearchItem[] {
-  const projects = getAllProjects();
-  const posts = getAllPosts();
-
-  const items: SearchItem[] = [
-    ...primaryRoutes.map((route) => ({
-      id: `route:${route.key}`,
-      label: `Go to ${route.label.toLowerCase().replace(/^./, (value) => value.toUpperCase())}`,
-      section: "Navigate",
-      glyph: route.paletteGlyph,
-      hint: route.number,
-      description: `${route.label} page`,
-      keywords: [route.key, route.label.toLowerCase(), route.href],
-      href: route.href
-    })),
-    {
-      id: "contact:overview",
-      label: "Contact and Availability",
-      section: "Contact",
-      glyph: "✉",
-      hint: "reach out",
-      description: profileData.contact.availability[0]?.label ?? "Open to consulting",
-      href: "/contact" as Route,
-      keywords: [
-        profileData.contact.quickMessageSubject,
-        siteConfig.socialLinks.email,
-        siteConfig.socialLinks.github,
-        siteConfig.socialLinks.linkedin,
-        siteConfig.socialLinks.apolloLabs,
-        ...profileData.contact.availability.map((item) => item.label)
-      ]
-    },
-    {
-      id: "action:github",
-      label: "Open GitHub",
-      section: "Actions",
-      glyph: "↗",
-      hint: "external",
-      description: "github.com/dunn-stephen",
-      externalHref: siteConfig.socialLinks.github,
-      keywords: ["github", "profile", "code", "repositories"]
-    },
-    {
-      id: "action:linkedin",
-      label: "Open LinkedIn",
-      section: "Actions",
-      glyph: "↗",
-      hint: "external",
-      description: "linkedin.com/in/stephendunn24",
-      externalHref: siteConfig.socialLinks.linkedin,
-      keywords: ["linkedin", "social", "profile", "resume"]
-    },
-    {
-      id: "action:email",
-      label: "Send Email",
-      section: "Actions",
-      glyph: "✉",
-      hint: "external",
-      description: "stephendunn2424@gmail.com",
-      externalHref: buildMailtoLink(profileData.contact.quickMessageSubject),
-      keywords: ["email", "contact", "mailto", "stephendunn2424@gmail.com"]
-    },
-    {
-      id: "action:apollo-labs",
-      label: "Open Apollo Labs",
-      section: "Actions",
-      glyph: "↗",
-      hint: "external",
-      description: "apollolabsconsulting.com",
-      externalHref: siteConfig.socialLinks.apolloLabs,
-      keywords: ["apollo", "apollo labs", "consulting", "agency"]
-    },
-    {
-      id: "action:weather",
-      label: "Open Weather Uplink",
-      section: "Actions",
-      glyph: "↗",
-      hint: "external",
-      description: "weather.stephenjdunn.com",
-      externalHref: "https://weather.stephenjdunn.com",
-      externalTarget: "_self",
-      keywords: ["weather", "forecast", "rain", "temperature", "climate", "weather uplink", "meteorology"]
-    },
-    {
-      id: "action:star-wars",
-      label: "Open Star Wars Crawl",
-      section: "Actions",
-      glyph: "↗",
-      hint: "external",
-      description: "starwars.stephenjdunn.com",
-      externalHref: "https://starwars.stephenjdunn.com",
-      externalTarget: "_self",
-      keywords: ["star wars", "starwars", "star-wars", "sw", "ascii", "crawl", "galaxy", "easter egg"]
-    },
-    {
-      id: "action:space-invaders",
-      label: "Play Space Invaders",
-      section: "Actions",
-      glyph: "↗",
-      hint: "external",
-      description: "space.stephenjdunn.com",
-      externalHref: "https://space.stephenjdunn.com",
-      externalTarget: "_self",
-      keywords: [
-        "space invaders",
-        "space-invaders",
-        "spaceinvaders",
-        "space",
-        "invaders",
-        "arcade",
-        "easter egg"
-      ]
-    }
-  ];
-
-  if (profileData.resume.pdfPath) {
-    items.push({
-      id: "action:resume-download",
-      label: "Download Resume",
-      section: "Actions",
-      glyph: "⬇",
-      hint: "external",
-      description: "PDF resume download",
-      externalHref: profileData.resume.pdfPath,
-      keywords: ["resume", "download", "pdf", "cv"]
-    });
-  }
-
-  items.push(
-    ...projects.map((project) => {
-      const detail = getProjectBySlug(project.slug);
-      const keywordSources = [
-        project.title,
-        project.slug,
-        project.description,
-        project.primaryTech ?? "",
-        project.status ?? "",
-        project.displayMode,
-        project.date,
-        ...project.tech,
-        ...(project.highlights ?? [])
-      ];
-
-      if (detail) {
-        keywordSources.push(detail.content, ...detail.headings);
-      }
-
-      return {
-        id: `project:${project.slug}`,
-        label: project.title,
-        section: "Projects",
-        glyph: "◆",
-        hint: project.slug,
-        description: project.description,
-        href: `/projects/${project.slug}` as Route,
-        keywords: keywordSources.map(stripMdx)
-      };
-    }),
-    ...posts.map((post) => {
-      const detail = getPostBySlug(post.slug);
-      const keywordSources = [post.title, post.slug, post.description, post.date, ...post.tags];
-
-      if (detail) {
-        keywordSources.push(detail.content, ...detail.headings);
-      }
-
-      return {
-        id: `post:${post.slug}`,
-        label: post.title,
-        section: "Blog",
-        glyph: "▦",
-        hint: post.slug,
-        description: post.description,
-        href: `/blog/${post.slug}` as Route,
-        keywords: keywordSources.map(stripMdx)
-      };
-    })
-  );
-
-  return items;
+export function buildSearchIndex(projects: Project[]): SearchableItem[] {
+  return projects.map((project) => ({
+    id: `project:${project.slug}`,
+    title: project.title,
+    slug: project.slug,
+    description: project.description,
+    tags: project.tags,
+    content: stripMdx(
+      project.files
+        .filter((file) => file.type === "mdx")
+        .map((file) => `${file.name} ${file.content ?? ""}`)
+        .join("\n\n")
+    )
+  }));
 }
 
-export async function buildSearchIndex(): Promise<SearchableItem[]> {
-  return [];
+function buildExcerpt(item: SearchableItem, query: string) {
+  if (!query) {
+    return item.description;
+  }
+
+  const description = compactWhitespace(item.description);
+  const content = compactWhitespace(item.content);
+  const lowerQuery = query.toLowerCase();
+  const descriptionIndex = description.toLowerCase().indexOf(lowerQuery);
+
+  if (descriptionIndex >= 0) {
+    return description;
+  }
+
+  const contentIndex = content.toLowerCase().indexOf(lowerQuery);
+
+  if (contentIndex < 0) {
+    return description;
+  }
+
+  const start = Math.max(0, contentIndex - 64);
+  const end = Math.min(content.length, contentIndex + query.length + 96);
+  const excerpt = content.slice(start, end).trim();
+
+  return `${start > 0 ? "…" : ""}${excerpt}${end < content.length ? "…" : ""}`;
 }
 
 export function search(query: string, index: SearchableItem[]): SearchResult[] {
-  const normalizedQuery = query.trim().toLowerCase();
+  const normalizedQuery = compactWhitespace(query.toLowerCase());
 
   if (normalizedQuery.length === 0) {
-    return index.map((item) => ({
-      item,
-      score: 1
+    return index.map((item, order) => ({
+      projectSlug: item.slug,
+      projectTitle: item.title,
+      excerpt: item.description,
+      score: order,
     }));
   }
 
-  return [];
+  const fuse = new Fuse(index, {
+    keys: [
+      { name: "title", weight: 0.35 },
+      { name: "description", weight: 0.25 },
+      { name: "tags", weight: 0.2 },
+      { name: "content", weight: 0.2 }
+    ],
+    includeScore: true,
+    threshold: 0.38,
+    ignoreLocation: true,
+    minMatchCharLength: 2
+  });
+
+  return fuse.search(normalizedQuery).map((result) => ({
+    projectSlug: result.item.slug,
+    projectTitle: result.item.title,
+    excerpt: buildExcerpt(result.item, normalizedQuery),
+    score: result.score ?? 1,
+  }));
 }

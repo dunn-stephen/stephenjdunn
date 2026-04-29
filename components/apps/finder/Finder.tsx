@@ -7,6 +7,7 @@ import type { AppProps, Project, ProjectFile } from "@/types";
 
 interface FinderWindowProps {
   projects: Project[];
+  selectedProjectSlug?: string;
 }
 
 interface ImagePreviewProps {
@@ -59,6 +60,10 @@ function readProjects(props: Record<string, unknown> | undefined) {
   return candidate.filter(isProject);
 }
 
+function readSelectedProjectSlug(props: Record<string, unknown> | undefined) {
+  return typeof props?.selectedProjectSlug === "string" ? props.selectedProjectSlug : null;
+}
+
 function getFileIconPath(file: ProjectFile) {
   return file.type === "image" ? "/icons/png/69.png" : "/icons/png/28.png";
 }
@@ -104,8 +109,12 @@ function ImagePreview({ file }: ImagePreviewProps) {
 export function Finder({ props }: AppProps) {
   const openWindow = useWindowStore((state) => state.openWindow);
   const projects = useMemo(() => readProjects(props), [props]);
-  const [selectedProjectSlug, setSelectedProjectSlug] = useState<string | null>(() => projects[0]?.slug ?? null);
-  const [selectedFilePath, setSelectedFilePath] = useState<string | null>(() => projects[0]?.files[0]?.path ?? null);
+  const requestedProjectSlug = useMemo(() => readSelectedProjectSlug(props), [props]);
+  const [selectedProjectSlug, setSelectedProjectSlug] = useState<string | null>(() => requestedProjectSlug ?? projects[0]?.slug ?? null);
+  const [selectedFilePath, setSelectedFilePath] = useState<string | null>(() => {
+    const initialProject = projects.find((project) => project.slug === requestedProjectSlug) ?? projects[0];
+    return initialProject?.files[0]?.path ?? null;
+  });
 
   const selectedProject = useMemo(
     () => (

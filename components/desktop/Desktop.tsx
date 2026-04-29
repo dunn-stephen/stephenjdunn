@@ -13,17 +13,19 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getAppDefinition } from "@/lib/app-registry";
 import { useSoundStore } from "@/lib/sound";
 import { useWindowStore } from "@/lib/window-store";
+import type { SearchableItem } from "@/lib/search";
 import type { Project } from "@/types";
 
 interface DesktopProps {
   projects: Project[];
+  searchIndex: SearchableItem[];
 }
 
 type BootState = "checking" | "playing" | "done";
 
 const BOOT_SESSION_KEY = "has-booted";
 
-export function Desktop({ projects }: DesktopProps) {
+export function Desktop({ projects, searchIndex }: DesktopProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const soundEnabled = useSoundStore((state) => state.enabled);
   const soundInitialized = useSoundStore((state) => state.initialized);
@@ -126,6 +128,7 @@ export function Desktop({ projects }: DesktopProps) {
         />
         <DesktopIcons
           projects={projects}
+          searchIndex={searchIndex}
           revealMode={iconRevealMode}
         />
         <WindowManager />

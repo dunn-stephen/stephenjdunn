@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { DesktopIcon } from "@/components/desktop/DesktopIcon";
 import { useSound } from "@/hooks/useSound";
 import { useWindowStore } from "@/lib/window-store";
+import type { SearchableItem } from "@/lib/search";
 import type { AppId, Project } from "@/types";
 
 const DESKTOP_ICON_POSITIONS_KEY = "desktop-icon-positions";
@@ -70,6 +71,13 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     defaultPosition: { x: 24, y: 436 }
   },
   {
+    id: "sherlock",
+    label: "Sherlock",
+    icon: "/icons/png/11.png",
+    appId: "sherlock",
+    defaultPosition: { x: 24, y: 532 }
+  },
+  {
     id: "note-1",
     label: "Note 1",
     icon: "/icons/png/77.png",
@@ -112,10 +120,11 @@ function clampPosition(position: IconPosition, viewport: { width: number; height
 
 interface DesktopIconsProps {
   projects: Project[];
+  searchIndex: SearchableItem[];
   revealMode: "hidden" | "shown" | "stagger";
 }
 
-export function DesktopIcons({ projects, revealMode }: DesktopIconsProps) {
+export function DesktopIcons({ projects, searchIndex, revealMode }: DesktopIconsProps) {
   const openWindow = useWindowStore((state) => state.openWindow);
   const { play: playClick } = useSound("click");
   const { play: playAlert } = useSound("alert");
@@ -212,7 +221,8 @@ export function DesktopIcons({ projects, revealMode }: DesktopIconsProps) {
 
             playOpen();
             openWindow(item.appId, {
-              ...(item.appId === "finder" ? { projects } : {}),
+              ...(item.appId === "finder" || item.appId === "sherlock" ? { projects } : {}),
+              ...(item.appId === "sherlock" ? { searchIndex } : {}),
               ...item.windowProps
             });
           }}
