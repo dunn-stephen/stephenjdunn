@@ -74,7 +74,7 @@ export function MenuBar({
   return (
     <div
       ref={containerRef}
-      className="fixed inset-x-0 top-0 z-[9999] px-3 pt-2"
+      className="fixed inset-x-0 top-0 z-[9999]"
     >
       <div className="os9-menubar flex h-7 items-center justify-between px-3">
         <div className="flex items-center gap-1">
