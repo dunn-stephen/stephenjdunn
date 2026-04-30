@@ -6,7 +6,9 @@ import type { AppId, WindowPosition, WindowSize, WindowState, WindowStore } from
 
 const MENUBAR_HEIGHT = 19;
 const BASE_Z_INDEX = 100;
-const CASCADE_OFFSET = 20;
+const CASCADE_OFFSET = 18;
+const DEFAULT_WINDOW_LEFT = 7;
+const DEFAULT_WINDOW_TOP = 25;
 
 function getViewportSize() {
   if (typeof window === "undefined") {
@@ -54,8 +56,8 @@ function createWindowState(appId: AppId, existingWindows: WindowState[], props?:
   const title = typeof props?.title === "string" ? props.title : definition.name;
   const position = clampPosition(
     {
-      x: 80 + cascadeIndex * CASCADE_OFFSET,
-      y: 60 + cascadeIndex * CASCADE_OFFSET
+      x: DEFAULT_WINDOW_LEFT + cascadeIndex * CASCADE_OFFSET,
+      y: DEFAULT_WINDOW_TOP + cascadeIndex * CASCADE_OFFSET
     },
     definition.defaultSize
   );
