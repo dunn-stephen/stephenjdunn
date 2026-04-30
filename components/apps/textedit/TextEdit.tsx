@@ -24,12 +24,9 @@ export function TextEdit({ props }: AppProps) {
     : { content: "", title: "Untitled" };
 
   return (
-    <div className="flex h-full flex-col bg-[#d4d0c8]">
-      <div className="border-b border-[#8f8f8f] bg-[#d9d9d9] px-4 py-1 font-['Chicago'] text-[11px] text-[#3f3f3f]">
-        {documentProps.title}
-      </div>
-      <div className="min-h-0 flex-1 bg-[#e5e5e5] p-3">
-        <div className="app-scrollbar h-full overflow-auto border border-[#8c8c8c] bg-[#ffffff] p-4 shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#d0d0d0]">
+    <div className="flex h-full min-h-0 flex-col bg-[#dadada]">
+      <div className="relative mx-1 my-1 flex min-h-0 flex-1 flex-col border border-black bg-white shadow-[-1px_-1px_0_#9c9c9c,1px_1px_0_#ffffff,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#acacac]">
+        <div className="app-scrollbar min-h-0 flex-1 overflow-auto px-5 py-4">
           <MdxDocument source={documentProps.content} />
         </div>
       </div>

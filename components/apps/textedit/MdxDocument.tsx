@@ -1,11 +1,11 @@
 "use client";
 
 import { compile, run } from "@mdx-js/mdx";
+import Image from "next/image";
 import type {
   AnchorHTMLAttributes,
   ComponentType,
   HTMLAttributes,
-  ImgHTMLAttributes,
   ReactNode
 } from "react";
 import { useEffect, useState } from "react";
@@ -76,12 +76,17 @@ const mdxComponents = {
       className="my-5 border-0 border-t border-[#c7c7c7]"
     />
   ),
-  img: (props: ImgHTMLAttributes<HTMLImageElement>) => (
-    <img
-      {...props}
-      alt={props.alt ?? ""}
-      className="my-4 max-w-full border border-[#9b9b9b] bg-[#f5f5f5] p-1 shadow-[inset_1px_1px_0_#ffffff]"
-    />
+  img: ({ alt, src = "" }: { alt?: string; src?: string }) => (
+    <span className="my-4 block border border-[#9b9b9b] bg-[#f5f5f5] p-1 shadow-[inset_1px_1px_0_#ffffff]">
+      <Image
+        src={src}
+        alt={alt ?? ""}
+        width={960}
+        height={720}
+        unoptimized
+        className="h-auto max-w-full"
+      />
+    </span>
   ),
   li: (props: HTMLAttributes<HTMLLIElement>) => (
     <li
@@ -98,7 +103,7 @@ const mdxComponents = {
   p: (props: HTMLAttributes<HTMLParagraphElement>) => (
     <p
       {...props}
-      className="mb-3 text-[12px] leading-[1.5] text-[#1d1d1d]"
+      className="mb-3 font-['Charcoal'] text-[12px] leading-[1.45] text-[#1d1d1d]"
     />
   ),
   pre: (props: HTMLAttributes<HTMLPreElement>) => (
