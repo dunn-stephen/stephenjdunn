@@ -7,8 +7,8 @@ import { getAppDefinition } from "@/lib/app-registry";
 import type { WindowSize, WindowState } from "@/types";
 import { TitleBar } from "@/components/windows/TitleBar";
 
-const TITLEBAR_HEIGHT = 28;
-const RESIZE_HANDLE_SIZE = 8;
+const TITLEBAR_HEIGHT = 22;
+const RESIZE_HANDLE_SIZE = 16;
 
 interface WindowFrameProps {
   isActive: boolean;
@@ -107,7 +107,12 @@ export function WindowFrame({ isActive, windowState }: WindowFrameProps) {
 
   return (
     <motion.div
-      className="absolute overflow-hidden border border-[#7b7b7b] bg-[#c0c0c0] shadow-[2px_2px_0_rgba(0,0,0,0.4)]"
+      className={[
+        "absolute flex flex-col overflow-hidden border bg-[#dadada]",
+        isActive
+          ? "border-black shadow-[1px_1px_0_#111111,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#999999]"
+          : "border-[#525252] shadow-[1px_1px_0_#525252,inset_1px_1px_0_#9a9a9a,inset_-1px_-1px_0_#6f6f6f]"
+      ].join(" ")}
       exit={{
         opacity: 0,
         scale: 0.85,
@@ -135,59 +140,57 @@ export function WindowFrame({ isActive, windowState }: WindowFrameProps) {
       }}
       onMouseDown={() => focusWindow(windowState.id)}
     >
-      <div className="relative h-full border border-[#f8f8f8] bg-[#d4d0c8] shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#404040]">
-        <TitleBar
-          isActive={isActive}
-          windowState={windowState}
-        />
-        <AnimatePresence initial={false}>
-          {!windowState.isShaded ? (
-            <motion.div
-              key="content"
-              className="border-t border-[#f8f8f8] bg-[#f7f7f7]"
-              exit={{
-                height: 0,
-                opacity: 0,
-                transition: { duration: 0.15, ease: "easeInOut" }
-              }}
-              initial={{
-                height: 0,
-                opacity: 0
-              }}
-              animate={{
-                height: contentHeight,
-                opacity: 1
-              }}
-              style={{ overflow: "hidden" }}
-              transition={{
-                duration: 0.15,
-                ease: "easeInOut"
-              }}
-            >
-              <div className="h-full border border-[#404040] border-t-0 bg-[#f5f5f5] shadow-[inset_1px_1px_0_#ffffff]">
-                {AppComponent ? (
-                  <AppComponent
-                    windowId={windowState.id}
-                    props={windowState.props}
-                  />
-                ) : (
-                  <WindowPlaceholder appName={windowState.title} />
-                )}
-              </div>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-        {showResizeHandle ? (
-          <div
-            aria-hidden="true"
-            className="absolute bottom-[3px] right-[3px] cursor-se-resize"
-            style={{ width: RESIZE_HANDLE_SIZE, height: RESIZE_HANDLE_SIZE }}
-            onMouseDown={handleResizeMouseDown}
+      <TitleBar
+        isActive={isActive}
+        windowState={windowState}
+      />
+      <AnimatePresence initial={false}>
+        {!windowState.isShaded ? (
+          <motion.div
+            key="content"
+            className="relative mx-1 mb-1 mt-[-1px] border border-black bg-white shadow-[-1px_-1px_0_#9c9c9c,1px_1px_0_#ffffff,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#acacac]"
+            exit={{
+              height: 0,
+              opacity: 0,
+              transition: { duration: 0.15, ease: "easeInOut" }
+            }}
+            initial={{
+              height: 0,
+              opacity: 0
+            }}
+            animate={{
+              height: contentHeight,
+              opacity: 1
+            }}
+            style={{ overflow: "hidden" }}
+            transition={{
+              duration: 0.15,
+              ease: "easeInOut"
+            }}
           >
-            <div className="h-full w-full bg-[linear-gradient(135deg,transparent_0_25%,#6a6a6a_25%_40%,transparent_40%_55%,#6a6a6a_55%_70%,transparent_70%)]" />
-          </div>
+            <div className="h-full bg-[#f5f5f5]">
+              {AppComponent ? (
+                <AppComponent
+                  windowId={windowState.id}
+                  props={windowState.props}
+                />
+              ) : (
+                <WindowPlaceholder appName={windowState.title} />
+              )}
+            </div>
+          </motion.div>
         ) : null}
-      </div>
+      </AnimatePresence>
+      {showResizeHandle ? (
+        <div
+          aria-hidden="true"
+          className={["absolute bottom-1 right-1 cursor-se-resize bg-[#dadada] shadow-[inset_1px_1px_0_#ffffff]", isActive ? "opacity-100" : "opacity-55"].join(" ")}
+          style={{ width: RESIZE_HANDLE_SIZE, height: RESIZE_HANDLE_SIZE }}
+          onMouseDown={handleResizeMouseDown}
+        >
+          <div className="h-full w-full bg-[linear-gradient(135deg,transparent_0_44%,#6f6f6f_44%_48%,transparent_48%_58%,#6f6f6f_58%_62%,transparent_62%_72%,#6f6f6f_72%_76%,transparent_76%_100%)]" />
+        </div>
+      ) : null}
     </motion.div>
   );
 }

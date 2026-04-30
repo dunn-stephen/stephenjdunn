@@ -37,12 +37,10 @@ export function DesktopIcon({
       onMouseDown={onPointerDown}
       animate={
         revealMode === "hidden"
-          ? { opacity: 0, y: 8 }
+          ? { opacity: 0, y: 4 }
           : { opacity: 1, y: 0 }
       }
-      className={`pointer-events-auto absolute flex w-[96px] flex-col items-center gap-1 rounded-[4px] px-2 py-2 text-center ${
-        selected ? "bg-[rgba(49,99,206,0.22)]" : ""
-      }`}
+      className="pointer-events-auto absolute flex w-[75px] flex-col items-center px-0 py-[6px] text-center"
       initial={false}
       style={{
         left: position.x,
@@ -60,9 +58,16 @@ export function DesktopIcon({
         alt=""
         width={64}
         height={64}
-        className="h-16 w-16 object-contain [image-rendering:pixelated]"
+        className={`h-12 w-12 object-contain [image-rendering:pixelated] ${
+          selected ? "brightness-[0.4]" : ""
+        }`}
       />
-      <span className="rounded-[3px] px-1 text-[11px] font-bold leading-tight text-[#1b1b1b]">
+      <span
+        className={[
+          "mt-[-4px] inline-block max-w-full overflow-hidden text-ellipsis whitespace-nowrap px-[2px] py-[1px] font-['Arial'] text-[10.5px] leading-[1.15] tracking-[0.4px]",
+          selected ? "bg-black text-white" : "bg-[rgba(255,255,255,0.5)] text-black"
+        ].join(" ")}
+      >
         {label}
       </span>
     </motion.button>

@@ -10,8 +10,8 @@ import type { AppId, Project } from "@/types";
 
 const DESKTOP_ICON_POSITIONS_KEY = "desktop-icon-positions";
 const MENUBAR_HEIGHT = 28;
-const ICON_WIDTH = 96;
-const ICON_HEIGHT = 112;
+const ICON_WIDTH = 75;
+const ICON_HEIGHT = 86;
 
 interface IconPosition {
   x: number;
@@ -34,7 +34,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     label: "Trash",
     icon: "/icons/png/7.png",
     isVisualOnly: true,
-    defaultPosition: { x: 1100, y: 620 }
+    defaultPosition: { x: 1130, y: 620 }
   },
   {
     id: "read-me",
@@ -119,6 +119,12 @@ const DESKTOP_ITEMS: DesktopItem[] = [
   }
 ];
 
+function getDefaultPositions() {
+  return Object.fromEntries(
+    DESKTOP_ITEMS.map((item) => [item.id, item.defaultPosition])
+  ) as Record<string, IconPosition>;
+}
+
 function clampPosition(position: IconPosition, viewport: { width: number; height: number }) {
   return {
     x: Math.max(12, Math.min(position.x, Math.max(12, viewport.width - ICON_WIDTH - 12))),
@@ -140,32 +146,7 @@ export function DesktopIcons({ projects, readMeContent, searchIndex, revealMode 
   const { play: playOpen } = useSound("open");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [viewport, setViewport] = useState({ width: 1280, height: 800 });
-  const [positions, setPositions] = useState<Record<string, IconPosition>>(() => {
-    const defaults = Object.fromEntries(DESKTOP_ITEMS.map((item) => [item.id, item.defaultPosition]));
-
-    if (typeof window === "undefined") {
-      return defaults;
-    }
-
-    try {
-      const raw = window.localStorage.getItem(DESKTOP_ICON_POSITIONS_KEY);
-
-      if (!raw) {
-        return defaults;
-      }
-
-      const parsed = JSON.parse(raw) as Record<string, IconPosition>;
-
-      return Object.fromEntries(
-        DESKTOP_ITEMS.map((item) => [
-          item.id,
-          parsed[item.id] ?? defaults[item.id]
-        ])
-      );
-    } catch {
-      return defaults;
-    }
-  });
+  const [positions, setPositions] = useState<Record<string, IconPosition>>(getDefaultPositions);
   const dragRef = useRef<{
     id: string;
     startPointer: IconPosition;
@@ -186,6 +167,40 @@ export function DesktopIcons({ projects, readMeContent, searchIndex, revealMode 
 
     return () => {
       window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  useEffect(() => {
+    let frameId = 0;
+
+    try {
+      const raw = window.localStorage.getItem(DESKTOP_ICON_POSITIONS_KEY);
+
+      if (!raw) {
+        return;
+      }
+
+      const parsed = JSON.parse(raw) as Record<string, IconPosition>;
+      const defaults = getDefaultPositions();
+
+      frameId = window.requestAnimationFrame(() => {
+        setPositions(
+          Object.fromEntries(
+            DESKTOP_ITEMS.map((item) => [
+              item.id,
+              parsed[item.id] ?? defaults[item.id]
+            ])
+          ) as Record<string, IconPosition>
+        );
+      });
+    } catch {
+      frameId = window.requestAnimationFrame(() => {
+        setPositions(getDefaultPositions());
+      });
+    }
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
     };
   }, []);
 

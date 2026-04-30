@@ -1,12 +1,14 @@
 "use client";
 
 import type { MouseEvent } from "react";
+import Image from "next/image";
 import { useSound } from "@/hooks/useSound";
+import { getAppDefinition } from "@/lib/app-registry";
 import { useWindowStore } from "@/lib/window-store";
 import type { WindowState } from "@/types";
 
 const MENUBAR_HEIGHT = 28;
-const TITLEBAR_HEIGHT = 28;
+const TITLEBAR_HEIGHT = 22;
 
 interface TitleBarProps {
   isActive: boolean;
@@ -25,10 +27,10 @@ function getViewportSize() {
 }
 
 export function TitleBar({ isActive, windowState }: TitleBarProps) {
+  const definition = getAppDefinition(windowState.appId);
   const closeWindow = useWindowStore((state) => state.closeWindow);
   const focusWindow = useWindowStore((state) => state.focusWindow);
   const maximizeWindow = useWindowStore((state) => state.maximizeWindow);
-  const minimizeWindow = useWindowStore((state) => state.minimizeWindow);
   const moveWindow = useWindowStore((state) => state.moveWindow);
   const restoreWindow = useWindowStore((state) => state.restoreWindow);
   const shadeWindow = useWindowStore((state) => state.shadeWindow);
@@ -77,10 +79,10 @@ export function TitleBar({ isActive, windowState }: TitleBarProps) {
     closeWindow(windowState.id);
   };
 
-  const handleMinimize = (event: MouseEvent<HTMLButtonElement>) => {
+  const handleShade = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     playClick();
-    minimizeWindow(windowState.id);
+    shadeWindow(windowState.id);
   };
 
   const handleZoom = (event: MouseEvent<HTMLButtonElement>) => {
@@ -98,45 +100,115 @@ export function TitleBar({ isActive, windowState }: TitleBarProps) {
   return (
     <div
       className={[
-        "relative flex h-7 items-center justify-center border-b border-[#4b4b4b] px-3 select-none",
-        isActive
-          ? "bg-[linear-gradient(180deg,#cccccc_0%,#bcbcbc_50%,#aaaaaa_100%)] text-[#111111]"
-          : "bg-[#dddddd] text-[#666666]"
+        "relative flex h-[22px] items-start justify-center select-none",
+        isActive ? "text-[#111111]" : "text-[#666666]"
       ].join(" ")}
       onDoubleClick={handleDoubleClick}
       onMouseDown={handleDragMouseDown}
     >
-      <div className="absolute left-2 flex items-center gap-2">
-        <button
-          aria-label={`Close ${windowState.title}`}
-          className="h-3 w-3 rounded-full border border-[#6f2020] bg-[#ff5f57] shadow-[inset_1px_1px_0_rgba(255,255,255,0.45)]"
-          type="button"
-          onClick={handleClose}
-          onMouseDown={(event) => event.stopPropagation()}
+      <button
+        aria-label={`Close ${windowState.title}`}
+        className={[
+          "ml-1 mt-1 h-[11px] w-[11px] border border-white p-0",
+          isActive ? "opacity-100" : "opacity-55"
+        ].join(" ")}
+        style={{ borderStyle: "inset" }}
+        type="button"
+        onClick={handleClose}
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <span className="relative block h-[9px] w-[9px] border border-[#222222] bg-[linear-gradient(to_bottom_right,#999999,#aaaaaa,#bbbbbb,#cccccc,#dddddd,#eeeeee,#ffffff,#ffffff)] shadow-[inset_1px_1px_0_#cccccc,inset_-1px_-1px_0_#888888]">
+          <span className="absolute left-0 top-0 h-px w-px bg-white" />
+        </span>
+      </button>
+      <div className={["mt-1 flex h-3 flex-1 px-1", isActive ? "opacity-100" : "opacity-55"].join(" ")}>
+        <span
+          className="block h-3 w-px"
+          style={{
+            backgroundImage: `repeating-linear-gradient(${isActive ? "#ffffff 0 1px, #dadada 1px 2px" : "#bdbdbd 0 1px, #dadada 1px 2px"})`
+          }}
         />
-        <button
-          aria-label={`Minimize ${windowState.title}`}
-          className="h-3 w-3 rounded-full border border-[#8f6813] bg-[#febc2e] shadow-[inset_1px_1px_0_rgba(255,255,255,0.45)]"
-          type="button"
-          onClick={handleMinimize}
-          onMouseDown={(event) => event.stopPropagation()}
+        <span
+          className="block h-3 flex-1"
+          style={{
+            backgroundImage: `repeating-linear-gradient(${isActive ? "#ffffff 0 1px, #737373 1px 2px" : "#bdbdbd 0 1px, #8a8a8a 1px 2px"})`
+          }}
         />
-        <button
-          aria-label={windowState.isMaximized ? `Restore ${windowState.title}` : `Zoom ${windowState.title}`}
-          className="h-3 w-3 rounded-full border border-[#21682b] bg-[#28c840] shadow-[inset_1px_1px_0_rgba(255,255,255,0.45)]"
-          type="button"
-          onClick={handleZoom}
-          onMouseDown={(event) => event.stopPropagation()}
+        <span
+          className="block h-3 w-px"
+          style={{
+            backgroundImage: `repeating-linear-gradient(${isActive ? "#dadada 0 1px, #737373 1px 2px" : "#dadada 0 1px, #8a8a8a 1px 2px"})`
+          }}
         />
       </div>
       <div
         className={[
-          "pointer-events-none max-w-[70%] truncate px-14 text-center text-[13px] leading-none tracking-[0.01em]",
-          isActive ? "font-bold text-[#111111]" : "font-normal text-[#6a6a6a]"
+          "pointer-events-none mt-[3px] flex min-w-0 max-w-[42%] items-center gap-1 overflow-hidden px-[3px] text-center text-[12px] leading-none",
+          isActive ? "opacity-100" : "opacity-50"
         ].join(" ")}
+        title={windowState.title}
       >
-        {windowState.title}
+        <Image
+          src={definition.icon}
+          alt=""
+          width={16}
+          height={16}
+          className="h-4 w-4 shrink-0 object-contain [image-rendering:pixelated]"
+        />
+        <span className="truncate">{windowState.title}</span>
       </div>
+      <div className={["mt-1 flex h-3 flex-1 px-1", isActive ? "opacity-100" : "opacity-55"].join(" ")}>
+        <span
+          className="block h-3 w-px"
+          style={{
+            backgroundImage: `repeating-linear-gradient(${isActive ? "#ffffff 0 1px, #dadada 1px 2px" : "#bdbdbd 0 1px, #dadada 1px 2px"})`
+          }}
+        />
+        <span
+          className="block h-3 flex-1"
+          style={{
+            backgroundImage: `repeating-linear-gradient(${isActive ? "#ffffff 0 1px, #737373 1px 2px" : "#bdbdbd 0 1px, #8a8a8a 1px 2px"})`
+          }}
+        />
+        <span
+          className="block h-3 w-px"
+          style={{
+            backgroundImage: `repeating-linear-gradient(${isActive ? "#dadada 0 1px, #737373 1px 2px" : "#dadada 0 1px, #8a8a8a 1px 2px"})`
+          }}
+        />
+      </div>
+      <button
+        aria-label={windowState.isMaximized ? `Restore ${windowState.title}` : `Zoom ${windowState.title}`}
+        className={[
+          "mr-[3px] mt-1 h-[11px] w-[11px] border border-white p-0",
+          isActive ? "opacity-100" : "opacity-55"
+        ].join(" ")}
+        style={{ borderStyle: "inset" }}
+        type="button"
+        onClick={handleZoom}
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <span className="relative block h-[9px] w-[9px] border border-[#222222] bg-[linear-gradient(to_bottom_right,#999999,#aaaaaa,#bbbbbb,#cccccc,#dddddd,#eeeeee,#ffffff,#ffffff)] shadow-[inset_1px_1px_0_#cccccc,inset_-1px_-1px_0_#888888]">
+          <span className="absolute left-0 top-0 h-px w-px bg-white" />
+          <span className="absolute left-px top-px h-[5px] w-[5px] border-b border-r border-[#202020]" />
+        </span>
+      </button>
+      <button
+        aria-label={windowState.isShaded ? `Expand ${windowState.title}` : `Collapse ${windowState.title}`}
+        className={[
+          "mr-1 mt-1 h-[11px] w-[11px] border border-white p-0",
+          isActive ? "opacity-100" : "opacity-55"
+        ].join(" ")}
+        style={{ borderStyle: "inset" }}
+        type="button"
+        onClick={handleShade}
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <span className="relative block h-[9px] w-[9px] border border-[#222222] bg-[linear-gradient(to_bottom_right,#999999,#aaaaaa,#bbbbbb,#cccccc,#dddddd,#eeeeee,#ffffff,#ffffff)] shadow-[inset_1px_1px_0_#cccccc,inset_-1px_-1px_0_#888888]">
+          <span className="absolute left-0 top-0 h-px w-px bg-white" />
+          <span className="absolute left-px top-1 h-px w-[5px] border-y border-[#202020]" />
+        </span>
+      </button>
     </div>
   );
 }

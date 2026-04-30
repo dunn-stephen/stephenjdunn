@@ -39,6 +39,7 @@ const ALL_APPS_EASTER_EGG_IDS = [
 
 export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const openWindow = useWindowStore((state) => state.openWindow);
   const soundEnabled = useSoundStore((state) => state.enabled);
   const soundInitialized = useSoundStore((state) => state.initialized);
   const toggleSound = useSoundStore((state) => state.toggle);
@@ -58,6 +59,10 @@ export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) 
     () => windows.find((windowState) => windowState.id === focusedWindowId) ?? null,
     [focusedWindowId, windows]
   );
+  const activeAppDefinition = useMemo(
+    () => getAppDefinition(activeWindow?.appId ?? "finder"),
+    [activeWindow]
+  );
   const openAppIds = useMemo(() => {
     const appIds = new Set(windows.map((windowState) => windowState.appId));
 
@@ -67,7 +72,7 @@ export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) 
 
     return appIds;
   }, [aboutOpen, windows]);
-  const activeAppName = activeWindow ? getAppDefinition(activeWindow.appId).name : "Finder";
+  const activeAppName = activeAppDefinition.name;
   const allAppsEasterEggState = allAppsEasterEggVisible
     ? "visible"
     : allAppsEasterEggDismissed
@@ -167,6 +172,7 @@ export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) 
       >
         <Wallpaper />
         <MenuBar
+          activeAppIcon={activeAppDefinition.icon}
           activeAppName={activeAppName}
           canCloseActiveApp={activeWindow !== null}
           soundEnabled={soundEnabled}
@@ -175,6 +181,18 @@ export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) 
             if (activeWindow) {
               closeWindow(activeWindow.id);
             }
+          }}
+          onOpenHelp={() => {
+            openWindow("textedit", {
+              content: readMeContent,
+              title: "Help Center"
+            });
+          }}
+          onRestart={() => {
+            console.info("Restart requested.");
+          }}
+          onSleep={() => {
+            console.info("Sleep requested.");
           }}
           onToggleSound={toggleSound}
           onShutDown={() => {

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useSoundStore } from "@/lib/sound";
 
 const CHIME_DELAY_MS = 350;
@@ -14,8 +14,8 @@ const PROGRESS_STEPS = [
   { delayMs: 1900, value: 90 },
   { delayMs: 2320, value: 100 }
 ] as const;
-const WELCOME_DISPLAY_MS = 700;
-const COMPLETE_DELAY_MS = PROGRESS_STEPS[PROGRESS_STEPS.length - 1].delayMs + WELCOME_DISPLAY_MS;
+const COMPLETE_HOLD_MS = 2000;
+const COMPLETE_DELAY_MS = PROGRESS_STEPS[PROGRESS_STEPS.length - 1].delayMs + COMPLETE_HOLD_MS;
 const REDUCED_MOTION_COMPLETE_DELAY_MS = 150;
 
 interface BootSequenceProps {
@@ -27,7 +27,6 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
   const playSound = useSoundStore((state) => state.play);
   const reduceMotion = useReducedMotion();
   const [progress, setProgress] = useState(0);
-  const [showWelcome, setShowWelcome] = useState(false);
   const onCompleteRef = useRef(onComplete);
   const bootDurationMs = reduceMotion ? REDUCED_MOTION_COMPLETE_DELAY_MS : COMPLETE_DELAY_MS;
 
@@ -50,9 +49,6 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
         playSound("boot");
       });
     }, CHIME_DELAY_MS);
-    const welcomeTimer = window.setTimeout(() => {
-      setShowWelcome(true);
-    }, reduceMotion ? 20 : PROGRESS_STEPS[PROGRESS_STEPS.length - 1].delayMs);
     const completeTimer = window.setTimeout(() => {
       onCompleteRef.current();
     }, bootDurationMs);
@@ -60,17 +56,15 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
     return () => {
       stepTimers.forEach((timer) => window.clearTimeout(timer));
       window.clearTimeout(chimeTimer);
-      window.clearTimeout(welcomeTimer);
       window.clearTimeout(completeTimer);
     };
   }, [bootDurationMs, initializeSound, playSound, reduceMotion]);
 
   return (
     <motion.div
-      className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#C0C0C0] px-6 text-black"
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#c0c0c0] bg-[url('/wallpapers/os9-mac-pattern.png')] bg-repeat px-6 text-black [background-position:0_20px]"
       exit={{ opacity: 0, transition: { duration: reduceMotion ? 0.01 : 0.35, ease: "easeInOut" } }}
       initial={{ opacity: 1 }}
-      onClick={() => onCompleteRef.current()}
     >
       <motion.div
         animate={{ opacity: 1, scale: 1 }}
@@ -89,7 +83,7 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
           />
         </div>
 
-        <div className="absolute left-1/2 top-[263px] flex -translate-x-1/2 flex-col items-center gap-2 text-center">
+        <div className="absolute left-1/2 top-[269px] flex -translate-x-1/2 flex-col items-center text-center">
           <motion.p
             animate={{ opacity: 1, y: 0 }}
             className="m-0 whitespace-nowrap font-['Charcoal'] text-[12px] leading-none"
@@ -98,31 +92,20 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
           >
             Starting Up...
           </motion.p>
-          <div className="w-[158px]">
-            <div className="relative h-[8px] overflow-hidden border border-black bg-[#c7c7c7] shadow-[-1px_-1px_0_#acacac,1px_1px_0_#ffffff,inset_-1px_-1px_0_#dedede,inset_1px_1px_0_#8b8b8b]">
+          <div className="mt-[13px] w-[158px]">
+            <div className="relative h-[10px] overflow-hidden border border-black bg-[#bdbdbd] shadow-[-1px_-1px_0_#acacac,1px_1px_0_#ffffff,inset_-1px_-1px_0_#dedede,inset_1px_1px_0_#8b8b8b]">
               <motion.div
                 animate={{ width: `${progress}%` }}
-                className="absolute inset-y-0 left-0 bg-[#5d5d5d]"
+                className="absolute inset-y-0 left-0"
                 initial={{ width: "0%" }}
+                style={{
+                  backgroundImage:
+                    "linear-gradient(to bottom, #31319c 0 11%, #6262cd 11% 22%, #9c9cff 22% 33%, #cdcdff 33% 44%, #eeeeee 44% 55%, #cdcdff 55% 66%, #9c9cff 66% 77%, #6262cd 77% 88%, #31319c 88% 100%)"
+                }}
                 transition={{ duration: reduceMotion ? 0.01 : 0.28, ease: "linear" }}
               />
             </div>
           </div>
-          <AnimatePresence mode="wait">
-            {showWelcome ? (
-              <motion.p
-                key="welcome"
-                animate={{ opacity: 1 }}
-                className="m-0 whitespace-nowrap font-['Charcoal'] text-[11px] leading-none"
-                initial={{ opacity: 0 }}
-                transition={{ duration: reduceMotion ? 0.01 : 0.2 }}
-              >
-                Welcome to Mac OS 9
-              </motion.p>
-            ) : (
-              <div key="welcome-spacer" className="h-[12px]" />
-            )}
-          </AnimatePresence>
         </div>
       </motion.div>
     </motion.div>
