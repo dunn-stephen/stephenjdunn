@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { About } from "@/components/apps/about/About";
 import { BootSequence } from "@/components/desktop/BootSequence";
 import { DesktopIcons } from "@/components/desktop/DesktopIcons";
@@ -23,6 +23,7 @@ interface DesktopProps {
 }
 
 type BootState = "checking" | "playing" | "done";
+type PowerState = "awake" | "sleeping" | "shutdown";
 
 const BOOT_SESSION_KEY = "has-booted";
 const ALL_APPS_EASTER_EGG_IDS = [
@@ -37,6 +38,47 @@ const ALL_APPS_EASTER_EGG_IDS = [
   "about"
 ] as const;
 
+function ShutdownAlert({
+  onCancel,
+  onRestart,
+  onShutDown,
+  onSleep
+}: {
+  onCancel: () => void;
+  onRestart: () => void;
+  onShutDown: () => void;
+  onSleep: () => void;
+}) {
+  return (
+    <div className="absolute inset-0 z-[10001] flex items-start justify-center bg-[rgba(0,0,0,0.12)] px-4 pt-[140px]">
+      <div className="w-[360px] border border-[#111111] bg-[#dedade] px-[26px] py-4 font-['Charcoal'] text-[12px] shadow-[1px_2px_0_#111111,inset_1px_1px_0_#ff9999,inset_-1px_-1px_0_#ff6162,inset_2px_2px_0_#ffffff,inset_-2px_-2px_0_#999999]">
+        <div className="flex">
+          <div className="mr-6 mt-0.5 flex h-8 w-8 items-center justify-center rounded-full border border-[#7b5800] bg-[radial-gradient(circle_at_40%_35%,#fff4a8_0_22%,#ffd35a_22%_65%,#e0a500_65%_100%)] font-['Chicago'] text-[18px] text-[#5a3b00]">
+            !
+          </div>
+          <div className="pt-1 text-[#202020]">
+            Are you sure you want to shut down your computer now?
+          </div>
+        </div>
+        <div className="mt-[15px] flex justify-end gap-[10px]">
+          <button className="os9-button min-h-[22px] w-[82px] rounded-none px-2 text-[11px]" type="button" onClick={onRestart}>
+            Restart
+          </button>
+          <button className="os9-button min-h-[22px] w-[82px] rounded-none px-2 text-[11px]" type="button" onClick={onSleep}>
+            Sleep
+          </button>
+          <button className="os9-button min-h-[22px] w-[82px] rounded-none px-2 text-[11px]" type="button" onClick={onCancel}>
+            Cancel
+          </button>
+          <button className="os9-button min-h-[22px] w-[82px] rounded-none px-2 text-[11px]" type="button" onClick={onShutDown}>
+            Shut Down
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const openWindow = useWindowStore((state) => state.openWindow);
@@ -44,6 +86,7 @@ export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) 
   const soundInitialized = useSoundStore((state) => state.initialized);
   const toggleSound = useSoundStore((state) => state.toggle);
   const initializeSound = useSoundStore((state) => state.initializeFromInteraction);
+  const playSound = useSoundStore((state) => state.play);
   const closeWindow = useWindowStore((state) => state.closeWindow);
   const focusedWindowId = useWindowStore((state) => state.focusedWindowId);
   const windows = useWindowStore((state) => state.windows);
@@ -53,6 +96,8 @@ export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) 
   const [allAppsEasterEggDismissed, setAllAppsEasterEggDismissed] = useState(false);
   const [bootState, setBootState] = useState<BootState>("checking");
   const [iconRevealMode, setIconRevealMode] = useState<"hidden" | "shown" | "stagger">("hidden");
+  const [powerState, setPowerState] = useState<PowerState>("awake");
+  const [shutdownDialogOpen, setShutdownDialogOpen] = useState(false);
   const allAppsEasterEggTriggered = useRef(false);
 
   const activeWindow = useMemo(
@@ -160,6 +205,16 @@ export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) 
     setIconRevealMode("stagger");
   };
 
+  const handleRestart = () => {
+    setShutdownDialogOpen(false);
+    setPowerState("sleeping");
+
+    window.setTimeout(() => {
+      window.sessionStorage.removeItem(BOOT_SESSION_KEY);
+      window.location.reload();
+    }, 650);
+  };
+
   return (
     <>
       <main
@@ -189,15 +244,16 @@ export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) 
             });
           }}
           onRestart={() => {
-            console.info("Restart requested.");
+            handleRestart();
           }}
           onSleep={() => {
-            console.info("Sleep requested.");
+            setShutdownDialogOpen(false);
+            setPowerState("sleeping");
           }}
           onToggleSound={toggleSound}
           onShutDown={() => {
-            // Task 1.2 only needs the Apple menu action present.
-            console.info("Shut Down requested.");
+            playSound("alert");
+            setShutdownDialogOpen(true);
           }}
         />
         <DesktopIcons
@@ -215,6 +271,71 @@ export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) 
           </div>
         ) : null}
         <WindowManager />
+        <AnimatePresence>
+          {shutdownDialogOpen ? (
+            <motion.div
+              key="shutdown-alert"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.12, ease: "easeOut" }}
+              className="absolute inset-0 z-[10000]"
+            >
+              <ShutdownAlert
+                onCancel={() => setShutdownDialogOpen(false)}
+                onRestart={handleRestart}
+                onSleep={() => {
+                  setShutdownDialogOpen(false);
+                  setPowerState("sleeping");
+                }}
+                onShutDown={() => {
+                  setShutdownDialogOpen(false);
+                  setPowerState("shutdown");
+                }}
+              />
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+        <AnimatePresence>
+          {powerState === "sleeping" ? (
+            <motion.button
+              key="sleep-overlay"
+              type="button"
+              aria-label="Wake desktop"
+              className="absolute inset-0 z-[10002] bg-black text-transparent"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              onClick={() => setPowerState("awake")}
+            >
+              Wake
+            </motion.button>
+          ) : null}
+        </AnimatePresence>
+        <AnimatePresence>
+          {powerState === "shutdown" ? (
+            <motion.div
+              key="shutdown-screen"
+              className="absolute inset-0 z-[10003] flex items-center justify-center bg-black px-6 text-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+            >
+              <div className="space-y-4 text-[#c8c8c8]">
+                <p className="m-0 font-['Chicago'] text-[13px]">It is now safe to switch off your Macintosh.</p>
+                <button
+                  type="button"
+                  className="os9-button min-h-[22px] rounded-none px-4 text-[11px]"
+                  onClick={handleRestart}
+                >
+                  Restart
+                </button>
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
         <About
           isOpen={aboutOpen}
           onClose={() => setAboutOpen(false)}
