@@ -158,7 +158,7 @@ export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) 
   return (
     <>
       <main
-        className={`fixed inset-0 overflow-hidden bg-[#C0C0C0] transition-opacity max-md:hidden ${
+        className={`fixed inset-0 overflow-hidden transition-opacity max-md:hidden ${
           bootState === "checking" ? "opacity-0" : "opacity-100"
         }`}
         data-about-easter-egg={aboutEasterEggTriggered ? "triggered" : "idle"}
