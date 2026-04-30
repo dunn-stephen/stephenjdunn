@@ -7,7 +7,7 @@ import { getAppDefinition } from "@/lib/app-registry";
 import { useWindowStore } from "@/lib/window-store";
 import type { WindowState } from "@/types";
 
-const MENUBAR_HEIGHT = 28;
+const MENUBAR_HEIGHT = 19;
 const TITLEBAR_HEIGHT = 22;
 
 interface TitleBarProps {

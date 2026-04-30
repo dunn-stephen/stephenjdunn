@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { appRegistry } from "@/lib/app-registry";
 import type { AppId, WindowPosition, WindowSize, WindowState, WindowStore } from "@/types";
 
-const MENUBAR_HEIGHT = 28;
+const MENUBAR_HEIGHT = 19;
 const BASE_Z_INDEX = 100;
 const CASCADE_OFFSET = 20;
 

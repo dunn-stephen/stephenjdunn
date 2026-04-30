@@ -9,7 +9,7 @@ import type { SearchableItem } from "@/lib/search";
 import type { AppId, Project } from "@/types";
 
 const DESKTOP_ICON_POSITIONS_KEY = "desktop-icon-positions";
-const MENUBAR_HEIGHT = 28;
+const MENUBAR_HEIGHT = 19;
 const ICON_WIDTH = 75;
 const ICON_HEIGHT = 86;
 
