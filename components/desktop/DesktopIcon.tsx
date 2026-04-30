@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 interface DesktopIconProps {
+  eager?: boolean;
   icon: string;
   label: string;
   position: {
@@ -19,6 +20,7 @@ interface DesktopIconProps {
 }
 
 export function DesktopIcon({
+  eager = false,
   icon,
   label,
   position,
@@ -58,6 +60,7 @@ export function DesktopIcon({
         alt=""
         width={64}
         height={64}
+        loading={eager ? "eager" : "lazy"}
         className={`h-12 w-12 object-contain [image-rendering:pixelated] ${
           selected ? "brightness-[0.4]" : ""
         }`}

@@ -222,6 +222,7 @@ export function DesktopIcons({ projects, readMeContent, searchIndex, revealMode 
       {items.map((item, index) => (
         <DesktopIcon
           key={item.id}
+          eager={item.id === "trash"}
           icon={item.icon}
           label={item.label}
           position={item.position}
