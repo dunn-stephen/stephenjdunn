@@ -124,24 +124,24 @@ export function About({ isOpen, onClose, onEasterEgg }: AboutProps) {
     >
       <div
         aria-modal="true"
-        className="os9-window h-[280px] w-[360px] bg-[#d6d6d6]"
+        className="h-[280px] w-[360px] border border-black bg-[#dadada] shadow-[1px_1px_0_#111111,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#999999]"
         role="dialog"
       >
-        <div className="os9-titlebar">
-          <div className="os9-titlebar-label">About This Computer</div>
+        <div className="flex h-[22px] items-center justify-between px-2">
+          <div className="font-['Charcoal'] text-[12px] text-[#111111]">About This Computer</div>
           <button
             type="button"
             onClick={() => {
               playClose();
               onClose();
             }}
-            className="os9-button px-2 py-0 text-[10px]"
+            className="os9-button min-h-[18px] rounded-none px-2 py-0 text-[10px]"
           >
             Close
           </button>
         </div>
 
-        <div className="os9-window-body flex h-[calc(280px-28px)] flex-col gap-3 overflow-hidden px-4 py-4 text-[12px] leading-4 text-[#242424]">
+        <div className="flex h-[calc(280px-22px)] flex-col gap-3 overflow-hidden bg-[#dadada] px-4 py-4 text-[12px] leading-4 text-[#242424]">
           <div className="flex items-start gap-4">
             <HappyMacButton
               onClick={() => {
@@ -158,7 +158,7 @@ export function About({ isOpen, onClose, onEasterEgg }: AboutProps) {
             </div>
           </div>
 
-          <div className="os9-surface-inset bg-[#efefef] px-3 py-2">
+          <div className="border border-black bg-[#efefef] px-3 py-2 shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#b0b0b0]">
             <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[11px] leading-4">
               <span className="font-['Chicago']">Built-in Memory:</span>
               <span>256 MB</span>
@@ -183,7 +183,7 @@ export function About({ isOpen, onClose, onEasterEgg }: AboutProps) {
           </div>
 
           {easterEggUnlocked ? (
-            <div className="os9-surface-outset bg-[#f7f0bf] px-3 py-2 text-[11px] leading-4 text-[#443d14]">
+            <div className="border border-black bg-[#f7f0bf] px-3 py-2 text-[11px] leading-4 text-[#443d14] shadow-[inset_1px_1px_0_#fff6cc,inset_-1px_-1px_0_#b8af71]">
               Hidden message: still booting weird little ideas.
             </div>
           ) : null}

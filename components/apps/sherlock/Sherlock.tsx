@@ -392,13 +392,13 @@ export function Sherlock({ props, windowId }: AppProps) {
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#d4d0c8] text-[12px] text-[#1d1d1d]">
-      <div className="border-b border-[#8f8f8f] bg-[#d9d9d9] px-3 py-2">
-        <div className="flex items-center gap-3">
+    <div className="flex h-full min-h-0 flex-col bg-[#dadada] text-[12px] text-[#1d1d1d]">
+      <div className="mx-1 mt-1 border border-black bg-[#dadada] px-3 py-2 shadow-[-1px_-1px_0_#9c9c9c,1px_1px_0_#ffffff,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#b3b3b3]">
+        <div className="flex items-center gap-2">
           <Image
             alt=""
             aria-hidden
-            className="h-5 w-5 shrink-0"
+            className="h-4 w-4 shrink-0"
             height={20}
             src="/icons/png/11.png"
             width={20}
@@ -410,7 +410,7 @@ export function Sherlock({ props, windowId }: AppProps) {
             id={`${windowId}-sherlock-search`}
             ref={inputRef}
             autoFocus
-            className="os9-surface-inset min-w-0 flex-1 bg-white px-3 py-1.5 text-[12px] text-[#1f1f1f] outline-none"
+            className="min-w-0 flex-1 border border-black bg-white px-2 py-[3px] font-['Charcoal'] text-[12px] text-[#1f1f1f] shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#b0b0b0] outline-none"
             placeholder="Search projects"
             type="search"
             value={query}
@@ -426,20 +426,23 @@ export function Sherlock({ props, windowId }: AppProps) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-b border-[#8f8f8f] bg-[#efefef] px-3 py-1 font-['Chicago'] text-[11px] text-[#4a4a4a]">
+      <div className="mx-1 mt-1 h-5 border border-black bg-[#dadada] shadow-[-1px_-1px_0_#9c9c9c,1px_1px_0_#ffffff,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#b3b3b3]">
+        <div className="mx-1 mt-1 flex items-center justify-between font-['Arial'] text-[10px] tracking-[0.4px] text-[#111111]">
         <span>{hasQuery ? `Searching for "${query.trim()}"` : "All Projects"}</span>
         <span>{results.length} item{results.length === 1 ? "" : "s"}</span>
+        </div>
       </div>
 
-      <div className="app-scrollbar min-h-0 flex-1 overflow-y-auto bg-[#e5e5e5] p-3">
+      <div className="relative mx-1 mb-1 mt-[-1px] min-h-0 flex-1 border border-black bg-white shadow-[-1px_-1px_0_#9c9c9c,1px_1px_0_#ffffff,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#acacac]">
+      <div className="app-scrollbar min-h-0 h-full overflow-y-auto px-3 py-3">
         {results.length === 0 ? (
           <ResultsEmptyState hasData={hasData} hasQuery={hasQuery} />
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {results.map((result) => (
               <button
                 key={result.projectSlug}
-                className="os9-surface-outset flex w-full items-start gap-3 bg-[#f7f7f7] px-3 py-3 text-left transition-colors hover:bg-[#f0f4fb] focus:bg-[#dbe9fb] focus:outline-none"
+                className="flex w-full items-start gap-3 border border-transparent px-2 py-2 text-left transition-none hover:border-black hover:bg-[#efefef] focus:border-black focus:bg-[#efefef] focus:outline-none"
                 type="button"
                 onClick={() => handleSelectResult(result)}
               >
@@ -458,7 +461,7 @@ export function Sherlock({ props, windowId }: AppProps) {
                       Finder
                     </span>
                   </div>
-                  <p className="mt-1 text-[11px] leading-4 text-[#4a4a4a]">{result.excerpt}</p>
+                  <p className="mt-1 font-['Charcoal'] text-[11px] leading-4 text-[#4a4a4a]">{result.excerpt}</p>
                   <p className="mt-2 font-['Chicago'] text-[10px] uppercase tracking-[0.08em] text-[#6a6a6a]">
                     {result.projectSlug}
                   </p>
@@ -468,12 +471,7 @@ export function Sherlock({ props, windowId }: AppProps) {
           </div>
         )}
       </div>
-
-      <footer className="border-t border-[#8f8f8f] bg-[#d8d8d8] px-3 py-1 font-['Chicago'] text-[11px] text-[#3d3d3d]">
-        {hasData
-          ? "Type to search titles, descriptions, tags, and indexed content."
-          : "Waiting for the search index and project list to be passed into Sherlock."}
-      </footer>
+      </div>
     </div>
   );
 }

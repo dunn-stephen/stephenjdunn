@@ -47,8 +47,8 @@ export function NotePad({ props, windowId }: AppProps) {
   const { note, noteId } = resolveNote(props);
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#d4d0c8] p-3 text-[#2d2610]">
-      <div className="os9-surface-outset flex min-h-0 flex-1 flex-col overflow-hidden bg-[#fff7bf] p-[2px]">
+    <div className="flex h-full min-h-0 flex-col bg-[#dadada] p-1 text-[#2d2610]">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden border border-black bg-[#fff7bf] p-[2px] shadow-[-1px_-1px_0_#c8be75,1px_1px_0_#fffbd3,inset_1px_1px_0_#fffde0,inset_-1px_-1px_0_#d8cd82]">
         <div className="border-b border-[#d8cd82] bg-[#fff2a0] px-3 py-2 font-['Chicago'] text-[11px] text-[#65530b]">
           {note.title}
         </div>

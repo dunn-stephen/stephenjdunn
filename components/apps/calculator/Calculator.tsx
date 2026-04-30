@@ -396,7 +396,7 @@ function getButtonClasses(tone: ButtonTone) {
     case "utility":
       return "border-[#616161] bg-[linear-gradient(180deg,#fefefe_0%,#d8d8d8_100%)] text-[#2b2b2b]";
     case "operator":
-      return "border-[#5c5f67] bg-[linear-gradient(180deg,#f4f7fb_0%,#b7bec8_100%)] text-[#222a35]";
+      return "border-[#5d5d74] bg-[linear-gradient(180deg,#ececff_0%,#babada_100%)] text-[#22223b]";
     case "number":
     default:
       return "border-[#636363] bg-[linear-gradient(180deg,#ffffff_0%,#d0d0d0_100%)] text-[#1f1f1f]";
@@ -407,10 +407,10 @@ function CalculatorButton({ definition, isActive, onPress }: CalculatorButtonPro
   return (
     <button
       className={[
-        "flex h-[40px] items-center justify-center border text-[16px] font-['Chicago'] leading-none shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#8d8d8d] outline-none transition-none focus:outline-none focus-visible:outline-none active:translate-y-px active:shadow-[inset_1px_1px_0_#8d8d8d,inset_-1px_-1px_0_#ffffff]",
-        getButtonClasses(definition.tone)
+        "flex h-[32px] items-center justify-center border text-[14px] font-['Chicago'] leading-none shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#8d8d8d] outline-none transition-none focus:outline-none focus-visible:outline-none active:translate-y-px active:shadow-[inset_1px_1px_0_#8d8d8d,inset_-1px_-1px_0_#ffffff]",
+        getButtonClasses(definition.tone),
+        isActive ? "bg-[#31319c] text-white" : ""
       ].join(" ")}
-      data-active={isActive ? "true" : undefined}
       style={{ gridColumn: `span ${definition.span ?? 1}` }}
       type="button"
       onClick={() => onPress(definition.action)}
@@ -426,9 +426,9 @@ export function Calculator(_: AppProps) {
   const easterEggLabel = CALCULATOR_EASTER_EGGS[state.display];
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#d4d0c8] p-2 text-[#1f1f1f]">
-      <div className="os9-surface-outset flex h-full min-h-0 flex-col gap-2 bg-[#cdcdcd] p-[6px]">
-        <div className="os9-surface-inset flex items-end justify-end bg-[linear-gradient(180deg,#f8f8df_0%,#d8d8bf_100%)] px-3 py-2">
+    <div className="flex h-full min-h-0 flex-col bg-[#dadada] p-1 text-[#1f1f1f]">
+      <div className="flex h-full min-h-0 flex-col gap-[6px] border border-black bg-[#dadada] px-[6px] py-[6px] shadow-[-1px_-1px_0_#9c9c9c,1px_1px_0_#ffffff,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#999999]">
+        <div className="flex items-end justify-end border border-black bg-[linear-gradient(180deg,#f8f8df_0%,#d8d8bf_100%)] px-3 py-2 shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#a4a486]">
           <div
             aria-label="Calculator display"
             className={[
@@ -443,7 +443,7 @@ export function Calculator(_: AppProps) {
           </div>
         </div>
 
-        <div className="grid flex-1 grid-cols-4 gap-[6px]">
+        <div className="grid flex-1 grid-cols-4 gap-[4px]">
           {BUTTONS.map((buttonDefinition) => {
             const isActive =
               buttonDefinition.action.type === "set-operator"
