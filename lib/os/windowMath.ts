@@ -1,12 +1,22 @@
 import type { WindowBounds } from "@/lib/os/types";
 
 export const MENU_BAR_HEIGHT = 28;
+export const WINDOW_SHADE_HEIGHT = 28;
 
-export function clampBounds(bounds: WindowBounds, viewportWidth: number, viewportHeight: number): WindowBounds {
+export function getWindowFrameHeight(boundsHeight: number, collapsed: boolean) {
+  return collapsed ? WINDOW_SHADE_HEIGHT : boundsHeight;
+}
+
+export function clampBounds(
+  bounds: WindowBounds,
+  viewportWidth: number,
+  viewportHeight: number,
+  frameHeight = bounds.height
+): WindowBounds {
   const width = Math.min(bounds.width, Math.max(280, viewportWidth - 24));
   const height = Math.min(bounds.height, Math.max(160, viewportHeight - MENU_BAR_HEIGHT - 24));
   const maxX = Math.max(0, viewportWidth - width);
-  const maxY = Math.max(MENU_BAR_HEIGHT, viewportHeight - 24);
+  const maxY = Math.max(MENU_BAR_HEIGHT, viewportHeight - frameHeight);
 
   return {
     width,

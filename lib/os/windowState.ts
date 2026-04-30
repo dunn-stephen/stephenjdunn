@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import type { AppId, WindowBounds, WindowInit, WindowInstance, WindowMode } from "@/lib/os/types";
 import { geometryTemplateToBounds, readGeometryTemplate, resetPersistedGeometry, writeGeometryTemplate } from "@/lib/os/sessionStorage";
-import { cascadeBounds, centerBounds, clampBounds, preferredZoomBounds } from "@/lib/os/windowMath";
+import { cascadeBounds, centerBounds, clampBounds, getWindowFrameHeight, preferredZoomBounds } from "@/lib/os/windowMath";
 
 export interface WindowManagerStore {
   windows: Record<string, WindowInstance>;
@@ -63,6 +63,11 @@ function assignZIndexes(windows: Record<string, WindowInstance>, focusedId: stri
 
 function persistWindowGeometry(window: WindowInstance) {
   writeGeometryTemplate(getGeometryKey(window.appId, window.nodeId), window.bounds);
+}
+
+function clampWindowBounds(window: WindowInstance, bounds: WindowBounds, viewportWidth: number, viewportHeight: number) {
+  // Keep shaded windows draggable all the way to the viewport edge, matching the visible frame height.
+  return clampBounds(bounds, viewportWidth, viewportHeight, getWindowFrameHeight(bounds.height, window.mode === "collapsed"));
 }
 
 export const useWindowManagerStore = create<WindowManagerStore>((set, get) => ({
@@ -130,7 +135,8 @@ export const useWindowManagerStore = create<WindowManagerStore>((set, get) => ({
     }
 
     const { width, height } = viewport();
-    const bounds = clampBounds(
+    const bounds = clampWindowBounds(
+      current,
       {
         ...current.bounds,
         x,
@@ -161,7 +167,8 @@ export const useWindowManagerStore = create<WindowManagerStore>((set, get) => ({
     }
 
     const viewportSize = viewport();
-    const bounds = clampBounds(
+    const bounds = clampWindowBounds(
+      current,
       {
         ...current.bounds,
         width,
@@ -207,13 +214,25 @@ export const useWindowManagerStore = create<WindowManagerStore>((set, get) => ({
       return;
     }
 
+    const nextMode: WindowMode = current.mode === "collapsed" ? "normal" : "collapsed";
+    const viewportSize = viewport();
+    const next: WindowInstance = {
+      ...current,
+      mode: nextMode,
+      bounds: clampBounds(
+        current.bounds,
+        viewportSize.width,
+        viewportSize.height,
+        getWindowFrameHeight(current.bounds.height, nextMode === "collapsed")
+      )
+    };
+
+    persistWindowGeometry(next);
+
     set({
       windows: {
         ...get().windows,
-        [windowId]: {
-          ...current,
-          mode: current.mode === "collapsed" ? "normal" : "collapsed"
-        }
+        [windowId]: next
       }
     });
   },
