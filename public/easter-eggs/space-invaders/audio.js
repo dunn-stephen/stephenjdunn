@@ -66,3 +66,9 @@ function updateBGM() {
   bgGain.gain.setValueAtTime(vol, t);
   bgGain.gain.setValueAtTime(0, t + 0.05);
 }
+
+window.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "setMuted") {
+    muted = !!event.data.muted;
+  }
+});
