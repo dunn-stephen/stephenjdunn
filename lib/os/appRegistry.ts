@@ -11,7 +11,8 @@ const defaultBoundsByApp: Record<AppId, WindowBounds> = {
   contact: { x: 188, y: 128, width: 540, height: 420 },
   extras: { x: 212, y: 132, width: 460, height: 320 },
   weather: { x: 96, y: 88, width: 880, height: 600 },
-  help: { x: 232, y: 148, width: 460, height: 340 }
+  help: { x: 232, y: 148, width: 460, height: 340 },
+  "file-corruption-dialog": { x: 264, y: 176, width: 420, height: 220 }
 };
 
 export function getDefaultBounds(appId: AppId) {
@@ -65,6 +66,14 @@ export function createNonCanonicalWindow(appId: AppId): WindowInit {
         canonicalRoute: null,
         bounds: getDefaultBounds(appId)
       };
+    case "file-corruption-dialog":
+      return {
+        appId,
+        kind: "modeless-dialog",
+        title: "Cannot Open File",
+        canonicalRoute: null,
+        bounds: getDefaultBounds(appId)
+      };
     default:
       return {
         appId,
@@ -74,6 +83,15 @@ export function createNonCanonicalWindow(appId: AppId): WindowInit {
         bounds: getDefaultBounds(appId)
       };
   }
+}
+
+export function createCorruptedFileDialogWindow(fileName: string): WindowInit {
+  return {
+    ...createNonCanonicalWindow("file-corruption-dialog"),
+    payload: {
+      fileName
+    }
+  };
 }
 
 export function createCanonicalWindow(appId: AppId, route: CanonicalRoute, options?: { slug?: string; title?: string }): WindowInit {

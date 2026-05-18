@@ -13,6 +13,7 @@ import { ContactApp } from "@/components/os/apps/ContactApp";
 import { ExtrasApp } from "@/components/os/apps/ExtrasApp";
 import { WeatherApp } from "@/components/os/apps/WeatherApp";
 import { HelpApp } from "@/components/os/apps/HelpApp";
+import { FileCorruptionDialogApp } from "@/components/os/apps/FileCorruptionDialogApp";
 
 type WindowLayerProps = {
   windows: WindowInstance[];
@@ -34,7 +35,7 @@ type WindowLayerProps = {
 
 function getWindowContent(
   window: WindowInstance,
-  props: Omit<WindowLayerProps, "windows" | "onFocus" | "onClose" | "onCollapse" | "onZoom" | "onMove" | "onResize">
+  props: Omit<WindowLayerProps, "windows" | "onFocus" | "onCollapse" | "onZoom" | "onMove" | "onResize">
 ) {
   switch (window.appId) {
     case "finder":
@@ -67,6 +68,8 @@ function getWindowContent(
       return <WeatherApp />;
     case "help":
       return <HelpApp />;
+    case "file-corruption-dialog":
+      return <FileCorruptionDialogApp fileName={window.payload?.fileName} onDismiss={() => props.onClose(window.id)} />;
     default:
       return <p className="text-[11px] text-subtle">App content unavailable.</p>;
   }

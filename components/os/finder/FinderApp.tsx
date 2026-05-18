@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { FinderTreeRecord } from "@/lib/os/types";
+import type { FinderNode, FinderTreeRecord } from "@/lib/os/types";
 
 type FinderAppProps = {
   tree: FinderTreeRecord;
@@ -11,32 +11,56 @@ type FinderAppProps = {
   onOpenNode: (nodeId: string) => void;
 };
 
-function iconForNode(nodeId: string) {
-  if (nodeId.includes("trash")) {
+function iconForNode(node: FinderNode) {
+  if (node.type === "trash") {
     return "🗑";
   }
 
-  if (nodeId.includes("applications")) {
-    return "🗂";
+  if (node.type === "volume") {
+    return "💽";
   }
 
-  if (nodeId.includes("projects")) {
+  if (node.type === "folder") {
+    if (node.id.includes("applications")) {
+      return "🗂";
+    }
+
+    if (node.id.includes("writing")) {
+      return "📝";
+    }
+
     return "📁";
   }
 
-  if (nodeId.includes("writing")) {
-    return "📝";
+  if (node.type === "app") {
+    return "🗂";
   }
 
-  if (nodeId.includes("resume")) {
+  if (/\.(jpg|jpeg|png|gif|webp)$/i.test(node.name)) {
+    return "🖼";
+  }
+
+  if (/\.(avi|mov|mp4|mkv)$/i.test(node.name)) {
+    return "🎞";
+  }
+
+  if (/\.(ppt|pptx)$/i.test(node.name)) {
+    return "📊";
+  }
+
+  if (/\.(xls|xlsx)$/i.test(node.name)) {
+    return "📈";
+  }
+
+  if (node.id.includes("resume")) {
     return "📄";
   }
 
-  if (nodeId.includes("contact")) {
+  if (node.id.includes("contact")) {
     return "☎";
   }
 
-  if (nodeId.includes("about")) {
+  if (node.id.includes("about")) {
     return "ℹ";
   }
 
@@ -69,7 +93,7 @@ export function FinderApp({ tree, nodeId, selectionNodeIds, onSelect, onOpenNode
               onClick={() => onOpenNode(item.id)}
               className="flex w-full items-center gap-2 rounded-[2px] px-2 py-1 text-left text-[12px] hover:bg-[#dce9fb]"
             >
-              <span>{iconForNode(item.id)}</span>
+              <span>{iconForNode(item)}</span>
               <span>{item.name}</span>
             </button>
           ))}
@@ -100,7 +124,7 @@ export function FinderApp({ tree, nodeId, selectionNodeIds, onSelect, onOpenNode
                   >
                     <div className="flex items-start gap-3">
                       <span className="text-[18px]" aria-hidden="true">
-                        {iconForNode(item.id)}
+                        {iconForNode(item)}
                       </span>
                       <div className="min-w-0">
                         <p className="font-bold uppercase tracking-[0.12em] text-accent-ink">{item.name}</p>

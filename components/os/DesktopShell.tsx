@@ -7,7 +7,12 @@ import { WelcomeSetup } from "@/components/os/WelcomeSetup";
 import { MenuBar } from "@/components/os/MenuBar";
 import { DesktopIcons } from "@/components/os/DesktopIcons";
 import { WindowLayer } from "@/components/os/windows/WindowLayer";
-import { createCanonicalWindow, createFinderWindow, createNonCanonicalWindow } from "@/lib/os/appRegistry";
+import {
+  createCanonicalWindow,
+  createCorruptedFileDialogWindow,
+  createFinderWindow,
+  createNonCanonicalWindow
+} from "@/lib/os/appRegistry";
 import { useFinderStore } from "@/lib/os/finderState";
 import { getLaunchIntent } from "@/lib/os/launchIntent";
 import { useDesktopSessionStore } from "@/lib/os/sessionState";
@@ -200,6 +205,9 @@ export function DesktopShell({ initialFinderTree }: DesktopShellProps) {
         if (node.externalHref) {
           window.open(node.externalHref, "_blank", "noopener,noreferrer");
         }
+        break;
+      case "show-dialog":
+        openWindow(createCorruptedFileDialogWindow(node.name));
         break;
       default:
         break;

@@ -9,7 +9,8 @@ export type AppId =
   | "sherlock"
   | "notepad"
   | "calculator"
-  | "about";
+  | "about"
+  | "corrupted-file-dialog";
 
 export interface WindowPosition {
   x: number;

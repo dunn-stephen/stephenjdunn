@@ -3,9 +3,11 @@
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useWindowStore } from "@/lib/window-store";
+import { TRASH_FILE_NAMES } from "@/lib/trash-files";
 import type { AppProps, Project, ProjectFile } from "@/types";
 
 interface FinderWindowProps {
+  folder?: "projects" | "trash";
   projects: Project[];
   selectedFilePath?: string;
   selectedProjectSlug?: string;
@@ -74,8 +76,32 @@ function readSelectedFilePath(props: Record<string, unknown> | undefined) {
   return typeof props?.selectedFilePath === "string" ? props.selectedFilePath : null;
 }
 
+function readFolder(props: Record<string, unknown> | undefined) {
+  return props?.folder === "trash" ? "trash" : "projects";
+}
+
 function getFileIconPath(file: ProjectFile) {
   return file.type === "image" ? "/icons/png/69.png" : "/icons/png/28.png";
+}
+
+function getTrashFileIconPath(fileName: string) {
+  if (/\.(jpg|jpeg|png|gif|webp)$/i.test(fileName)) {
+    return "/icons/png/69.png";
+  }
+
+  if (/\.(avi|mov|mp4|mkv)$/i.test(fileName)) {
+    return "/icons/png/85.png";
+  }
+
+  if (/\.(ppt|pptx)$/i.test(fileName)) {
+    return "/icons/png/27.png";
+  }
+
+  if (/\.(xls|xlsx)$/i.test(fileName)) {
+    return "/icons/png/32.png";
+  }
+
+  return "/icons/png/28.png";
 }
 
 function getPreviewSource(path: string) {
@@ -159,6 +185,7 @@ function FinderContents({
 export function Finder({ props }: AppProps) {
   const openWindow = useWindowStore((state) => state.openWindow);
   const projects = useMemo(() => readProjects(props), [props]);
+  const folder = useMemo(() => readFolder(props), [props]);
   const selectedProjectSlug = useMemo(() => readSelectedProjectSlug(props), [props]);
   const selectedFilePath = useMemo(() => readSelectedFilePath(props), [props]);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
@@ -174,6 +201,21 @@ export function Finder({ props }: AppProps) {
   );
 
   const figures = useMemo<FinderFigure[]>(() => {
+    if (folder === "trash") {
+      return TRASH_FILE_NAMES.map((fileName) => ({
+        id: fileName,
+        icon: getTrashFileIconPath(fileName),
+        kind: "file" as const,
+        label: fileName,
+        onOpen: () => {
+          openWindow("corrupted-file-dialog", {
+            fileName,
+            title: "Cannot Open File"
+          });
+        }
+      }));
+    }
+
     if (selectedProject) {
       return selectedProject.files.map((file) => ({
         id: file.path,
@@ -212,15 +254,37 @@ export function Finder({ props }: AppProps) {
         });
       }
     }));
-  }, [openWindow, projects, selectedProject]);
+  }, [folder, openWindow, projects, selectedProject]);
 
-  if (projects.length === 0) {
+  if (folder !== "trash" && projects.length === 0) {
     return (
       <div className="flex h-full flex-col bg-[#dadada]">
         <FinderStatusBar text="0 items, Finder folder" />
         <FinderContents>
           <div className="flex h-full items-center justify-center px-6 text-center font-['Arial'] text-[10.5px] tracking-[0.4px] text-[#525252]">
             No project data is available for this window.
+          </div>
+        </FinderContents>
+      </div>
+    );
+  }
+
+  if (folder === "trash") {
+    const statusText = `${renderItemCount(figures.length)}, Trash folder`;
+
+    return (
+      <div className="flex h-full min-h-0 flex-col bg-[#dadada] text-black">
+        <FinderStatusBar text={statusText} />
+        <FinderContents>
+          <div className="flex min-h-full flex-wrap content-start items-start gap-x-[30px] gap-y-0 px-4 pb-4 pt-0">
+            {figures.map((figure) => (
+              <FinderFigureButton
+                key={figure.id}
+                figure={figure}
+                isSelected={selectedItemId === figure.id}
+                onSelect={() => setSelectedItemId(figure.id)}
+              />
+            ))}
           </div>
         </FinderContents>
       </div>

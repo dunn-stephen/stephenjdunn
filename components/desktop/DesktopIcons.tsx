@@ -33,7 +33,8 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     id: "trash",
     label: "Trash",
     icon: "/icons/png/7.png",
-    isVisualOnly: true,
+    appId: "finder",
+    windowProps: { folder: "trash", title: "Trash" },
     defaultPosition: { x: 1130, y: 620 }
   },
   {

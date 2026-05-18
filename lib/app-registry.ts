@@ -10,6 +10,7 @@ const SpaceInvaders = dynamic<AppProps>(() => import("@/components/apps/space-in
 const Sherlock = dynamic<AppProps>(() => import("@/components/apps/sherlock/Sherlock").then((module) => module.Sherlock));
 const NotePad = dynamic<AppProps>(() => import("@/components/apps/notepad/NotePad").then((module) => module.NotePad));
 const Calculator = dynamic<AppProps>(() => import("@/components/apps/calculator/Calculator").then((module) => module.Calculator));
+const CorruptedFileDialog = dynamic<AppProps>(() => import("@/components/apps/corrupted-file-dialog/CorruptedFileDialog").then((module) => module.CorruptedFileDialog));
 
 function PlaceholderApp({ props }: AppProps) {
   return createElement(
@@ -124,6 +125,16 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     singleton: true,
     resizable: false,
     component: PlaceholderApp
+  },
+  "corrupted-file-dialog": {
+    id: "corrupted-file-dialog",
+    name: "Cannot Open File",
+    icon: "/icons/png/14.png",
+    defaultSize: { width: 380, height: 180 },
+    minSize: { width: 380, height: 180 },
+    singleton: false,
+    resizable: false,
+    component: CorruptedFileDialog
   }
 };
 

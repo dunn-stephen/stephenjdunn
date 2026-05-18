@@ -22,7 +22,8 @@ export type AppId =
   | "contact"
   | "extras"
   | "weather"
-  | "help";
+  | "help"
+  | "file-corruption-dialog";
 
 export type WindowKind = "document" | "utility" | "modeless-dialog";
 
@@ -78,7 +79,7 @@ export interface WindowInit {
 
 export type FinderNodeType = "volume" | "folder" | "document" | "app" | "trash";
 
-export type FinderOpenBehavior = "finder" | "launch-app" | "open-document" | "external";
+export type FinderOpenBehavior = "finder" | "launch-app" | "open-document" | "external" | "show-dialog";
 
 export interface FinderNodeMeta {
   subtitle?: string;

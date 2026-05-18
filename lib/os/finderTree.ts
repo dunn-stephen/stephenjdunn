@@ -1,6 +1,21 @@
 import { getAllPosts, getAllProjects } from "@/lib/content";
 import type { FinderNode, FinderTreeRecord } from "@/lib/os/types";
 
+const trashFileNames = [
+  "definitely_not_passwords.txt",
+  "bank_account_number_and_debit_card_pin.txt",
+  "embarrassing_haircut_2007.jpg",
+  "resume_with_exaggerated_skills.doc",
+  "definitely_not_pirated_movie.avi",
+  "why_i_deserve_a_raise.ppt",
+  "budget_if_i_won_the_lottery.xls",
+  "top_secret_alien_contact_logs.txt",
+  "proof_neighbor_is_a_vampire.txt",
+  "things_i_know_that_they_dont_want_me_to_know.doc",
+  "moon_landing_but_the_other_moon_landing.avi",
+  "CONFIRMED_how_to_end_world_hunger.txt"
+] as const;
+
 function toRecord(nodes: FinderNode[]) {
   return Object.fromEntries(nodes.map((node) => [node.id, node])) as FinderTreeRecord;
 }
@@ -120,7 +135,8 @@ export function buildFinderTree(): FinderTreeRecord {
       type: "trash",
       parentId: "volume-stephen-hd",
       iconId: "trash",
-      openBehavior: "finder"
+      openBehavior: "finder",
+      children: trashFileNames.map((_, index) => `trash-item-${index + 1}`)
     }
   ];
 
@@ -156,5 +172,17 @@ export function buildFinderTree(): FinderTreeRecord {
     }
   }));
 
-  return toRecord([...baseNodes, ...projectNodes, ...postNodes]);
+  const trashNodes: FinderNode[] = trashFileNames.map((name, index) => ({
+    id: `trash-item-${index + 1}`,
+    name,
+    type: "document",
+    parentId: "trash",
+    iconId: "trash-document",
+    openBehavior: "show-dialog",
+    meta: {
+      subtitle: "The data in this file has been corrupted and cannot be opened."
+    }
+  }));
+
+  return toRecord([...baseNodes, ...projectNodes, ...postNodes, ...trashNodes]);
 }
