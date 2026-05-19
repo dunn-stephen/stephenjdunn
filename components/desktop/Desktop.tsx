@@ -13,13 +13,11 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getAppDefinition } from "@/lib/app-registry";
 import { useSoundStore } from "@/lib/sound";
 import { useWindowStore } from "@/lib/window-store";
-import type { SearchableItem } from "@/lib/search";
 import type { Project } from "@/types";
 
 interface DesktopProps {
   projects: Project[];
   readMeContent: string;
-  searchIndex: SearchableItem[];
 }
 
 type BootState = "checking" | "playing" | "done";
@@ -32,7 +30,6 @@ const ALL_APPS_EASTER_EGG_IDS = [
   "simpletext",
   "mail",
   "space-invaders",
-  "sherlock",
   "notepad",
   "calculator",
   "about"
@@ -79,7 +76,7 @@ function ShutdownAlert({
   );
 }
 
-export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) {
+export function Desktop({ projects, readMeContent }: DesktopProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const openWindow = useWindowStore((state) => state.openWindow);
   const soundEnabled = useSoundStore((state) => state.enabled);
@@ -259,7 +256,6 @@ export function Desktop({ projects, readMeContent, searchIndex }: DesktopProps) 
         <DesktopIcons
           projects={projects}
           readMeContent={readMeContent}
-          searchIndex={searchIndex}
           revealMode={iconRevealMode}
         />
         {allAppsEasterEggState === "visible" ? (

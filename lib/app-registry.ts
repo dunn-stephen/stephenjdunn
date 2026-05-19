@@ -3,11 +3,11 @@ import dynamic from "next/dynamic";
 import type { AppDefinition, AppId, AppProps } from "@/types";
 
 const Finder = dynamic<AppProps>(() => import("@/components/apps/finder/Finder").then((module) => module.Finder));
+const ProjectBrowser = dynamic<AppProps>(() => import("@/components/apps/project-browser/ProjectBrowser").then((module) => module.ProjectBrowser));
 const TextEdit = dynamic<AppProps>(() => import("@/components/apps/textedit/TextEdit").then((module) => module.TextEdit));
 const SimpleText = dynamic<AppProps>(() => import("@/components/apps/simpletext/SimpleText").then((module) => module.SimpleText));
 const Mail = dynamic<AppProps>(() => import("@/components/apps/mail/Mail").then((module) => module.Mail));
 const SpaceInvaders = dynamic<AppProps>(() => import("@/components/apps/space-invaders/SpaceInvaders").then((module) => module.SpaceInvaders));
-const Sherlock = dynamic<AppProps>(() => import("@/components/apps/sherlock/Sherlock").then((module) => module.Sherlock));
 const NotePad = dynamic<AppProps>(() => import("@/components/apps/notepad/NotePad").then((module) => module.NotePad));
 const Calculator = dynamic<AppProps>(() => import("@/components/apps/calculator/Calculator").then((module) => module.Calculator));
 const CorruptedFileDialog = dynamic<AppProps>(() => import("@/components/apps/corrupted-file-dialog/CorruptedFileDialog").then((module) => module.CorruptedFileDialog));
@@ -41,10 +41,20 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     name: "Finder",
     icon: "/icons/png/4.png",
     defaultSize: { width: 640, height: 440 },
+    minSize: { width: 480, height: 320 },
+    singleton: true,
+    resizable: true,
+    component: Finder
+  },
+  "project-browser": {
+    id: "project-browser",
+    name: "Projects",
+    icon: "/icons/png/37.png",
+    defaultSize: { width: 640, height: 440 },
     minSize: { width: 420, height: 300 },
     singleton: false,
     resizable: true,
-    component: Finder
+    component: ProjectBrowser
   },
   textedit: {
     id: "textedit",
@@ -85,16 +95,6 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     singleton: true,
     resizable: true,
     component: SpaceInvaders
-  },
-  sherlock: {
-    id: "sherlock",
-    name: "Sherlock",
-    icon: "/icons/png/11.png",
-    defaultSize: { width: 420, height: 380 },
-    minSize: { width: 340, height: 280 },
-    singleton: true,
-    resizable: true,
-    component: Sherlock
   },
   notepad: {
     id: "notepad",

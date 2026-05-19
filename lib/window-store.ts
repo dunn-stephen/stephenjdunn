@@ -92,7 +92,12 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
         const focusedWindows = applyFocus(
           currentWindows.map((windowState) => (
             windowState.id === existingWindow.id
-              ? { ...windowState, isMinimized: false }
+              ? {
+                  ...windowState,
+                  isMinimized: false,
+                  title: typeof props?.title === "string" ? props.title : windowState.title,
+                  props: props ? { ...windowState.props, ...props } : windowState.props
+                }
               : windowState
           )),
           existingWindow.id

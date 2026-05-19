@@ -2,11 +2,11 @@ import type { ComponentType } from "react";
 
 export type AppId =
   | "finder"
+  | "project-browser"
   | "textedit"
   | "simpletext"
   | "mail"
   | "space-invaders"
-  | "sherlock"
   | "notepad"
   | "calculator"
   | "about"

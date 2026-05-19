@@ -5,7 +5,6 @@ import { DesktopIcon } from "@/components/desktop/DesktopIcon";
 import { useSound } from "@/hooks/useSound";
 import { NOTES } from "@/lib/notes-config";
 import { useWindowStore } from "@/lib/window-store";
-import type { SearchableItem } from "@/lib/search";
 import type { AppId, Project } from "@/types";
 
 const DESKTOP_ICON_POSITIONS_KEY = "desktop-icon-positions";
@@ -34,7 +33,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     label: "Trash",
     icon: "/icons/png/7.png",
     appId: "finder",
-    windowProps: { folder: "trash", title: "Trash" },
+    windowProps: { initialFilter: "trash" },
     defaultPosition: { x: 1130, y: 620 }
   },
   {
@@ -69,14 +68,14 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     id: "projects",
     label: "Projects",
     icon: "/icons/png/37.png",
-    appId: "finder",
+    appId: "project-browser",
     defaultPosition: { x: 24, y: 436 }
   },
   {
-    id: "sherlock",
-    label: "Sherlock",
-    icon: "/icons/png/11.png",
-    appId: "sherlock",
+    id: "finder",
+    label: "Finder",
+    icon: "/icons/png/4.png",
+    appId: "finder",
     defaultPosition: { x: 24, y: 532 }
   },
   {
@@ -136,11 +135,10 @@ function clampPosition(position: IconPosition, viewport: { width: number; height
 interface DesktopIconsProps {
   projects: Project[];
   readMeContent: string;
-  searchIndex: SearchableItem[];
   revealMode: "hidden" | "shown" | "stagger";
 }
 
-export function DesktopIcons({ projects, readMeContent, searchIndex, revealMode }: DesktopIconsProps) {
+export function DesktopIcons({ projects, readMeContent, revealMode }: DesktopIconsProps) {
   const openWindow = useWindowStore((state) => state.openWindow);
   const { play: playClick } = useSound("click");
   const { play: playAlert } = useSound("alert");
@@ -248,8 +246,8 @@ export function DesktopIcons({ projects, readMeContent, searchIndex, revealMode 
             playOpen();
             openWindow(item.appId, {
               ...(item.appId === "textedit" ? { content: readMeContent, title: "Read Me" } : {}),
-              ...(item.appId === "finder" || item.appId === "sherlock" ? { projects } : {}),
-              ...(item.appId === "sherlock" ? { searchIndex } : {}),
+              ...(item.appId === "finder" || item.appId === "project-browser" ? { projects } : {}),
+              ...(item.appId === "finder" ? { readMeContent, initialFilter: "desktop" } : {}),
               ...item.windowProps
             });
           }}
