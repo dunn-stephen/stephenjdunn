@@ -356,7 +356,7 @@ export function MenuBar({
       ref={containerRef}
       className="fixed inset-x-0 top-0 z-[9999]"
     >
-      <div className="flex h-[19px] items-start border-b border-black bg-[#dedede] font-['Charcoal'] text-[12px] leading-none shadow-[inset_-1px_-1px_0_#9c9c9c,inset_1px_1px_0_#ffffff] [image-rendering:pixelated]">
+      <div className="os9-menubar flex h-[19px] items-start border-b border-black text-[12px] leading-none [image-rendering:pixelated]">
         <MenuWedge side="left" />
         <div className="flex h-full items-start">
           {menus.map((menu) => {
@@ -377,11 +377,9 @@ export function MenuBar({
                   aria-expanded={isOpen}
                   aria-haspopup="menu"
                   className={[
-                    "flex h-[18px] items-center border-t px-[8px] pt-px text-left",
+                    "os9-menubar-button flex h-[18px] items-center text-left",
                     menu.id === "apple" ? "min-w-[24px] justify-center px-[7px]" : "",
-                    isOpen
-                      ? "border-t-[#6262cd] bg-[#31319c] text-white"
-                      : "border-t-white bg-transparent text-black"
+                    isOpen ? "os9-menubar-button-active" : "text-black"
                   ].join(" ")}
                   onClick={() => {
                     playClick();
@@ -391,13 +389,13 @@ export function MenuBar({
                   {menu.label}
                 </button>
                 {isOpen ? (
-                  <div className="absolute left-0 top-[18px] z-[10001] min-w-[180px] border border-black bg-[#dedede] py-px shadow-[1px_1px_0_#111111,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#999999]">
+                  <div className="os9-menu-dropdown absolute left-0 top-[18px] z-[10001] min-w-[180px] py-px">
                     {menu.items.map((item, index) => {
                       if (item.type === "separator") {
                         return (
                           <div
                             key={`${menu.id}-separator-${index}`}
-                            className="my-[2px] h-[2px] shadow-[inset_0_1px_0_#999999,inset_0_-1px_0_#ffffff]"
+                            className="os9-menu-separator"
                           />
                         );
                       }
@@ -407,13 +405,8 @@ export function MenuBar({
                           key={`${menu.id}-${item.label}`}
                           type="button"
                           disabled={item.disabled}
-                          className={[
-                            "relative flex min-h-[18px] w-full items-center justify-between border-l border-r px-[8px] py-0 text-left",
-                            item.icon ? "pl-[24px]" : "pl-[20px]",
-                            item.disabled
-                              ? "cursor-default border-l-white border-r-[#9c9c9c] text-[#737373]"
-                              : "cursor-default border-l-white border-r-[#9c9c9c] text-black hover:border-l-[#6262cd] hover:border-r-[#00008b] hover:bg-[#31319c] hover:text-white"
-                          ].join(" ")}
+                          className="os9-menu-item cursor-default"
+                          data-has-icon={item.icon ? "true" : "false"}
                           onClick={() => {
                             if (item.disabled) {
                               return;
@@ -450,18 +443,18 @@ export function MenuBar({
           })}
         </div>
         <div className="flex-1" />
-        <div className="mt-[2px] ml-[8px] mr-[7px] text-black">{time}</div>
+        <div className="os9-menubar-status mt-[2px] ml-[8px] mr-[7px] text-black">{time}</div>
         <div
           aria-hidden="true"
           className="mt-[2px] h-[13px] w-[6px] bg-[linear-gradient(90deg,#ffffff_0_1px,#9c9c9c_1px_2px,transparent_2px_100%)]"
         />
-        <div className="mt-[2px] ml-[8px] mr-[7px] flex items-center text-black">
+        <div className="os9-menubar-status mt-[2px] ml-[8px] mr-[7px] text-black">
           <Image
             src={activeAppIcon}
             alt=""
             width={16}
             height={16}
-            className="mb-[2px] mr-[5px] h-4 w-4 object-contain [image-rendering:pixelated]"
+            className="mb-[1px] mr-[5px] h-4 w-4 object-contain [image-rendering:pixelated]"
           />
           <span>{activeAppName}</span>
         </div>

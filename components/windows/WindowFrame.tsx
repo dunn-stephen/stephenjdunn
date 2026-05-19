@@ -107,12 +107,8 @@ export function WindowFrame({ isActive, windowState }: WindowFrameProps) {
 
   return (
     <motion.div
-      className={[
-        "absolute flex flex-col overflow-hidden border bg-[#dadada]",
-        isActive
-          ? "border-black shadow-[1px_1px_0_#111111,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#999999]"
-          : "border-[#525252] shadow-[1px_1px_0_#525252,inset_1px_1px_0_#9a9a9a,inset_-1px_-1px_0_#6f6f6f]"
-      ].join(" ")}
+      className="os9-window-frame absolute flex flex-col overflow-hidden"
+      data-focused={isActive}
       exit={{
         opacity: 0,
         scale: 0.85,
@@ -148,7 +144,7 @@ export function WindowFrame({ isActive, windowState }: WindowFrameProps) {
         {!windowState.isShaded ? (
           <motion.div
             key="content"
-            className="relative mx-1 mb-1 mt-[-1px] border border-black bg-white shadow-[-1px_-1px_0_#9c9c9c,1px_1px_0_#ffffff,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#acacac]"
+            className="os9-window-frame__content-shell"
             exit={{
               height: 0,
               opacity: 0,
@@ -168,7 +164,7 @@ export function WindowFrame({ isActive, windowState }: WindowFrameProps) {
               ease: "easeInOut"
             }}
           >
-            <div className="h-full bg-[#f5f5f5]">
+            <div className="h-full bg-[#efefef]">
               {AppComponent ? (
                 <AppComponent
                   windowId={windowState.id}
@@ -184,12 +180,10 @@ export function WindowFrame({ isActive, windowState }: WindowFrameProps) {
       {showResizeHandle ? (
         <div
           aria-hidden="true"
-          className={["absolute bottom-1 right-1 cursor-se-resize bg-[#dadada] shadow-[inset_1px_1px_0_#ffffff]", isActive ? "opacity-100" : "opacity-55"].join(" ")}
+          className="os9-window-frame__resize-handle"
           style={{ width: RESIZE_HANDLE_SIZE, height: RESIZE_HANDLE_SIZE }}
           onMouseDown={handleResizeMouseDown}
-        >
-          <div className="h-full w-full bg-[linear-gradient(135deg,transparent_0_44%,#6f6f6f_44%_48%,transparent_48%_58%,#6f6f6f_58%_62%,transparent_62%_72%,#6f6f6f_72%_76%,transparent_76%_100%)]" />
-        </div>
+        />
       ) : null}
     </motion.div>
   );

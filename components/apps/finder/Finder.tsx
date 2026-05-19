@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { NOTES } from "@/lib/notes-config";
 import { appRegistry } from "@/lib/app-registry";
@@ -52,6 +53,7 @@ const GRID_LOCATION_STYLE = {
 
 export interface SearchItem {
   id: string;
+  iconPath?: string;
   name: string;
   kind: SearchKind;
   type: string;
@@ -75,7 +77,6 @@ interface DesktopFileDefinition {
 }
 
 interface SidebarFilter {
-  icon: React.ReactNode;
   id: SearchFilter;
   label: string;
 }
@@ -217,6 +218,30 @@ function getTrashFileType(fileName: string) {
   return "Text File";
 }
 
+function getTrashFileIconPath(fileName: string) {
+  if (/\.(jpg|jpeg|png|gif|webp)$/i.test(fileName)) {
+    return "/icons/png/69.png";
+  }
+
+  if (/\.(avi|mov|mp4|mkv)$/i.test(fileName)) {
+    return "/icons/png/85.png";
+  }
+
+  if (/\.(ppt|pptx)$/i.test(fileName)) {
+    return "/icons/png/27.png";
+  }
+
+  if (/\.(xls|xlsx)$/i.test(fileName)) {
+    return "/icons/png/32.png";
+  }
+
+  if (/\.(doc|docx)$/i.test(fileName)) {
+    return "/icons/png/28.png";
+  }
+
+  return "/icons/png/28.png";
+}
+
 function buildSearchItems({
   openWindow,
   projects,
@@ -242,6 +267,7 @@ function buildSearchItems({
       type: "Application",
       location: "Desktop",
       desc: APP_DESCRIPTIONS[appId] ?? "Open this app.",
+      iconPath: definition.icon,
       onOpen: () => {
         if (appId === "finder") {
           openWindow("finder", {
@@ -264,6 +290,7 @@ function buildSearchItems({
     type: "Folder",
     location: "Desktop",
     desc: "Browse all project folders.",
+    iconPath: "/icons/png/37.png",
     onOpen: () => {
       openWindow("project-browser", {
         projects,
@@ -279,6 +306,7 @@ function buildSearchItems({
     type: "Trash",
     location: "Desktop",
     desc: "Browse discarded files in Trash.",
+    iconPath: "/icons/png/17.png",
     onOpen: () => {
       openWindow("finder", {
         projects,
@@ -296,6 +324,7 @@ function buildSearchItems({
       type: file.type,
       location: "Desktop",
       desc: file.desc,
+      iconPath: file.id === "desktop:resume" ? "/icons/png/8.png" : file.id.startsWith("desktop:note-") ? "/icons/png/12.png" : "/icons/png/28.png",
       onOpen: () => {
         if (file.id === "desktop:read-me") {
           openWindow("textedit", {
@@ -328,6 +357,7 @@ function buildSearchItems({
       type: getTrashFileType(fileName),
       location: "Trash",
       desc: "Discarded file in Trash.",
+      iconPath: getTrashFileIconPath(fileName),
       onOpen: () => {
         openWindow("corrupted-file-dialog", {
           fileName,
@@ -345,6 +375,7 @@ function buildSearchItems({
       type: "Folder",
       location: "Projects",
       desc: project.description,
+      iconPath: "/icons/png/37.png",
       onOpen: () => {
         openWindow("project-browser", {
           projects,
@@ -367,6 +398,7 @@ function buildSearchItems({
       type: "MDX Document",
       location: `Projects \u203a ${project.title}`,
       desc: project.description,
+      iconPath: "/icons/png/28.png",
       onOpen: () => {
         openWindow("textedit", {
           content: indexFile.content ?? "",
@@ -379,16 +411,30 @@ function buildSearchItems({
   return items.sort((left, right) => left.name.localeCompare(right.name));
 }
 
-function getKindIcon(kind: SearchKind, selected = false, desktop = false) {
-  if (kind === "app") {
-    return desktop ? <AppIcon selected={selected} /> : <SmallAppIcon selected={selected} />;
-  }
-
+function getDefaultIconPath(kind: SearchKind) {
   if (kind === "folder") {
-    return desktop ? <FolderIconLg selected={selected} /> : <SmallFolderIcon selected={selected} />;
+    return "/icons/png/37.png";
   }
 
-  return desktop ? <DocIcon selected={selected} /> : <SmallDocIcon selected={selected} />;
+  if (kind === "app") {
+    return "/icons/png/4.png";
+  }
+
+  return "/icons/png/28.png";
+}
+
+function SearchItemIcon({ item, desktop = false }: { item: SearchItem; desktop?: boolean }) {
+  const iconSize = desktop ? 32 : 16;
+
+  return (
+    <Image
+      src={item.iconPath ?? getDefaultIconPath(item.kind)}
+      alt=""
+      width={iconSize}
+      height={iconSize}
+      className={`${desktop ? "h-8 w-8" : "h-4 w-4"} object-contain [image-rendering:pixelated]`}
+    />
+  );
 }
 
 function getFilterLabel(filter: SearchFilter) {
@@ -413,9 +459,9 @@ function getFilterLabel(filter: SearchFilter) {
 
 function EmptyState({ query }: { query: string }) {
   return (
-    <div className="flex h-full items-center justify-center px-6 text-center font-['Arial'] text-[10px] tracking-[0.3px] text-[#6a6a6a]">
+    <div className="os9-ui-text flex h-full items-center justify-center px-6 text-center text-[#6a6a6a]">
       <div>
-        <p className="m-0 font-['Chicago'] text-[12px] text-[#232323]">
+        <p className="m-0 font-['Charcoal'] text-[12px] text-[#232323]">
           {query ? "No items found." : "No items available."}
         </p>
         <p className="m-0 mt-2">
@@ -423,65 +469,6 @@ function EmptyState({ query }: { query: string }) {
         </p>
       </div>
     </div>
-  );
-}
-
-function SmallAppIcon({ selected = false }: { selected?: boolean }) {
-  return (
-    <svg aria-hidden="true" height="15" viewBox="0 0 15 15" width="15">
-      <rect fill={selected ? "#dce6ff" : "#1f1f1f"} height="11" rx="1" width="13" x="1" y="1" />
-      <rect fill={selected ? "#8eb1ff" : "#8db6ff"} height="7" width="9" x="3" y="3" />
-      <rect fill={selected ? "#dce6ff" : "#5e5e5e"} height="1" width="5" x="5" y="13" />
-    </svg>
-  );
-}
-
-function SmallDocIcon({ selected = false }: { selected?: boolean }) {
-  return (
-    <svg aria-hidden="true" height="15" viewBox="0 0 12 15" width="12">
-      <path d="M1 1h6l4 4v9H1z" fill={selected ? "#d9e4ff" : "#f8f8f8"} stroke={selected ? "#c1d4ff" : "#6e6e6e"} />
-      <path d="M7 1v4h4" fill={selected ? "#afc7ff" : "#d8d8d8"} />
-      <path d="M3 7h5M3 9h5M3 11h4" stroke={selected ? "#5d7fd8" : "#8d8d8d"} strokeWidth="1" />
-    </svg>
-  );
-}
-
-function SmallFolderIcon({ selected = false }: { selected?: boolean }) {
-  return (
-    <svg aria-hidden="true" height="13" viewBox="0 0 15 13" width="15">
-      <path d="M1 4h13v7H1z" fill={selected ? "#a9bcff" : "#f3c243"} stroke={selected ? "#d7e0ff" : "#976c00"} />
-      <path d="M1 3h4l1-2h3l1 2h4v2H1z" fill={selected ? "#c3d1ff" : "#ffd775"} stroke={selected ? "#d7e0ff" : "#b98a12"} />
-    </svg>
-  );
-}
-
-function AppIcon({ selected = false }: { selected?: boolean }) {
-  return (
-    <svg aria-hidden="true" height="36" viewBox="0 0 36 36" width="36">
-      <rect fill={selected ? "#18378e" : "#2f2f2f"} height="24" rx="2" width="30" x="3" y="4" />
-      <rect fill={selected ? "#9fb9ff" : "#89b6ff"} height="16" rx="1" width="22" x="7" y="8" />
-      <rect fill={selected ? "#dbe5ff" : "#808080"} height="2" width="10" x="13" y="30" />
-      <rect fill={selected ? "#dbe5ff" : "#5f5f5f"} height="2" width="16" x="10" y="32" />
-    </svg>
-  );
-}
-
-function DocIcon({ selected = false }: { selected?: boolean }) {
-  return (
-    <svg aria-hidden="true" height="28" viewBox="0 0 24 28" width="24">
-      <path d="M3 1h12l6 6v20H3z" fill={selected ? "#dce6ff" : "#fafafa"} stroke={selected ? "#6d8fe6" : "#737373"} />
-      <path d="M15 1v6h6" fill={selected ? "#a8c1ff" : "#d9d9d9"} />
-      <path d="M6 11h10M6 14h10M6 17h10M6 20h8" stroke={selected ? "#5d7fd8" : "#9a9a9a"} strokeWidth="1.2" />
-    </svg>
-  );
-}
-
-function FolderIconLg({ selected = false }: { selected?: boolean }) {
-  return (
-    <svg aria-hidden="true" height="36" viewBox="0 0 36 28" width="36">
-      <path d="M2 9h32v16H2z" fill={selected ? "#9eb4ff" : "#f3c243"} stroke={selected ? "#dbe5ff" : "#916600"} strokeWidth="1.2" />
-      <path d="M2 7h10l2-4h8l2 4h10v4H2z" fill={selected ? "#c7d5ff" : "#ffd775"} stroke={selected ? "#dbe5ff" : "#bc8d12"} strokeWidth="1.2" />
-    </svg>
   );
 }
 
@@ -499,20 +486,22 @@ function SidebarIcon({ filter, selected }: { filter: SearchFilter; selected: boo
     return <SearchIcon selected={selected} />;
   }
 
-  if (filter === "app") {
-    return <SmallAppIcon selected={selected} />;
-  }
+  const item: SearchItem = {
+    id: filter,
+    name: filter,
+    kind: filter === "app" ? "app" : filter === "file" ? "file" : "folder",
+    type: "",
+    location: "",
+    desc: "",
+    iconPath: filter === "trash" ? "/icons/png/17.png" : undefined
+  };
 
-  if (filter === "file") {
-    return <SmallDocIcon selected={selected} />;
-  }
-
-  return <SmallFolderIcon selected={selected} />;
+  return <SearchItemIcon item={item} />;
 }
 
 function ListHeader() {
   return (
-    <div className="grid h-[22px] shrink-0 grid-cols-[minmax(0,1fr)_58px_120px_148px] border-b border-[#ababab] bg-[linear-gradient(180deg,#ebebeb_0%,#d3d3d3_100%)] font-['Chicago'] text-[9px] uppercase tracking-[0.04em] text-[#3d3d3d]">
+    <div className="os9-list-header grid h-[22px] shrink-0 grid-cols-[minmax(0,1fr)_58px_120px_148px] uppercase text-[#3d3d3d]">
       <div className="flex items-center px-2">Name</div>
       <div className="flex items-center px-2">Kind</div>
       <div className="flex items-center px-2">Where</div>
@@ -575,12 +564,12 @@ export function Finder({ props, windowId }: AppProps) {
   );
 
   const sidebarFilters = useMemo<SidebarFilter[]>(() => ([
-    { id: "all", label: "All Results", icon: <SidebarIcon filter="all" selected={selectedFilter === "all"} /> },
-    { id: "app", label: "Apps", icon: <SidebarIcon filter="app" selected={selectedFilter === "app"} /> },
-    { id: "file", label: "Files", icon: <SidebarIcon filter="file" selected={selectedFilter === "file"} /> },
-    { id: "desktop", label: "Desktop", icon: <SidebarIcon filter="desktop" selected={selectedFilter === "desktop"} /> },
-    { id: "trash", label: "Trash", icon: <SidebarIcon filter="trash" selected={selectedFilter === "trash"} /> }
-  ]), [selectedFilter]);
+    { id: "all", label: "All Results" },
+    { id: "app", label: "Apps" },
+    { id: "file", label: "Files" },
+    { id: "desktop", label: "Desktop" },
+    { id: "trash", label: "Trash" }
+  ]), []);
 
   const openFirstResult = () => {
     results[0]?.onOpen?.();
@@ -591,14 +580,14 @@ export function Finder({ props, windowId }: AppProps) {
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#dadada] text-[#1c1c1c]">
-      <div className="flex h-[28px] items-center gap-[5px] border-b border-[#ababab] bg-[linear-gradient(180deg,#ededed_0%,#d7d7d7_100%)] px-[6px]">
-        <div className="flex h-[20px] min-w-0 flex-1 items-center border border-[#606060] bg-[linear-gradient(180deg,#ffffff_0%,#f0f0f0_100%)] px-[6px] shadow-[inset_1px_1px_0_#a0a0a0,inset_-1px_-1px_0_#ffffff]">
+      <div className="os9-toolbar flex h-[28px] items-center gap-[5px] px-[6px]">
+        <div className="os9-search-field min-w-0 flex-1 px-[6px]">
           <SearchIcon />
           <input
             id={`${windowId}-finder-search`}
             ref={inputRef}
             autoFocus
-            className="min-w-0 flex-1 bg-transparent px-[5px] font-['Arial'] text-[10px] text-[#262626] outline-none placeholder:text-[#8a8a8a]"
+            className="os9-search-field__input px-[5px]"
             placeholder="Search"
             type="search"
             value={query}
@@ -612,7 +601,7 @@ export function Finder({ props, windowId }: AppProps) {
           {query ? (
             <button
               aria-label="Clear search"
-              className="flex h-3 w-3 items-center justify-center rounded-full border border-[#7d7d7d] bg-[linear-gradient(180deg,#f7f7f7_0%,#d5d5d5_100%)] text-[9px] leading-none text-[#505050]"
+              className="os9-pill-button"
               type="button"
               onClick={() => setQuery("")}
             >
@@ -621,37 +610,31 @@ export function Finder({ props, windowId }: AppProps) {
           ) : null}
         </div>
 
-        <div className="flex h-[20px] overflow-hidden border border-[#7f7f7f] shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#9f9f9f]">
+        <div className="os9-view-toggle">
           <button
             aria-label="List view"
-            className={`flex w-[24px] items-center justify-center border-r border-[#8e8e8e] text-[11px] leading-none ${
-              viewMode === "list"
-                ? "bg-[linear-gradient(180deg,#b8ccf0_0%,#91aee0_100%)]"
-                : "bg-[linear-gradient(180deg,#f8f8f8_0%,#d0d0d0_100%)]"
-            }`}
+            className="os9-view-toggle__button"
+            data-active={viewMode === "list"}
             type="button"
             onClick={() => setViewMode("list")}
           >
-            ≡
+            <span className="os9-view-toggle__glyph os9-view-toggle__glyph--list" />
           </button>
           <button
             aria-label="Grid view"
-            className={`flex w-[24px] items-center justify-center text-[11px] leading-none ${
-              viewMode === "grid"
-                ? "bg-[linear-gradient(180deg,#b8ccf0_0%,#91aee0_100%)]"
-                : "bg-[linear-gradient(180deg,#f8f8f8_0%,#d0d0d0_100%)]"
-            }`}
+            className="os9-view-toggle__button"
+            data-active={viewMode === "grid"}
             type="button"
             onClick={() => setViewMode("grid")}
           >
-            ⊞
+            <span className="os9-view-toggle__glyph os9-view-toggle__glyph--grid" />
           </button>
         </div>
       </div>
 
       <div className="flex min-h-0 flex-1">
-        <div className="flex w-[152px] shrink-0 flex-col border-r border-[#ababab] bg-white">
-          <div className="px-3 pb-2 pt-3 font-['Chicago'] text-[9px] uppercase tracking-[0.08em] text-[#6d6d6d]">
+        <div className="os9-sidebar flex w-[152px] shrink-0 flex-col border-r border-[#ababab]">
+          <div className="os9-sidebar__section">
             Finder
           </div>
 
@@ -662,17 +645,16 @@ export function Finder({ props, windowId }: AppProps) {
             return (
               <button
                 key={filter.id}
-                className={`flex h-[22px] items-center gap-2 px-3 text-left font-['Arial'] text-[10px] ${
-                  isSelected
-                    ? "bg-[#0000a8] text-white"
-                    : "bg-transparent text-[#202020] hover:bg-[#dbe9fb]"
-                }`}
+                className="os9-sidebar__item"
+                data-selected={isSelected}
                 type="button"
                 onClick={() => setSelectedFilter(filter.id)}
               >
-                <span className="flex h-[15px] w-[15px] items-center justify-center">{filter.icon}</span>
+                <span className="flex h-4 w-4 items-center justify-center">
+                  <SidebarIcon filter={filter.id} selected={isSelected} />
+                </span>
                 <span className="min-w-0 flex-1 truncate">{filter.label}</span>
-                <span className={`shrink-0 text-[9px] ${isSelected ? "text-[#aaccff]" : "text-[#aaaaaa]"}`}>
+                <span className="os9-sidebar__count shrink-0">
                   {count}
                 </span>
               </button>
@@ -691,7 +673,7 @@ export function Finder({ props, windowId }: AppProps) {
                 {results.map((item) => (
                   <div
                     key={`${item.kind}:${item.id}:${item.location}`}
-                    className="flex w-[116px] cursor-default flex-col items-center text-center"
+                    className="os9-grid-item w-[116px] cursor-default"
                     role="button"
                     tabIndex={0}
                     onDoubleClick={() => item.onOpen?.()}
@@ -702,12 +684,12 @@ export function Finder({ props, windowId }: AppProps) {
                     }}
                   >
                     <div className="flex h-[52px] items-center justify-center">
-                      {getKindIcon(item.kind, false, true)}
+                      <SearchItemIcon item={item} desktop />
                     </div>
-                    <div className="w-full px-1 font-['Arial'] text-[10px] leading-[11px] text-[#1f1f1f]" style={GRID_LABEL_STYLE}>
+                    <div className="os9-grid-item__label" style={GRID_LABEL_STYLE}>
                       {item.name}
                     </div>
-                    <div className="mt-1 font-['Arial'] text-[8px] uppercase tracking-[0.04em] text-[#999999]">
+                    <div className="mt-1 font-['Charcoal'] text-[8px] uppercase tracking-[0.04em] text-[#7f7f7f]">
                       {titleCase(item.kind)}
                     </div>
                   </div>
@@ -718,7 +700,7 @@ export function Finder({ props, windowId }: AppProps) {
                 {results.map((item) => (
                   <div
                     key={`${item.kind}:${item.id}:${item.location}`}
-                    className="flex w-[112px] cursor-default flex-col items-center text-center"
+                    className="os9-grid-item w-[112px] cursor-default"
                     role="button"
                     tabIndex={0}
                     onDoubleClick={() => item.onOpen?.()}
@@ -729,12 +711,12 @@ export function Finder({ props, windowId }: AppProps) {
                     }}
                   >
                     <div className="flex h-[44px] items-center justify-center">
-                      {getKindIcon(item.kind, false, true)}
+                      <SearchItemIcon item={item} desktop />
                     </div>
-                    <div className="w-full px-1 font-['Arial'] text-[10px] leading-[11px] text-[#1f1f1f]" style={GRID_LABEL_STYLE}>
+                    <div className="os9-grid-item__label" style={GRID_LABEL_STYLE}>
                       {item.name}
                     </div>
-                    <div className="mt-1 w-full px-1 font-['Arial'] text-[8px] leading-[10px] text-[#888888]" style={GRID_LOCATION_STYLE}>
+                    <div className="os9-grid-item__meta mt-1" style={GRID_LOCATION_STYLE}>
                       {item.location}
                     </div>
                   </div>
@@ -745,7 +727,7 @@ export function Finder({ props, windowId }: AppProps) {
                 {results.map((item) => (
                   <div
                     key={`${item.kind}:${item.id}:${item.location}`}
-                    className="grid h-[22px] cursor-default grid-cols-[minmax(0,1fr)_58px_120px_148px] border-b border-[#e8e8e8] font-['Arial'] text-[10px] tracking-[0.2px] text-[#232323]"
+                    className="os9-list-row grid h-[22px] cursor-default grid-cols-[minmax(0,1fr)_58px_120px_148px] tracking-[0.2px] text-[#232323]"
                     role="button"
                     tabIndex={0}
                     onDoubleClick={() => item.onOpen?.()}
@@ -756,7 +738,9 @@ export function Finder({ props, windowId }: AppProps) {
                     }}
                   >
                     <div className="flex min-w-0 items-center gap-2 px-2">
-                      <span className="shrink-0">{getKindIcon(item.kind)}</span>
+                      <span className="shrink-0">
+                        <SearchItemIcon item={item} />
+                      </span>
                       <span className="truncate">{item.name}</span>
                     </div>
                     <div className="flex items-center px-2">{titleCase(item.kind)}</div>
@@ -770,9 +754,9 @@ export function Finder({ props, windowId }: AppProps) {
         </div>
       </div>
 
-      <div className="flex h-[20px] items-center justify-between bg-[#dadada] px-[8px] font-['Arial'] text-[10px] tracking-[0.4px] text-[#2d2d2d]">
-        <span>{statusLabel}</span>
-        <span>{results.length} item{results.length === 1 ? "" : "s"}</span>
+      <div className="os9-status-bar">
+        <span className="os9-status-bar__segment truncate">{statusLabel}</span>
+        <span className="os9-status-bar__segment shrink-0">{results.length} item{results.length === 1 ? "" : "s"}</span>
       </div>
     </div>
   );

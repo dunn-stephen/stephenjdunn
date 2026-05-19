@@ -99,53 +99,32 @@ export function TitleBar({ isActive, windowState }: TitleBarProps) {
 
   return (
     <div
-      className={[
-        "relative flex h-[22px] items-start justify-center select-none",
-        isActive ? "text-[#111111]" : "text-[#666666]"
-      ].join(" ")}
+      className="os9-window-frame__header text-[#111111]"
       onDoubleClick={handleDoubleClick}
       onMouseDown={handleDragMouseDown}
     >
       <button
         aria-label={`Close ${windowState.title}`}
-        className={[
-          "ml-1 mt-1 h-[11px] w-[11px] border border-white p-0",
-          isActive ? "opacity-100" : "opacity-55"
-        ].join(" ")}
-        style={{ borderStyle: "inset" }}
+        className="os9-window-frame__control os9-window-frame__control--close"
         type="button"
         onClick={handleClose}
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <span className="relative block h-[9px] w-[9px] border border-[#222222] bg-[linear-gradient(to_bottom_right,#999999,#aaaaaa,#bbbbbb,#cccccc,#dddddd,#eeeeee,#ffffff,#ffffff)] shadow-[inset_1px_1px_0_#cccccc,inset_-1px_-1px_0_#888888]">
-          <span className="absolute left-0 top-0 h-px w-px bg-white" />
+        <span className="os9-window-frame__control-box">
+          <span className="os9-window-frame__control-inner">
+            <span className="os9-window-frame__control-highlight" />
+          </span>
         </span>
       </button>
-      <div className={["mt-1 flex h-3 flex-1 px-1", isActive ? "opacity-100" : "opacity-55"].join(" ")}>
-        <span
-          className="block h-3 w-px"
-          style={{
-            backgroundImage: `repeating-linear-gradient(${isActive ? "#ffffff 0 1px, #dadada 1px 2px" : "#bdbdbd 0 1px, #dadada 1px 2px"})`
-          }}
-        />
-        <span
-          className="block h-3 flex-1"
-          style={{
-            backgroundImage: `repeating-linear-gradient(${isActive ? "#ffffff 0 1px, #737373 1px 2px" : "#bdbdbd 0 1px, #8a8a8a 1px 2px"})`
-          }}
-        />
-        <span
-          className="block h-3 w-px"
-          style={{
-            backgroundImage: `repeating-linear-gradient(${isActive ? "#dadada 0 1px, #737373 1px 2px" : "#dadada 0 1px, #8a8a8a 1px 2px"})`
-          }}
-        />
+
+      <div className="os9-window-frame__titlebar-hit">
+        <span className="os9-window-frame__stripe os9-window-frame__stripe--left" />
+        <span className="os9-window-frame__stripe os9-window-frame__stripe--center" />
+        <span className="os9-window-frame__stripe os9-window-frame__stripe--right" />
       </div>
+
       <div
-        className={[
-          "pointer-events-none mt-[3px] flex min-w-0 max-w-[42%] items-center gap-1 overflow-hidden px-[3px] text-center text-[12px] leading-none",
-          isActive ? "opacity-100" : "opacity-50"
-        ].join(" ")}
+        className="pointer-events-none mt-[3px] flex min-w-0 max-w-[42%] items-center gap-1 overflow-hidden px-[3px] text-center"
         title={windowState.title}
       >
         <Image
@@ -155,58 +134,41 @@ export function TitleBar({ isActive, windowState }: TitleBarProps) {
           height={16}
           className="h-4 w-4 shrink-0 object-contain [image-rendering:pixelated]"
         />
-        <span className="truncate">{windowState.title}</span>
+        <span className="os9-window-frame__title truncate font-['Charcoal']">{windowState.title}</span>
       </div>
-      <div className={["mt-1 flex h-3 flex-1 px-1", isActive ? "opacity-100" : "opacity-55"].join(" ")}>
-        <span
-          className="block h-3 w-px"
-          style={{
-            backgroundImage: `repeating-linear-gradient(${isActive ? "#ffffff 0 1px, #dadada 1px 2px" : "#bdbdbd 0 1px, #dadada 1px 2px"})`
-          }}
-        />
-        <span
-          className="block h-3 flex-1"
-          style={{
-            backgroundImage: `repeating-linear-gradient(${isActive ? "#ffffff 0 1px, #737373 1px 2px" : "#bdbdbd 0 1px, #8a8a8a 1px 2px"})`
-          }}
-        />
-        <span
-          className="block h-3 w-px"
-          style={{
-            backgroundImage: `repeating-linear-gradient(${isActive ? "#dadada 0 1px, #737373 1px 2px" : "#dadada 0 1px, #8a8a8a 1px 2px"})`
-          }}
-        />
+
+      <div className="os9-window-frame__titlebar-hit">
+        <span className="os9-window-frame__stripe os9-window-frame__stripe--left" />
+        <span className="os9-window-frame__stripe os9-window-frame__stripe--center" />
+        <span className="os9-window-frame__stripe os9-window-frame__stripe--right" />
       </div>
+
       <button
         aria-label={windowState.isMaximized ? `Restore ${windowState.title}` : `Zoom ${windowState.title}`}
-        className={[
-          "mr-[3px] mt-1 h-[11px] w-[11px] border border-white p-0",
-          isActive ? "opacity-100" : "opacity-55"
-        ].join(" ")}
-        style={{ borderStyle: "inset" }}
+        className="os9-window-frame__control os9-window-frame__control--zoom"
         type="button"
         onClick={handleZoom}
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <span className="relative block h-[9px] w-[9px] border border-[#222222] bg-[linear-gradient(to_bottom_right,#999999,#aaaaaa,#bbbbbb,#cccccc,#dddddd,#eeeeee,#ffffff,#ffffff)] shadow-[inset_1px_1px_0_#cccccc,inset_-1px_-1px_0_#888888]">
-          <span className="absolute left-0 top-0 h-px w-px bg-white" />
-          <span className="absolute left-px top-px h-[5px] w-[5px] border-b border-r border-[#202020]" />
+        <span className="os9-window-frame__control-box">
+          <span className="os9-window-frame__control-inner">
+            <span className="os9-window-frame__control-highlight" />
+            <span className="os9-window-frame__zoom-glyph" />
+          </span>
         </span>
       </button>
       <button
         aria-label={windowState.isShaded ? `Expand ${windowState.title}` : `Collapse ${windowState.title}`}
-        className={[
-          "mr-1 mt-1 h-[11px] w-[11px] border border-white p-0",
-          isActive ? "opacity-100" : "opacity-55"
-        ].join(" ")}
-        style={{ borderStyle: "inset" }}
+        className="os9-window-frame__control os9-window-frame__control--shade"
         type="button"
         onClick={handleShade}
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <span className="relative block h-[9px] w-[9px] border border-[#222222] bg-[linear-gradient(to_bottom_right,#999999,#aaaaaa,#bbbbbb,#cccccc,#dddddd,#eeeeee,#ffffff,#ffffff)] shadow-[inset_1px_1px_0_#cccccc,inset_-1px_-1px_0_#888888]">
-          <span className="absolute left-0 top-0 h-px w-px bg-white" />
-          <span className="absolute left-px top-1 h-px w-[5px] border-y border-[#202020]" />
+        <span className="os9-window-frame__control-box">
+          <span className="os9-window-frame__control-inner">
+            <span className="os9-window-frame__control-highlight" />
+            <span className="os9-window-frame__shade-glyph" />
+          </span>
         </span>
       </button>
     </div>

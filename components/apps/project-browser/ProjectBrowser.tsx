@@ -128,7 +128,8 @@ function FinderFigureButton({
   return (
     <button
       type="button"
-      className="group flex w-[100px] flex-col items-center bg-transparent px-0 py-0 text-center"
+      className="os9-icon-tile group px-0 py-0 text-center"
+      data-selected={isSelected}
       onClick={onSelect}
       onDoubleClick={figure.onOpen}
     >
@@ -143,8 +144,8 @@ function FinderFigureButton({
       </span>
       <span
         className={[
-          "mt-[-2px] inline-block max-w-[31em] overflow-hidden text-ellipsis whitespace-nowrap px-[2px] py-[1px] font-['Arial'] text-[10.5px] tracking-[0.4px]",
-          isSelected ? "bg-black text-white" : "bg-[rgba(255,255,255,0.5)] text-black",
+          "os9-icon-tile__label",
+          isSelected ? "" : "bg-[rgba(255,255,255,0.52)] text-black",
           figure.isAlias ? "italic" : ""
         ].join(" ")}
       >
@@ -156,8 +157,8 @@ function FinderFigureButton({
 
 function FinderStatusBar({ text }: { text: string }) {
   return (
-    <div className="mx-1 mt-1 h-5 border border-black bg-[#dadada] shadow-[-1px_-1px_0_#9c9c9c,1px_1px_0_#ffffff,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#b3b3b3]">
-      <div className="mx-1 mt-1 font-['Arial'] text-[10px] tracking-[0.4px] text-[#111111]">{text}</div>
+    <div className="os9-status-bar mx-1 mt-1 border border-black shadow-[-1px_-1px_0_#9c9c9c,1px_1px_0_#ffffff,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#b3b3b3]">
+      <div className="os9-status-bar__segment truncate text-[#111111]">{text}</div>
     </div>
   );
 }
@@ -261,7 +262,7 @@ export function ProjectBrowser({ props }: AppProps) {
       <div className="flex h-full flex-col bg-[#dadada]">
         <FinderStatusBar text="0 items, Finder folder" />
         <FinderContents>
-          <div className="flex h-full items-center justify-center px-6 text-center font-['Arial'] text-[10.5px] tracking-[0.4px] text-[#525252]">
+          <div className="os9-ui-text flex h-full items-center justify-center px-6 text-center text-[#525252]">
             No project data is available for this window.
           </div>
         </FinderContents>
