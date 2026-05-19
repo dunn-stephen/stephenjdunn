@@ -31,7 +31,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
   {
     id: "trash",
     label: "Trash",
-    icon: "/icons/png/7.png",
+    icon: "/icons/trash-os9.svg",
     appId: "finder",
     windowProps: { initialFilter: "trash" },
     defaultPosition: { x: 1130, y: 620 }
@@ -53,14 +53,14 @@ const DESKTOP_ITEMS: DesktopItem[] = [
   {
     id: "mail",
     label: "Mail",
-    icon: "/icons/png/20.png",
+    icon: "/icons/mail-os9.svg",
     appId: "mail",
     defaultPosition: { x: 24, y: 244 }
   },
   {
     id: "space-invaders",
     label: "Space Invaders",
-    icon: "/icons/png/62.png",
+    icon: "/icons/space-invaders.svg",
     appId: "space-invaders",
     defaultPosition: { x: 24, y: 340 }
   },
@@ -77,6 +77,13 @@ const DESKTOP_ITEMS: DesktopItem[] = [
     icon: "/icons/png/4.png",
     appId: "finder",
     defaultPosition: { x: 24, y: 532 }
+  },
+  {
+    id: "notepad-app",
+    label: "Note Pad",
+    icon: "/icons/notepad-os9.svg",
+    appId: "notepad",
+    defaultPosition: { x: 128, y: 532 }
   },
   {
     id: "note-1",
@@ -113,7 +120,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
   {
     id: "calculator",
     label: "Calculator",
-    icon: "/icons/png/13.png",
+    icon: "/icons/calculator-os9.svg",
     appId: "calculator",
     defaultPosition: { x: 128, y: 436 }
   }

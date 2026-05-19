@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <path d="M3 2H21L29 10V30H3Z" fill="#F4F4F4"/>
+  <path d="M3 2H21L29 10V30H3Z" stroke="#3E3E3E" stroke-width="1"/>
+  <path d="M21 2V10H29" fill="#DCDCDC"/>
+  <path d="M21 2V10H29" stroke="#3E3E3E" stroke-width="1"/>
+  <path d="M5 5H19" stroke="#7B96D3" stroke-width="1"/>
+  <path d="M5 8H19" stroke="#7B96D3" stroke-width="1"/>
+  <path d="M5 11H19" stroke="#7B96D3" stroke-width="1"/>
+  <path d="M5 14H19" stroke="#7B96D3" stroke-width="1"/>
+  <path d="M5 17H19" stroke="#7B96D3" stroke-width="1"/>
+  <path d="M5 20H19" stroke="#7B96D3" stroke-width="1"/>
+  <path d="M14 4V25" stroke="#E15E5E" stroke-width="1"/>
+  <path d="M6 25H18V29H6Z" fill="#D9D9D9"/>
+  <path d="M6 25H18V29H6Z" stroke="#3E3E3E" stroke-width="1"/>
+  <path d="M8 26H10V28H8Z" fill="#3E3E3E"/>
+  <path d="M11 26H13V28H11Z" fill="#3E3E3E"/>
+  <path d="M14 26H16V28H14Z" fill="#3E3E3E"/>
+  <path d="M18 15H28V25H18Z" fill="#CFCFCF"/>
+  <path d="M18 15H28V25H18Z" stroke="#3E3E3E" stroke-width="1"/>
+  <path d="M19 17H23V19H19Z" fill="#F6D35A"/>
+  <path d="M24 17H27V19H24Z" fill="#89B6FF"/>
+  <path d="M19 20H23V22H19Z" fill="#E15E5E"/>
+  <path d="M24 20H27V22H24Z" fill="#7CC57C"/>
+  <path d="M18 12H28V16H18Z" fill="#E6E6E6"/>
+  <path d="M18 12H28V16H18Z" stroke="#3E3E3E" stroke-width="1"/>
+  <text x="19.5" y="15" fill="#1F1F1F" font-family="Geneva, Arial, sans-serif" font-size="4.5" font-weight="700">DATA</text>
+</svg>

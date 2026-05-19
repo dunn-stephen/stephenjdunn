@@ -277,7 +277,7 @@ function buildSearchItems({
     type: "Trash",
     location: "Desktop",
     desc: "Browse discarded files in Trash.",
-    iconPath: "/icons/png/17.png",
+    iconPath: "/icons/trash-os9.svg",
     onOpen: () => {
       openWindow("finder", {
         projects,
@@ -464,7 +464,7 @@ function SidebarIcon({ filter, selected }: { filter: SearchFilter; selected: boo
     type: "",
     location: "",
     desc: "",
-    iconPath: filter === "trash" ? "/icons/png/17.png" : undefined
+    iconPath: filter === "trash" ? "/icons/trash-os9.svg" : undefined
   };
 
   return <SearchItemIcon item={item} />;

@@ -13,7 +13,6 @@ interface NoteDefinition {
   content: string;
 }
 
-const FALLBACK_NOTE_ID = 1;
 const EMPTY_NOTE: NoteDefinition = {
   title: "Note Pad",
   content: ""
@@ -34,7 +33,14 @@ function getNoteDefinition(noteId: number): NoteDefinition {
 }
 
 function resolveNote(props: AppProps["props"]) {
-  const noteId = isNotePadWindowProps(props) ? props.noteId : FALLBACK_NOTE_ID;
+  if (!isNotePadWindowProps(props)) {
+    return {
+      note: EMPTY_NOTE,
+      noteId: 0
+    };
+  }
+
+  const noteId = props.noteId;
   const note = getNoteDefinition(noteId);
 
   return {

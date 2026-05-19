@@ -79,7 +79,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
   mail: {
     id: "mail",
     name: "Mail",
-    icon: "/icons/png/9.png",
+    icon: "/icons/mail-os9.svg",
     defaultSize: { width: 480, height: 380 },
     minSize: { width: 380, height: 300 },
     singleton: true,
@@ -89,7 +89,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
   "space-invaders": {
     id: "space-invaders",
     name: "Space Invaders",
-    icon: "/icons/png/10.png",
+    icon: "/icons/space-invaders.svg",
     defaultSize: { width: 480, height: 540 },
     minSize: { width: 420, height: 480 },
     singleton: true,
@@ -99,7 +99,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
   notepad: {
     id: "notepad",
     name: "Note Pad",
-    icon: "/icons/png/12.png",
+    icon: "/icons/notepad-os9.svg",
     defaultSize: { width: 300, height: 260 },
     minSize: { width: 220, height: 160 },
     singleton: false,
@@ -109,7 +109,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
   calculator: {
     id: "calculator",
     name: "Calculator",
-    icon: "/icons/png/13.png",
+    icon: "/icons/calculator-os9.svg",
     defaultSize: { width: 280, height: 320 },
     minSize: { width: 280, height: 320 },
     singleton: true,
