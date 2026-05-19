@@ -2,18 +2,12 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { getGenericFileIconPath, getTrashFileIconPath } from "@/lib/file-icons";
 import { useWindowStore } from "@/lib/window-store";
 import { TRASH_FILE_NAMES } from "@/lib/trash-files";
 import type { AppProps, Project, ProjectFile } from "@/types";
 
-interface FinderWindowProps {
-  folder?: "projects" | "trash";
-  projects: Project[];
-  selectedFilePath?: string;
-  selectedProjectSlug?: string;
-}
-
-interface FinderFigure {
+interface ProjectBrowserFigure {
   icon: string;
   id: string;
   isAlias?: boolean;
@@ -81,27 +75,7 @@ function readFolder(props: Record<string, unknown> | undefined) {
 }
 
 function getFileIconPath(file: ProjectFile) {
-  return file.type === "image" ? "/icons/png/69.png" : "/icons/png/28.png";
-}
-
-function getTrashFileIconPath(fileName: string) {
-  if (/\.(jpg|jpeg|png|gif|webp)$/i.test(fileName)) {
-    return "/icons/png/69.png";
-  }
-
-  if (/\.(avi|mov|mp4|mkv)$/i.test(fileName)) {
-    return "/icons/png/85.png";
-  }
-
-  if (/\.(ppt|pptx)$/i.test(fileName)) {
-    return "/icons/png/27.png";
-  }
-
-  if (/\.(xls|xlsx)$/i.test(fileName)) {
-    return "/icons/png/32.png";
-  }
-
-  return "/icons/png/28.png";
+  return getGenericFileIconPath(file.type === "image" ? "image" : "document");
 }
 
 function getPreviewSource(path: string) {
@@ -116,12 +90,12 @@ function renderItemCount(count: number) {
   return `${count} item${count === 1 ? "" : "s"}`;
 }
 
-function FinderFigureButton({
+function ProjectBrowserFigureButton({
   figure,
   isSelected,
   onSelect
 }: {
-  figure: FinderFigure;
+  figure: ProjectBrowserFigure;
   isSelected: boolean;
   onSelect: () => void;
 }) {
@@ -155,30 +129,25 @@ function FinderFigureButton({
   );
 }
 
-function FinderStatusBar({ text }: { text: string }) {
+function ProjectBrowserStatusBar({ text }: { text: string }) {
   return (
-    <div className="os9-status-bar mx-1 mt-1 border border-black shadow-[-1px_-1px_0_#9c9c9c,1px_1px_0_#ffffff,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#b3b3b3]">
+    <div className="os9-status-bar os9-content-well os9-content-well--compact mt-1 border-black">
       <div className="os9-status-bar__segment truncate text-[#111111]">{text}</div>
     </div>
   );
 }
 
-function FinderContents({
+function ProjectBrowserContents({
   children
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative mx-1 mb-1 mt-[-1px] flex min-h-0 flex-1 flex-col border border-black bg-white shadow-[-1px_-1px_0_#9c9c9c,1px_1px_0_#ffffff,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#acacac]">
+    <div className="os9-content-well os9-content-well--compact mb-1 flex min-h-0 flex-1 flex-col">
       <div className="app-scrollbar min-h-0 flex-1 overflow-auto">
         {children}
       </div>
-      <div
-        aria-hidden="true"
-        className="absolute bottom-1 right-1 h-4 w-4 bg-[#dadada] shadow-[inset_1px_1px_0_#ffffff]"
-      >
-        <div className="h-full w-full bg-[linear-gradient(135deg,transparent_0_44%,#6f6f6f_44%_48%,transparent_48%_58%,#6f6f6f_58%_62%,transparent_62%_72%,#6f6f6f_72%_76%,transparent_76%_100%)]" />
-      </div>
+      <div aria-hidden="true" className="os9-resize-corner" />
     </div>
   );
 }
@@ -201,7 +170,7 @@ export function ProjectBrowser({ props }: AppProps) {
     [selectedFilePath, selectedProject]
   );
 
-  const figures = useMemo<FinderFigure[]>(() => {
+  const figures = useMemo<ProjectBrowserFigure[]>(() => {
     if (folder === "trash") {
       return TRASH_FILE_NAMES.map((fileName) => ({
         id: fileName,
@@ -259,13 +228,13 @@ export function ProjectBrowser({ props }: AppProps) {
 
   if (folder !== "trash" && projects.length === 0) {
     return (
-      <div className="flex h-full flex-col bg-[#dadada]">
-        <FinderStatusBar text="0 items, Finder folder" />
-        <FinderContents>
-          <div className="os9-ui-text flex h-full items-center justify-center px-6 text-center text-[#525252]">
+      <div className="os9-app-shell flex h-full flex-col">
+        <ProjectBrowserStatusBar text="0 items, Finder folder" />
+        <ProjectBrowserContents>
+          <div className="os9-empty-state text-[#525252]">
             No project data is available for this window.
           </div>
-        </FinderContents>
+        </ProjectBrowserContents>
       </div>
     );
   }
@@ -274,12 +243,12 @@ export function ProjectBrowser({ props }: AppProps) {
     const statusText = `${renderItemCount(figures.length)}, Trash folder`;
 
     return (
-      <div className="flex h-full min-h-0 flex-col bg-[#dadada] text-black">
-        <FinderStatusBar text={statusText} />
-        <FinderContents>
+      <div className="os9-app-shell flex h-full min-h-0 flex-col text-black">
+        <ProjectBrowserStatusBar text={statusText} />
+        <ProjectBrowserContents>
           <div className="flex min-h-full flex-wrap content-start items-start gap-x-[30px] gap-y-0 px-4 pb-4 pt-0">
             {figures.map((figure) => (
-              <FinderFigureButton
+              <ProjectBrowserFigureButton
                 key={figure.id}
                 figure={figure}
                 isSelected={selectedItemId === figure.id}
@@ -287,7 +256,7 @@ export function ProjectBrowser({ props }: AppProps) {
               />
             ))}
           </div>
-        </FinderContents>
+        </ProjectBrowserContents>
       </div>
     );
   }
@@ -299,9 +268,9 @@ export function ProjectBrowser({ props }: AppProps) {
     const statusText = `${previewFile.name}, ${selectedProject?.title ?? "Projects"}`;
 
     return (
-      <div className="flex h-full flex-col bg-[#dadada]">
-        <FinderStatusBar text={statusText} />
-        <FinderContents>
+      <div className="os9-app-shell flex h-full flex-col">
+        <ProjectBrowserStatusBar text={statusText} />
+        <ProjectBrowserContents>
           <div className="flex h-full min-h-[220px] items-center justify-center bg-[#efefef] p-4">
             <div className="relative h-full max-h-full w-full border border-[#8c8c8c] bg-white p-1 shadow-[inset_1px_1px_0_#ffffff]">
               <div className="relative h-full min-h-[180px] w-full">
@@ -315,7 +284,7 @@ export function ProjectBrowser({ props }: AppProps) {
               </div>
             </div>
           </div>
-        </FinderContents>
+        </ProjectBrowserContents>
       </div>
     );
   }
@@ -324,12 +293,12 @@ export function ProjectBrowser({ props }: AppProps) {
   const statusText = `${renderItemCount(figures.length)}, ${folderLabel} folder`;
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#dadada] text-black">
-      <FinderStatusBar text={statusText} />
-      <FinderContents>
+    <div className="os9-app-shell flex h-full min-h-0 flex-col text-black">
+      <ProjectBrowserStatusBar text={statusText} />
+      <ProjectBrowserContents>
         <div className="flex min-h-full flex-wrap content-start items-start gap-x-[30px] gap-y-0 px-4 pb-4 pt-0">
           {figures.map((figure) => (
-            <FinderFigureButton
+            <ProjectBrowserFigureButton
               key={figure.id}
               figure={figure}
               isSelected={selectedItemId === figure.id}
@@ -337,7 +306,7 @@ export function ProjectBrowser({ props }: AppProps) {
             />
           ))}
         </div>
-      </FinderContents>
+      </ProjectBrowserContents>
     </div>
   );
 }

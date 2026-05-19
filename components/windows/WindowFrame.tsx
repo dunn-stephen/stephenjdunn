@@ -41,9 +41,9 @@ function getMaxSize(positionX: number, positionY: number) {
 
 function WindowPlaceholder({ appName }: WindowPlaceholderProps) {
   return (
-    <div className="flex h-full items-center justify-center bg-[#f1f1f1] p-6 text-center text-[12px] text-[#4f4f4f]">
+    <div className="os9-empty-state bg-[#f1f1f1] p-6 text-[#4f4f4f]">
       <div className="max-w-[240px] space-y-2">
-        <p className="font-['Chicago'] text-[13px] text-[#222222]">{appName}</p>
+        <p className="os9-empty-state__title text-[13px] text-[#222222]">{appName}</p>
         <p>App content is not registered yet.</p>
       </div>
     </div>
@@ -164,7 +164,7 @@ export function WindowFrame({ isActive, windowState }: WindowFrameProps) {
               ease: "easeInOut"
             }}
           >
-            <div className="h-full bg-[#efefef]">
+            <div className="h-full os9-app-shell">
               {AppComponent ? (
                 <AppComponent
                   windowId={windowState.id}

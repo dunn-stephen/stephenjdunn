@@ -642,6 +642,11 @@ button {
   background: linear-gradient(180deg, #ededed 0%, #d7d7d7 100%);
 }
 
+.os9-app-shell {
+  background: #dadada;
+  color: #1c1c1c;
+}
+
 .os9-ui-label {
   font-family:
     "Charcoal",
@@ -901,6 +906,66 @@ button {
   padding: 0 8px;
 }
 
+.os9-content-well {
+  position: relative;
+  margin: -1px 4px 4px;
+  border: 1px solid #000000;
+  background: #ffffff;
+  box-shadow:
+    -1px -1px 0 #9c9c9c,
+    1px 1px 0 #ffffff,
+    inset 1px 1px 0 #ffffff,
+    inset -1px -1px 0 #acacac;
+}
+
+.os9-content-well--compact {
+  margin: 0 4px 4px;
+}
+
+.os9-resize-corner {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 16px;
+  height: 16px;
+  background-color: #dadada;
+  box-shadow: inset 1px 1px 0 #ffffff;
+}
+
+.os9-resize-corner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, transparent 0 44%, #6f6f6f 44% 48%, transparent 48% 58%, #6f6f6f 58% 62%, transparent 62% 72%, #6f6f6f 72% 76%, transparent 76% 100%);
+}
+
+.os9-empty-state {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  text-align: center;
+  color: #6a6a6a;
+  font-family:
+    Geneva,
+    sans-serif;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.os9-empty-state__title {
+  margin: 0;
+  color: #232323;
+  font-family:
+    "Charcoal",
+    Geneva,
+    sans-serif;
+  font-size: 12px;
+  line-height: 1;
+}
+
 .os9-grid-item {
   display: flex;
   flex-direction: column;
@@ -1020,6 +1085,25 @@ button {
     "Charcoal",
     Geneva,
     sans-serif;
+}
+
+.os9-menubar-wedge {
+  margin-top: -5px;
+  display: block;
+  height: 24px;
+  width: 11px;
+  flex-shrink: 0;
+  background: #dedede;
+  box-shadow:
+    inset 1px 1px 0 #ffffff,
+    inset -1px -1px 0 #9c9c9c;
+}
+
+.os9-menubar-divider {
+  margin-top: 2px;
+  height: 13px;
+  width: 6px;
+  background: linear-gradient(90deg, #ffffff 0 1px, #9c9c9c 1px 2px, transparent 2px 100%);
 }
 
 .os9-menu-item {

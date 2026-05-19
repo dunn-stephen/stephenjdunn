@@ -60,7 +60,7 @@ function MenuWedge({ side }: { side: "left" | "right" }) {
   return (
     <span
       aria-hidden="true"
-      className="mt-[-5px] block h-6 w-[11px] shrink-0 bg-[#dedede] shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#9c9c9c]"
+      className="os9-menubar-wedge"
       style={{
         clipPath:
           side === "left"
@@ -446,7 +446,7 @@ export function MenuBar({
         <div className="os9-menubar-status mt-[2px] ml-[8px] mr-[7px] text-black">{time}</div>
         <div
           aria-hidden="true"
-          className="mt-[2px] h-[13px] w-[6px] bg-[linear-gradient(90deg,#ffffff_0_1px,#9c9c9c_1px_2px,transparent_2px_100%)]"
+          className="os9-menubar-divider"
         />
         <div className="os9-menubar-status mt-[2px] ml-[8px] mr-[7px] text-black">
           <Image

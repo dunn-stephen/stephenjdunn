@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { getTrashFileIconPath } from "@/lib/file-icons";
 import { NOTES } from "@/lib/notes-config";
 import { appRegistry } from "@/lib/app-registry";
 import { TRASH_FILE_NAMES } from "@/lib/trash-files";
@@ -60,12 +61,6 @@ export interface SearchItem {
   location: string;
   desc: string;
   onOpen?: () => void;
-}
-
-interface FinderWindowProps {
-  projects?: Project[];
-  readMeContent?: string;
-  initialFilter?: SearchFilter;
 }
 
 interface DesktopFileDefinition {
@@ -216,30 +211,6 @@ function getTrashFileType(fileName: string) {
   }
 
   return "Text File";
-}
-
-function getTrashFileIconPath(fileName: string) {
-  if (/\.(jpg|jpeg|png|gif|webp)$/i.test(fileName)) {
-    return "/icons/png/69.png";
-  }
-
-  if (/\.(avi|mov|mp4|mkv)$/i.test(fileName)) {
-    return "/icons/png/85.png";
-  }
-
-  if (/\.(ppt|pptx)$/i.test(fileName)) {
-    return "/icons/png/27.png";
-  }
-
-  if (/\.(xls|xlsx)$/i.test(fileName)) {
-    return "/icons/png/32.png";
-  }
-
-  if (/\.(doc|docx)$/i.test(fileName)) {
-    return "/icons/png/28.png";
-  }
-
-  return "/icons/png/28.png";
 }
 
 function buildSearchItems({
@@ -459,9 +430,9 @@ function getFilterLabel(filter: SearchFilter) {
 
 function EmptyState({ query }: { query: string }) {
   return (
-    <div className="os9-ui-text flex h-full items-center justify-center px-6 text-center text-[#6a6a6a]">
+    <div className="os9-empty-state">
       <div>
-        <p className="m-0 font-['Charcoal'] text-[12px] text-[#232323]">
+        <p className="os9-empty-state__title">
           {query ? "No items found." : "No items available."}
         </p>
         <p className="m-0 mt-2">
@@ -579,7 +550,7 @@ export function Finder({ props, windowId }: AppProps) {
   const statusLabel = `Finder  \u203a  ${getFilterLabel(selectedFilter)}`;
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#dadada] text-[#1c1c1c]">
+    <div className="os9-app-shell flex h-full min-h-0 flex-col">
       <div className="os9-toolbar flex h-[28px] items-center gap-[5px] px-[6px]">
         <div className="os9-search-field min-w-0 flex-1 px-[6px]">
           <SearchIcon />
