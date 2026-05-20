@@ -143,20 +143,22 @@ export function TitleBar({ isActive, windowState }: TitleBarProps) {
         <span className="os9-window-frame__stripe os9-window-frame__stripe--right" />
       </div>
 
-      <button
-        aria-label={windowState.isMaximized ? `Restore ${windowState.title}` : `Zoom ${windowState.title}`}
-        className="os9-window-frame__control os9-window-frame__control--zoom"
-        type="button"
-        onClick={handleZoom}
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <span className="os9-window-frame__control-box">
-          <span className="os9-window-frame__control-inner">
-            <span className="os9-window-frame__control-highlight" />
-            <span className="os9-window-frame__zoom-glyph" />
+      {definition.resizable ? (
+        <button
+          aria-label={windowState.isMaximized ? `Restore ${windowState.title}` : `Zoom ${windowState.title}`}
+          className="os9-window-frame__control os9-window-frame__control--zoom"
+          type="button"
+          onClick={handleZoom}
+          onMouseDown={(event) => event.stopPropagation()}
+        >
+          <span className="os9-window-frame__control-box">
+            <span className="os9-window-frame__control-inner">
+              <span className="os9-window-frame__control-highlight" />
+              <span className="os9-window-frame__zoom-glyph" />
+            </span>
           </span>
-        </span>
-      </button>
+        </button>
+      ) : null}
       <button
         aria-label={windowState.isShaded ? `Expand ${windowState.title}` : `Collapse ${windowState.title}`}
         className="os9-window-frame__control os9-window-frame__control--shade"

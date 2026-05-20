@@ -277,7 +277,7 @@ function buildSearchItems({
     type: "Trash",
     location: "Desktop",
     desc: "Browse discarded files in Trash.",
-    iconPath: "/icons/trash-os9.svg",
+    iconPath: "/icons/trash-os9.png",
     onOpen: () => {
       openWindow("finder", {
         projects,
@@ -295,7 +295,7 @@ function buildSearchItems({
       type: file.type,
       location: "Desktop",
       desc: file.desc,
-      iconPath: file.id === "desktop:resume" ? "/icons/png/8.png" : file.id.startsWith("desktop:note-") ? "/icons/png/12.png" : "/icons/png/28.png",
+      iconPath: file.id === "desktop:resume" ? "/icons/png/8.png" : file.id.startsWith("desktop:note-") ? "/icons/notepad-file-os9.png" : "/icons/png/28.png",
       onOpen: () => {
         if (file.id === "desktop:read-me") {
           openWindow("textedit", {
@@ -464,7 +464,7 @@ function SidebarIcon({ filter, selected }: { filter: SearchFilter; selected: boo
     type: "",
     location: "",
     desc: "",
-    iconPath: filter === "trash" ? "/icons/trash-os9.svg" : undefined
+    iconPath: filter === "trash" ? "/icons/trash-os9.png" : undefined
   };
 
   return <SearchItemIcon item={item} />;
@@ -487,7 +487,7 @@ export function Finder({ props, windowId }: AppProps) {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const initialFilter = useMemo(() => readInitialFilter(props), [props]);
   const [selectedFilter, setSelectedFilter] = useState<SearchFilter>(initialFilter);
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const projects = useMemo(() => readProjects(props), [props]);
   const readMeContent = useMemo(() => readReadMeContent(props), [props]);

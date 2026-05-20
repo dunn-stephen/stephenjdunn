@@ -1,7 +1,7 @@
-import { createElement } from "react";
 import dynamic from "next/dynamic";
 import type { AppDefinition, AppId, AppProps } from "@/types";
 
+const About = dynamic<AppProps>(() => import("@/components/apps/about/About").then((module) => module.About));
 const Finder = dynamic<AppProps>(() => import("@/components/apps/finder/Finder").then((module) => module.Finder));
 const ProjectBrowser = dynamic<AppProps>(() => import("@/components/apps/project-browser/ProjectBrowser").then((module) => module.ProjectBrowser));
 const TextEdit = dynamic<AppProps>(() => import("@/components/apps/textedit/TextEdit").then((module) => module.TextEdit));
@@ -12,34 +12,11 @@ const NotePad = dynamic<AppProps>(() => import("@/components/apps/notepad/NotePa
 const Calculator = dynamic<AppProps>(() => import("@/components/apps/calculator/Calculator").then((module) => module.Calculator));
 const CorruptedFileDialog = dynamic<AppProps>(() => import("@/components/apps/corrupted-file-dialog/CorruptedFileDialog").then((module) => module.CorruptedFileDialog));
 
-function PlaceholderApp({ props }: AppProps) {
-  return createElement(
-    "div",
-    { className: "flex h-full flex-col gap-3 bg-[#f5f5f5] p-4 text-[12px] text-[#2b2b2b]" },
-    createElement(
-      "p",
-      { className: "font-['Chicago'] text-[13px]" },
-      "App content coming in Phase 4."
-    ),
-    props
-      ? createElement(
-          "pre",
-          { className: "os9-surface-inset overflow-auto p-2 text-[11px] leading-4 text-[#4a4a4a]" },
-          JSON.stringify(props, null, 2)
-        )
-      : createElement(
-          "p",
-          { className: "text-[#5a5a5a]" },
-          "This is a window-shell placeholder."
-        )
-  );
-}
-
 export const appRegistry: Record<AppId, AppDefinition> = {
   finder: {
     id: "finder",
     name: "Finder",
-    icon: "/icons/png/4.png",
+    icon: "/icons/finder-os9.png",
     defaultSize: { width: 640, height: 440 },
     minSize: { width: 480, height: 320 },
     singleton: true,
@@ -79,7 +56,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
   mail: {
     id: "mail",
     name: "Mail",
-    icon: "/icons/mail-os9.svg",
+    icon: "/icons/mail-os9.png",
     defaultSize: { width: 480, height: 380 },
     minSize: { width: 380, height: 300 },
     singleton: true,
@@ -99,7 +76,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
   notepad: {
     id: "notepad",
     name: "Note Pad",
-    icon: "/icons/notepad-os9.svg",
+    icon: "/icons/notepad-app-os9.png",
     defaultSize: { width: 300, height: 260 },
     minSize: { width: 220, height: 160 },
     singleton: false,
@@ -109,7 +86,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
   calculator: {
     id: "calculator",
     name: "Calculator",
-    icon: "/icons/calculator-os9.svg",
+    icon: "/icons/calculator-os9.png",
     defaultSize: { width: 280, height: 320 },
     minSize: { width: 280, height: 320 },
     singleton: true,
@@ -120,11 +97,11 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     id: "about",
     name: "About This Computer",
     icon: "/icons/png/14.png",
-    defaultSize: { width: 360, height: 280 },
-    minSize: { width: 360, height: 280 },
+    defaultSize: { width: 540, height: 470 },
+    minSize: { width: 420, height: 320 },
     singleton: true,
-    resizable: false,
-    component: PlaceholderApp
+    resizable: true,
+    component: About
   },
   "corrupted-file-dialog": {
     id: "corrupted-file-dialog",

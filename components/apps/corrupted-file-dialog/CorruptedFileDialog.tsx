@@ -29,7 +29,9 @@ export function CorruptedFileDialog({ windowId, props }: AppProps) {
             !
           </div>
           <div className="min-w-0">
-            <p className="font-['Chicago'] text-[12px] text-[#202020]">{fileName}</p>
+            <p className="font-['Chicago'] text-[12px] leading-[1.35] text-[#202020] [overflow-wrap:anywhere]">
+              {fileName}
+            </p>
             <p className="mt-2 font-['Arial'] text-[12px] leading-[1.45] text-[#303030]">
               The data in this file has been corrupted and cannot be opened.
             </p>

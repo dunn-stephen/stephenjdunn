@@ -31,7 +31,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
   {
     id: "trash",
     label: "Trash",
-    icon: "/icons/trash-os9.svg",
+    icon: "/icons/trash-os9.png",
     appId: "finder",
     windowProps: { initialFilter: "trash" },
     defaultPosition: { x: 1130, y: 620 }
@@ -53,7 +53,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
   {
     id: "mail",
     label: "Mail",
-    icon: "/icons/mail-os9.svg",
+    icon: "/icons/mail-os9.png",
     appId: "mail",
     defaultPosition: { x: 24, y: 244 }
   },
@@ -74,21 +74,21 @@ const DESKTOP_ITEMS: DesktopItem[] = [
   {
     id: "finder",
     label: "Finder",
-    icon: "/icons/png/4.png",
+    icon: "/icons/finder-os9.png",
     appId: "finder",
     defaultPosition: { x: 24, y: 532 }
   },
   {
     id: "notepad-app",
     label: "Note Pad",
-    icon: "/icons/notepad-os9.svg",
+    icon: "/icons/notepad-app-os9.png",
     appId: "notepad",
     defaultPosition: { x: 128, y: 532 }
   },
   {
     id: "note-1",
     label: "Note 1",
-    icon: "/icons/png/77.png",
+    icon: "/icons/notepad-file-os9.png",
     appId: "notepad",
     windowProps: { noteId: 1, title: NOTES[1].title },
     defaultPosition: { x: 128, y: 52 }
@@ -96,7 +96,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
   {
     id: "note-2",
     label: "Note 2",
-    icon: "/icons/png/77.png",
+    icon: "/icons/notepad-file-os9.png",
     appId: "notepad",
     windowProps: { noteId: 2, title: NOTES[2].title },
     defaultPosition: { x: 128, y: 148 }
@@ -104,7 +104,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
   {
     id: "note-3",
     label: "Note 3",
-    icon: "/icons/png/77.png",
+    icon: "/icons/notepad-file-os9.png",
     appId: "notepad",
     windowProps: { noteId: 3, title: NOTES[3].title },
     defaultPosition: { x: 128, y: 244 }
@@ -112,7 +112,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
   {
     id: "note-4",
     label: "Note 4",
-    icon: "/icons/png/77.png",
+    icon: "/icons/notepad-file-os9.png",
     appId: "notepad",
     windowProps: { noteId: 4, title: NOTES[4].title },
     defaultPosition: { x: 128, y: 340 }
@@ -120,7 +120,7 @@ const DESKTOP_ITEMS: DesktopItem[] = [
   {
     id: "calculator",
     label: "Calculator",
-    icon: "/icons/calculator-os9.svg",
+    icon: "/icons/calculator-os9.png",
     appId: "calculator",
     defaultPosition: { x: 128, y: 436 }
   }
@@ -225,6 +225,12 @@ export function DesktopIcons({ projects, readMeContent, revealMode }: DesktopIco
 
   return (
     <div className="absolute inset-0 pointer-events-none">
+      <button
+        type="button"
+        aria-label="Desktop"
+        className="absolute inset-0 pointer-events-auto cursor-default"
+        onClick={() => setSelectedId(null)}
+      />
       {items.map((item, index) => (
         <DesktopIcon
           key={item.id}

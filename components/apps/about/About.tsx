@@ -2,16 +2,13 @@
 
 import { useSound } from "@/hooks/useSound";
 import { useEffect, useRef, useState } from "react";
+import type { AppProps } from "@/types";
 
 const SESSION_START_KEY = "os9-session-started-at";
 const EASTER_EGG_TRIGGER_CLICKS = 5;
 const SITE_LABEL = "stephenjdunn.com";
-
-interface AboutProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onEasterEgg?: () => void;
-}
+const SYSTEM_NAME = "Stephen OS 9.2";
+const SYSTEM_SUBTITLE = "A browser-based Mac OS 9 portfolio by Stephen Dunn.";
 
 function formatUptime(elapsedSeconds: number) {
   const totalSeconds = Math.max(0, elapsedSeconds);
@@ -45,13 +42,11 @@ function HappyMacButton({ onClick }: HappyMacButtonProps) {
   );
 }
 
-export function About({ isOpen, onClose, onEasterEgg }: AboutProps) {
+export function About({ windowId }: AppProps) {
   const startTime = useRef<number | null>(null);
-  const easterEggTriggered = useRef(false);
   const [elapsed, setElapsed] = useState(0);
   const [iconClicks, setIconClicks] = useState(0);
   const { play: playClick } = useSound("click");
-  const { play: playClose } = useSound("close");
 
   useEffect(() => {
     if (startTime.current !== null) {
@@ -69,7 +64,7 @@ export function About({ isOpen, onClose, onEasterEgg }: AboutProps) {
   }, []);
 
   useEffect(() => {
-    if (!isOpen || startTime.current === null) {
+    if (startTime.current === null) {
       return undefined;
     }
 
@@ -82,113 +77,74 @@ export function About({ isOpen, onClose, onEasterEgg }: AboutProps) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isOpen, onClose]);
-
-  useEffect(() => {
-    if (iconClicks < EASTER_EGG_TRIGGER_CLICKS || easterEggTriggered.current) {
-      return;
-    }
-
-    easterEggTriggered.current = true;
-    onEasterEgg?.();
-  }, [iconClicks, onEasterEgg]);
-
-  if (!isOpen) {
-    return null;
-  }
+  }, []);
 
   const uptimeLabel = formatUptime(elapsed);
   const easterEggUnlocked = iconClicks >= EASTER_EGG_TRIGGER_CLICKS;
 
   return (
     <div
-      className="fixed inset-0 z-[10000] flex items-center justify-center bg-[rgba(0,0,0,0.18)] px-4"
+      data-window-id={windowId}
+      className="flex h-full flex-col gap-3 overflow-auto bg-[#dadada] px-4 py-4 text-[12px] leading-4 text-[#242424]"
     >
-      <div
-        aria-modal="true"
-        className="h-[280px] w-[360px] border border-black bg-[#dadada] shadow-[1px_1px_0_#111111,inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#999999]"
-        role="dialog"
-      >
-        <div className="flex h-[22px] items-center justify-between px-2">
-          <div className="font-['Charcoal'] text-[12px] text-[#111111]">About This Computer</div>
-          <button
-            type="button"
-            onClick={() => {
-              playClose();
-              onClose();
-            }}
-            className="os9-button min-h-[18px] rounded-none px-2 py-0 text-[10px]"
-          >
-            Close
-          </button>
-        </div>
+      <div className="flex items-start gap-4">
+        <HappyMacButton
+          onClick={() => {
+            playClick();
+            setIconClicks((currentClicks) => currentClicks + 1);
+          }}
+        />
 
-        <div className="flex h-[calc(280px-22px)] flex-col gap-3 overflow-hidden bg-[#dadada] px-4 py-4 text-[12px] leading-4 text-[#242424]">
-          <div className="flex items-start gap-4">
-            <HappyMacButton
-              onClick={() => {
-                playClick();
-                setIconClicks((currentClicks) => currentClicks + 1);
-              }}
-            />
-
-            <div className="min-w-0 flex-1 space-y-1">
-              <p className="m-0 font-['Chicago'] text-[14px] leading-4">Mac OS 9.2.2</p>
-              <p className="m-0 text-[#3f3f3f]">© Apple Computer, Inc.</p>
-              <p className="m-0 pt-1 font-['Chicago'] text-[12px] leading-4">Stephen Dunn — Software Engineer</p>
-              <p className="m-0 text-[#4a4a4a]">{iconClicks >= EASTER_EGG_TRIGGER_CLICKS ? "Startup disk unlocked." : "Power Mac G4 (pretend)"}</p>
-            </div>
-          </div>
-
-          <div className="border border-black bg-[#efefef] px-3 py-2 shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#b0b0b0]">
-            <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[11px] leading-4">
-              <span className="font-['Chicago']">Built-in Memory:</span>
-              <span>256 MB</span>
-              <span className="font-['Chicago']">Virtual Memory:</span>
-              <span>Off</span>
-              <span className="font-['Chicago']">Uptime:</span>
-              <span>{uptimeLabel}</span>
-            </div>
-          </div>
-
-          <div className="h-px bg-[#9b9b9b]" />
-
-          <div className="space-y-2 text-[11px] leading-4">
-            <p className="m-0 font-['Chicago'] text-[12px]">{SITE_LABEL}</p>
-            <p className="m-0">
-              Built with: Next.js · TypeScript · Tailwind
-              <br />
-              Zustand · Framer Motion · MDX
-            </p>
-            <p className="m-0">Deployed on: Netlify</p>
-            <p className="m-0">Icons: bearz314/MacOS9-icons (MIT)</p>
-          </div>
-
-          {easterEggUnlocked ? (
-            <div className="border border-black bg-[#f7f0bf] px-3 py-2 text-[11px] leading-4 text-[#443d14] shadow-[inset_1px_1px_0_#fff6cc,inset_-1px_-1px_0_#b8af71]">
-              Hidden message: still booting weird little ideas.
-            </div>
-          ) : null}
+        <div className="min-w-0 flex-1 space-y-1">
+          <p className="m-0 font-['Chicago'] text-[14px] leading-4">{SYSTEM_NAME}</p>
+          <p className="m-0 text-[#3f3f3f]">{SYSTEM_SUBTITLE}</p>
+          <p className="m-0 pt-1 font-['Chicago'] text-[12px] leading-4">Stephen Dunn — Software Engineer</p>
+          <p className="m-0 text-[#4a4a4a]">
+            {iconClicks >= EASTER_EGG_TRIGGER_CLICKS
+              ? "Startup disk unlocked."
+              : "Open the apps, browse the files, and poke around."}
+          </p>
         </div>
       </div>
+
+      <div className="border border-black bg-[#efefef] px-3 py-2 shadow-[inset_1px_1px_0_#ffffff,inset_-1px_-1px_0_#b0b0b0]">
+        <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[11px] leading-4">
+          <span className="font-['Chicago']">Computer:</span>
+          <span>Stephen Power Mac G4</span>
+          <span className="font-['Chicago']">Processor:</span>
+          <span>400 MHz curiosity engine</span>
+          <span className="font-['Chicago']">Memory:</span>
+          <span>512 MB creative RAM</span>
+          <span className="font-['Chicago']">Startup Disk:</span>
+          <span>Stephen HD</span>
+          <span className="font-['Chicago']">System Software:</span>
+          <span>{SYSTEM_NAME}</span>
+          <span className="font-['Chicago']">Uptime:</span>
+          <span>{uptimeLabel}</span>
+        </div>
+      </div>
+
+      <div className="h-px bg-[#9b9b9b]" />
+
+      <div className="space-y-2 text-[11px] leading-4">
+        <p className="m-0 font-['Chicago'] text-[12px]">{SITE_LABEL}</p>
+        <p className="m-0">
+          This machine was assembled to showcase projects, writing, experiments, and a mild obsession with old interfaces.
+        </p>
+        <p className="m-0">
+          Built with: Next.js · TypeScript · Tailwind
+          <br />
+          Zustand · Framer Motion · MDX
+        </p>
+        <p className="m-0">Deployed on: Netlify</p>
+        <p className="m-0">Icons inspired by classic Mac OS 9 resources and credited in this project.</p>
+      </div>
+
+      {easterEggUnlocked ? (
+        <div className="border border-black bg-[#f7f0bf] px-3 py-2 text-[11px] leading-4 text-[#443d14] shadow-[inset_1px_1px_0_#fff6cc,inset_-1px_-1px_0_#b8af71]">
+          Hidden message: still booting weird little ideas.
+        </div>
+      ) : null}
     </div>
   );
 }

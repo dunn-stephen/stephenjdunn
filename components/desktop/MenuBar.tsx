@@ -10,7 +10,6 @@ import { useWindowStore } from "@/lib/window-store";
 type MenuId = "apple" | "file" | "edit" | "view" | "window" | "special" | "help";
 
 interface MenuBarProps {
-  activeAppIcon: string;
   activeAppName: string;
   canCloseActiveApp: boolean;
   soundEnabled: boolean;
@@ -45,6 +44,9 @@ interface MenuDefinition {
   label: string;
 }
 
+const SOUND_GLYPH_WIDTH = 17;
+const SOUND_GLYPH_HEIGHT = 13;
+
 function useClockLabel() {
   return useMemo(
     () =>
@@ -56,23 +58,52 @@ function useClockLabel() {
   );
 }
 
-function MenuWedge({ side }: { side: "left" | "right" }) {
+function SoundMenuGlyph() {
   return (
-    <span
+    <svg
       aria-hidden="true"
-      className="os9-menubar-wedge"
+      viewBox="0 0 17 13"
+      shapeRendering="crispEdges"
+      className="block shrink-0 [image-rendering:pixelated]"
       style={{
-        clipPath:
-          side === "left"
-            ? "polygon(0 100%, 100% 0, 100% 100%)"
-            : "polygon(0 0, 0 100%, 100% 100%)"
+        width: SOUND_GLYPH_WIDTH,
+        height: SOUND_GLYPH_HEIGHT
       }}
-    />
+    >
+      <rect x="0" y="4" width="2" height="5" fill="#111111" />
+      <rect x="2" y="3" width="3" height="7" fill="#c8c6ff" />
+      <rect x="5" y="1" width="1" height="11" fill="#111111" />
+      <rect x="6" y="0" width="1" height="1" fill="#111111" />
+      <rect x="6" y="11" width="1" height="1" fill="#111111" />
+      <rect x="6" y="1" width="2" height="2" fill="#6e69ff" />
+      <rect x="6" y="9" width="2" height="2" fill="#6e69ff" />
+      <rect x="8" y="3" width="1" height="6" fill="#6e69ff" />
+
+      <rect x="10" y="3" width="1" height="1" fill="#7a7a7a" />
+      <rect x="10" y="9" width="1" height="1" fill="#7a7a7a" />
+      <rect x="11" y="2" width="1" height="1" fill="#b6b6b6" />
+      <rect x="11" y="10" width="1" height="1" fill="#b6b6b6" />
+      <rect x="12" y="1" width="1" height="1" fill="#7a7a7a" />
+      <rect x="12" y="11" width="1" height="1" fill="#7a7a7a" />
+
+      <rect x="11" y="4" width="1" height="1" fill="#7a7a7a" />
+      <rect x="11" y="8" width="1" height="1" fill="#7a7a7a" />
+      <rect x="12" y="3" width="1" height="1" fill="#b6b6b6" />
+      <rect x="12" y="9" width="1" height="1" fill="#b6b6b6" />
+      <rect x="13" y="2" width="1" height="1" fill="#7a7a7a" />
+      <rect x="13" y="10" width="1" height="1" fill="#7a7a7a" />
+
+      <rect x="12" y="5" width="1" height="1" fill="#7a7a7a" />
+      <rect x="12" y="7" width="1" height="1" fill="#7a7a7a" />
+      <rect x="13" y="4" width="1" height="1" fill="#b6b6b6" />
+      <rect x="13" y="8" width="1" height="1" fill="#b6b6b6" />
+      <rect x="14" y="3" width="1" height="1" fill="#7a7a7a" />
+      <rect x="14" y="9" width="1" height="1" fill="#7a7a7a" />
+    </svg>
   );
 }
 
 export function MenuBar({
-  activeAppIcon,
   activeAppName,
   canCloseActiveApp,
   soundEnabled,
@@ -350,6 +381,20 @@ export function MenuBar({
   ]);
 
   const time = tick === null ? "" : formatter.format(new Date(tick));
+  const soundButtonLabel = soundEnabled ? "Disable sounds" : "Enable sounds";
+
+  const handleSoundToggle = () => {
+    setOpenMenu(null);
+
+    if (soundEnabled) {
+      playClick();
+      onToggleSound();
+      return;
+    }
+
+    onToggleSound();
+    playClick();
+  };
 
   return (
     <div
@@ -357,7 +402,6 @@ export function MenuBar({
       className="fixed inset-x-0 top-0 z-[9999]"
     >
       <div className="os9-menubar flex h-[19px] items-start border-b border-black text-[12px] leading-none [image-rendering:pixelated]">
-        <MenuWedge side="left" />
         <div className="flex h-full items-start">
           {menus.map((menu) => {
             const isOpen = openMenu === menu.id;
@@ -443,22 +487,27 @@ export function MenuBar({
           })}
         </div>
         <div className="flex-1" />
-        <div className="os9-menubar-status mt-[2px] ml-[8px] mr-[7px] text-black">{time}</div>
-        <div
-          aria-hidden="true"
-          className="os9-menubar-divider"
-        />
-        <div className="os9-menubar-status mt-[2px] ml-[8px] mr-[7px] text-black">
-          <Image
-            src={activeAppIcon}
-            alt=""
-            width={16}
-            height={16}
-            className="mb-[1px] mr-[5px] h-4 w-4 object-contain [image-rendering:pixelated]"
+        <div className="flex h-full items-center">
+          <div className="os9-menubar-status ml-[8px] mr-[7px] text-black">{time}</div>
+          <button
+            type="button"
+            aria-label={soundButtonLabel}
+            aria-pressed={soundEnabled}
+            title={soundButtonLabel}
+            className="os9-menubar-sound-toggle mr-[4px]"
+            data-enabled={soundEnabled ? "true" : "false"}
+            onClick={handleSoundToggle}
+          >
+            <SoundMenuGlyph />
+          </button>
+          <div
+            aria-hidden="true"
+            className="os9-menubar-divider"
           />
-          <span>{activeAppName}</span>
+          <div className="os9-menubar-status ml-[8px] mr-[7px] text-black">
+            <span>{activeAppName}</span>
+          </div>
         </div>
-        <MenuWedge side="right" />
       </div>
     </div>
   );

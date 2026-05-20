@@ -1076,7 +1076,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  min-height: 15px;
+  min-height: 14px;
   padding: 0 7px;
   font-size: 12px;
   font-weight: 700;
@@ -1087,22 +1087,34 @@ button {
     sans-serif;
 }
 
-.os9-menubar-wedge {
-  margin-top: -5px;
-  display: block;
-  height: 24px;
-  width: 11px;
-  flex-shrink: 0;
-  background: #dedede;
-  box-shadow:
-    inset 1px 1px 0 #ffffff,
-    inset -1px -1px 0 #9c9c9c;
+.os9-menubar-sound-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 14px;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+.os9-menubar-sound-toggle:hover {
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.os9-menubar-sound-toggle:focus-visible {
+  outline: 1px solid #00008b;
+  outline-offset: 0;
+}
+
+.os9-menubar-sound-toggle[data-enabled="false"] {
+  opacity: 0.82;
 }
 
 .os9-menubar-divider {
-  margin-top: 2px;
-  height: 13px;
+  height: 14px;
   width: 6px;
+  align-self: center;
   background: linear-gradient(90deg, #ffffff 0 1px, #9c9c9c 1px 2px, transparent 2px 100%);
 }
 

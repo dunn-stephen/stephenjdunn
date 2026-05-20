@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { About } from "@/components/apps/about/About";
 import { BootSequence } from "@/components/desktop/BootSequence";
 import { DesktopIcons } from "@/components/desktop/DesktopIcons";
 import { MenuBar } from "@/components/desktop/MenuBar";
@@ -87,8 +86,6 @@ export function Desktop({ projects, readMeContent }: DesktopProps) {
   const closeWindow = useWindowStore((state) => state.closeWindow);
   const focusedWindowId = useWindowStore((state) => state.focusedWindowId);
   const windows = useWindowStore((state) => state.windows);
-  const [aboutOpen, setAboutOpen] = useState(false);
-  const [aboutEasterEggTriggered, setAboutEasterEggTriggered] = useState(false);
   const [allAppsEasterEggVisible, setAllAppsEasterEggVisible] = useState(false);
   const [allAppsEasterEggDismissed, setAllAppsEasterEggDismissed] = useState(false);
   const [bootState, setBootState] = useState<BootState>("checking");
@@ -105,16 +102,27 @@ export function Desktop({ projects, readMeContent }: DesktopProps) {
     () => getAppDefinition(activeWindow?.appId ?? "finder"),
     [activeWindow]
   );
-  const openAppIds = useMemo(() => {
-    const appIds = new Set(windows.map((windowState) => windowState.appId));
-
-    if (aboutOpen) {
-      appIds.add("about");
+  const openAppIds = useMemo(
+    () => new Set(windows.map((windowState) => windowState.appId)),
+    [windows]
+  );
+  const activeMenuStatus = useMemo(() => {
+    if (!activeWindow) {
+      return {
+        name: "Desktop"
+      };
     }
 
-    return appIds;
-  }, [aboutOpen, windows]);
-  const activeAppName = activeAppDefinition.name;
+    if (activeWindow.appId === "finder") {
+      return {
+        name: "Finder"
+      };
+    }
+
+    return {
+      name: activeAppDefinition.name
+    };
+  }, [activeAppDefinition, activeWindow]);
   const allAppsEasterEggState = allAppsEasterEggVisible
     ? "visible"
     : allAppsEasterEggDismissed
@@ -218,17 +226,15 @@ export function Desktop({ projects, readMeContent }: DesktopProps) {
         className={`fixed inset-0 overflow-hidden bg-[#C0C0C0] transition-opacity max-md:hidden ${
           bootState === "checking" ? "opacity-0" : "opacity-100"
         }`}
-        data-about-easter-egg={aboutEasterEggTriggered ? "triggered" : "idle"}
         data-all-apps-easter-egg={allAppsEasterEggState}
         data-project-count={projects.length}
       >
         <Wallpaper />
         <MenuBar
-          activeAppIcon={activeAppDefinition.icon}
-          activeAppName={activeAppName}
+          activeAppName={activeMenuStatus.name}
           canCloseActiveApp={activeWindow !== null}
           soundEnabled={soundEnabled}
-          onAbout={() => setAboutOpen(true)}
+          onAbout={() => openWindow("about")}
           onCloseActiveApp={() => {
             if (activeWindow) {
               closeWindow(activeWindow.id);
@@ -332,11 +338,6 @@ export function Desktop({ projects, readMeContent }: DesktopProps) {
             </motion.div>
           ) : null}
         </AnimatePresence>
-        <About
-          isOpen={aboutOpen}
-          onClose={() => setAboutOpen(false)}
-          onEasterEgg={() => setAboutEasterEggTriggered(true)}
-        />
       </main>
       <MobileFallback projects={projects} />
       <AnimatePresence>
